@@ -1,6 +1,6 @@
 const root = document.documentElement;
 const themeToggle = document.getElementById("themeToggle");
-const themeIcon = themeToggle.querySelector(".theme-icon");
+const themeIcon = themeToggle ? themeToggle.querySelector(".theme-icon") : null;
 const registerNowBtn = document.getElementById("registerNowBtn");
 const backToTopBtn = document.getElementById("backToTop");
 const registrationSection = document.getElementById("registration");
@@ -16,44 +16,52 @@ if (savedTheme === "dark" || savedTheme === "light") {
     updateThemeButton(savedTheme);
 }
 
-themeToggle.addEventListener("click", () => {
-    const currentTheme = root.getAttribute("data-theme");
-    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+        const currentTheme = root.getAttribute("data-theme");
+        const nextTheme = currentTheme === "dark" ? "light" : "dark";
 
-    root.setAttribute("data-theme", nextTheme);
-    localStorage.setItem("walania-theme", nextTheme);
-    updateThemeButton(nextTheme);
-});
+        root.setAttribute("data-theme", nextTheme);
+        localStorage.setItem("walania-theme", nextTheme);
+        updateThemeButton(nextTheme);
+    });
+}
 
-registerNowBtn.addEventListener("click", () => {
-    registrationSection.scrollIntoView({ behavior: "smooth", block: "start" });
-});
+if (registerNowBtn && registrationSection) {
+    registerNowBtn.addEventListener("click", () => {
+        registrationSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+}
 
-backToTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
+if (backToTopBtn) {
+    backToTopBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
 
-window.addEventListener("scroll", () => {
-    const showButtonAt = document.body.scrollHeight * 0.45;
-    backToTopBtn.classList.toggle("is-visible", window.scrollY > showButtonAt);
-});
+    window.addEventListener("scroll", () => {
+        const showButtonAt = document.body.scrollHeight * 0.45;
+        backToTopBtn.classList.toggle("is-visible", window.scrollY > showButtonAt);
+    });
+}
 
 
 
-eventSearchBtn.addEventListener("click", filterEvents);
+if (eventSearch && eventSearchBtn && noEventsMessage) {
+    eventSearchBtn.addEventListener("click", filterEvents);
 
-eventSearch.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        filterEvents();
-    }
-});
+    eventSearch.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            filterEvents();
+        }
+    });
 
-eventSearch.addEventListener("input", () => {
-    if (eventSearch.value.trim() === "") {
-        filterEvents();
-    }
-});
+    eventSearch.addEventListener("input", () => {
+        if (eventSearch.value.trim() === "") {
+            filterEvents();
+        }
+    });
+}
 function filterEvents() {
     const searchTerm = eventSearch.value.trim().toLowerCase();
     let visibleCount = 0;
@@ -76,6 +84,10 @@ function filterEvents() {
 
 
 function updateThemeButton(theme) {
+    if (!themeIcon || !themeToggle) {
+        return;
+    }
+
     const isDark = theme === "dark";
 
     themeIcon.textContent = isDark ? "L" : "D";
