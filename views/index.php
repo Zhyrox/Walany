@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/db.php';
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '../../models/db.php';
+require_once __DIR__ . '../../controllers/auth.php';
 
 $registrationStatus = null;
 $registrationErrors = [];
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Walania | Event Registration</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             <a href="#registration">Register</a>
             <a href="#contacts">Contacts</a>
             <?php if ($user !== null) : ?>
-                <a href="logout.php">Logout</a>
+                <a href="..\controllers\logout.php">Logout</a>
             <?php else : ?>
                 <a href="user_login.php">User Login</a>
                 <a href="login.php">Admin</a>
