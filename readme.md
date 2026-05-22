@@ -5,3 +5,8 @@ TO DO:
 -SVG ICONS
 -BACKGROUND DESIGNS
 -SOME TWEAKS IF MERON
+
+Github Account Names:
+    Zhyrox - Zhiro, Francisco
+    JeremyOrville-ITProg - Batac, Jeremy Orville
+    yt1an - Dela Torre, Kristian Elmer
