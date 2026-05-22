@@ -1,10 +1,12 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 $registrationStatus = null;
 $registrationErrors = [];
 $events = [];
 $eventsMessage = null;
+$user = current_user();
 
 try {
     $eventResult = walania_db()->query(
@@ -32,6 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
     $contactNumber = trim($_POST['contact_number'] ?? '');
     $eventName = trim($_POST['event_name'] ?? '');
     $preferenceAllergy = trim($_POST['preference_allergy'] ?? '');
+
+    if (!user_is_logged_in()) {
+        $registrationErrors[] = 'Please login or create a user account before submitting an event registration.';
+    }
 
     if ($fullName === '') {
         $registrationErrors[] = 'Full name is required.';
@@ -103,7 +109,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             <a href="#events">Events</a>
             <a href="#registration">Register</a>
             <a href="#contacts">Contacts</a>
-            <a href="login.php">Login</a>
+            <?php if ($user !== null) : ?>
+                <a href="logout.php">Logout</a>
+            <?php else : ?>
+                <a href="user_login.php">User Login</a>
+                <a href="login.php">Admin</a>
+            <?php endif; ?>
         </nav>
 
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">
@@ -166,12 +177,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
                 <div class="section-heading">
                     <p class="eyebrow">Event Registration System</p>
                     <h2>Event Registration</h2>
-                    <p>Collect participant details here and connect the form action to your PHP MVC controller.</p>
+                    <p><?php echo $user !== null ? 'You are logged in and ready to submit an event registration.' : 'Login or create a user account before submitting an event registration.'; ?></p>
                 </div>
 
                 <form class="registration-form" action="index.php#registration" method="POST">
                     <input type="hidden" name="registration_form" value="1">
                     <h3>Add Participant</h3>
+
+                    <?php if ($user === null) : ?>
+                        <div class="form-alert form-alert-info">
+                            <p>You need a user account to submit this form.</p>
+                            <p><a href="user_login.php">Login</a> or <a href="user_register.php">create an account</a> first.</p>
+                        </div>
+                    <?php else : ?>
+                        <p class="form-alert form-alert-success">Logged in as <?php echo h($user['full_name']); ?>.</p>
+                    <?php endif; ?>
 
                     <?php if ($registrationStatus === 'success') : ?>
                         <p class="form-alert form-alert-success">Registration saved successfully.</p>
@@ -186,27 +206,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="fullName">Full Name</label>
-                            <input id="fullName" name="full_name" type="text" autocomplete="name" required>
+                            <input id="fullName" name="full_name" type="text" value="<?php echo h($user['full_name'] ?? ''); ?>" autocomplete="name" <?php echo $user === null ? 'disabled' : ''; ?> required>
                         </div>
 
                         <div class="form-group">
                             <label for="age">Age</label>
-                            <input id="age" name="age" type="number" min="1" max="120" required>
+                            <input id="age" name="age" type="number" min="1" max="120" <?php echo $user === null ? 'disabled' : ''; ?> required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input id="email" name="email" type="email" autocomplete="email" required>
+                            <input id="email" name="email" type="email" value="<?php echo h($user['email'] ?? ''); ?>" autocomplete="email" <?php echo $user === null ? 'disabled' : ''; ?> required>
                         </div>
 
                         <div class="form-group">
                             <label for="contactNumber">Contact Number</label>
-                            <input id="contactNumber" name="contact_number" type="tel" autocomplete="tel" required>
+                            <input id="contactNumber" name="contact_number" type="tel" autocomplete="tel" <?php echo $user === null ? 'disabled' : ''; ?> required>
                         </div>
 
                         <div class="form-group form-group-wide">
                             <label for="eventName">Event Name</label>
-                            <select id="eventName" name="event_name" required>
+                            <select id="eventName" name="event_name" <?php echo $user === null ? 'disabled' : ''; ?> required>
                                 <option value="">-- Select Event --</option>
                                 <?php foreach ($events as $event) : ?>
                                     <option value="<?php echo h($event['event_name']); ?>"><?php echo h($event['event_name']); ?></option>
@@ -216,11 +236,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
 
                         <div class="form-group form-group-wide">
                             <label for="preferenceAllergy">Preference/Allergy</label>
-                            <input id="preferenceAllergy" name="preference_allergy" type="text" placeholder="Food preference, accessibility needs, or allergies">
+                            <input id="preferenceAllergy" name="preference_allergy" type="text" placeholder="Food preference, accessibility needs, or allergies" <?php echo $user === null ? 'disabled' : ''; ?>>
                         </div>
                     </div>
 
-                    <button class="primary-button submit-button" type="submit">Submit</button>
+                    <button class="primary-button submit-button" type="submit" <?php echo $user === null ? 'disabled' : ''; ?>>Submit</button>
                 </form>
             </div>
         </section>

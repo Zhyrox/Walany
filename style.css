@@ -426,6 +426,22 @@ button {
     background: color-mix(in srgb, #f8d7da 70%, var(--surface));
 }
 
+.form-alert-info {
+    border: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+    color: var(--muted);
+    background: color-mix(in srgb, var(--secondary) 28%, var(--surface));
+}
+
+.form-alert a {
+    color: var(--primary);
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.form-alert a:hover {
+    color: var(--accent);
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
