@@ -6,7 +6,22 @@
     font-family: 'ArchivoExpandedExtraBold';
     src:url('./misc/fonts/Archivo_Expanded-ExtraBold.woff2') format('woff2');
 }
-
+@font-face{
+    font-family: 'ArchivoCondensedMedium';
+    src:url('./misc/fonts/Archivo_Condensed-Medium.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'ArchivoLight';
+    src: url('./misc/fonts/Archivo-Light.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'ArchivoBold';
+    src: url('./misc/fonts/Archivo-Bold.woff2') format('woff2');
+}
+@font-face{
+    font-family: 'ArchivoExtraBold';
+    src: url('./misc/fonts/Archivo-ExtraBold.woff2') format('woff2');
+}
 
 :root[data-theme="light"] {
     --text: #0b0f0f;
@@ -77,6 +92,7 @@ button {
     box-shadow: var(--shadow);
     backdrop-filter: blur(18px);
     transform: translateX(-50%);
+    font-family: 'ArchivoBold';
 }
 
 .logo-placeholder {
@@ -210,6 +226,7 @@ button {
     border-radius: 999px;
     font-weight: 800;
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    font-family: 'ArchivoExtraBold';
 }
 
 .primary-button {
@@ -253,10 +270,11 @@ button {
 .eyebrow {
     margin: 0 0 8px;
     color: var(--primary);
-    font-size: 0.82rem;
+    font-size: 1rem;
     font-weight: 900;
     letter-spacing: 0;
     text-transform: uppercase;
+    font-family: 'ArchivoCondensedMedium';
 }
 
 .section-heading h2,
@@ -265,6 +283,7 @@ button {
     font-size: clamp(2.5rem, 7vw, 5.2rem);
     line-height: 1;
     letter-spacing: 0;
+    font-family: 'ArchivoCondensedExtraBold';
 }
 
 .section-heading p:not(.eyebrow) {
@@ -272,6 +291,7 @@ button {
     margin: 18px auto 0;
     color: var(--muted);
     font-size: 1.05rem;
+    font-family: 'ArchivoLight';
 }
 
 .event-tools {
@@ -284,12 +304,14 @@ button {
     margin-bottom: 10px;
     color: var(--text);
     font-weight: 800;
+    font-family: 'ArchivoBold';
 }
 
 .event-search-row {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 12px;
+    font-family: 'ArchivoLight';
 }
 
 .event-search-row input,
@@ -356,16 +378,19 @@ button {
     color: var(--background);
     background: var(--primary);
     font-weight: 900;
+    font-family: 'ArchivoExpandedExtraBold';
 }
 
 .event-card h3 {
     margin: 0 0 8px;
     font-size: 1.25rem;
+    font-family: 'ArchivoBold';
 }
 
 .event-card p {
     margin: 0;
     color: var(--muted);
+    font-family: 'ArchivoLight';
 }
 
 .no-events-message {
@@ -413,6 +438,7 @@ button {
 .registration-form h3 {
     margin: 0 0 22px;
     font-size: 1.35rem;
+    font-family: 'ArchivoBold';
 }
 
 .form-alert {
@@ -421,6 +447,7 @@ button {
     border-radius: 14px;
     font-size: 0.95rem;
     font-weight: 800;
+    font-family: 'ArchivoBold';
 }
 
 .form-alert p {
@@ -477,6 +504,7 @@ button {
 .form-group label {
     font-size: 0.9rem;
     font-weight: 800;
+    font-family: 'ArchivoBold';
 }
 
 .registration-form input,
@@ -487,6 +515,10 @@ button {
 .admin-event-form input {
     min-height: 46px;
     padding: 11px 13px;
+}
+
+.eventName, .preferenceAllergy{
+    font-family: 'ArchivoLight';
 }
 
 .submit-button {
@@ -523,6 +555,7 @@ button {
     margin: 14px 0;
     color: var(--muted);
     font-size: 1.05rem;
+    font-family: 'ArchivoLight';
 }
 
 .back-to-top {
@@ -587,6 +620,7 @@ button {
     font-size: clamp(1.05rem, 2vw, 1.35rem);
     font-style: italic;
     font-weight: 700;
+    font-family: 'ArchivoBold';
 }
 
 .login-form {
@@ -622,6 +656,7 @@ button {
     display: flex;
     align-items: center;
     gap: 9px;
+    font-family: 'ArchivoBold';
 }
 
 .remember-option input {
@@ -635,6 +670,7 @@ button {
     color: var(--primary);
     font-weight: 900;
     text-decoration: none;
+    font-family: 'ArchivoBold';
 }
 
 .login-options a:hover,
@@ -644,6 +680,7 @@ button {
 
 .login-form .submit-button {
     width: 100%;
+    font-family: 'ArchivoBold';
 }
 
 .login-note {
@@ -688,6 +725,7 @@ button {
 .admin-panel-heading {
     margin-bottom: 22px;
     text-align: center;
+    font-family: 'ArchivoExpandedExtraBold';
 }
 
 .admin-panel-heading h1 {
@@ -715,6 +753,7 @@ button {
     border-collapse: collapse;
     color: #153232;
     font-size: 0.92rem;
+    font-family: 'ArchivoBold';
 }
 
 .admin-table th,
@@ -723,6 +762,7 @@ button {
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 26%, transparent);
     text-align: left;
     vertical-align: top;
+    font-family: 'ArchivoExtraBold';
 }
 
 .admin-table th {
@@ -763,6 +803,7 @@ button {
 .admin-form-heading h2 {
     margin: 0;
     font-size: 1.55rem;
+    font-family: 'ArchivoBold';
 }
 
 .admin-actions {
@@ -797,12 +838,14 @@ button {
 .admin-event-item h3 {
     margin: 0 0 6px;
     font-size: 1.05rem;
+    font-family: 'ArchivoBold'
 }
 
 .admin-event-item p,
 .admin-empty-state {
     margin: 0;
     color: var(--muted);
+    font-family: 'ArchivoLight';
 }
 
 .admin-empty-state {

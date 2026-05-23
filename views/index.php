@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
                 <div class="section-heading">
                     <p class="eyebrow">Browse upcoming activities</p>
                     <h2>Events Section</h2>
-                    <p>Scroll inside the frame to view more events without making the whole page too long.</p>
+                    <p>Scroll inside the frame to view more events.</p>
                 </div>
 
                 <div class="event-tools">
@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
 
                         <div class="form-group form-group-wide">
                             <label for="eventName">Event Name</label>
-                            <select id="eventName" name="event_name" <?php echo $user === null ? 'disabled' : ''; ?> required>
+                            <select class="eventName" id="eventName" name="event_name" <?php echo $user === null ? 'disabled' : ''; ?> required>
                                 <option value="">-- Select Event --</option>
                                 <?php foreach ($events as $event) : ?>
                                     <option value="<?php echo h($event['event_name']); ?>"><?php echo h($event['event_name']); ?></option>
@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
 
                         <div class="form-group form-group-wide">
                             <label for="preferenceAllergy">Preference/Allergy</label>
-                            <input id="preferenceAllergy" name="preference_allergy" type="text" placeholder="Food preference, accessibility needs, or allergies" <?php echo $user === null ? 'disabled' : ''; ?>>
+                            <input class="preferenceAllergy" id="preferenceAllergy" name="preference_allergy" type="text" placeholder="Food preference, accessibility needs, or allergies" <?php echo $user === null ? 'disabled' : ''; ?>>
                         </div>
                     </div>
 
