@@ -10,3 +10,4 @@ Github Account Names:
     Zhyrox - Zhiro, Francisco
     JeremyOrville-ITProg - Batac, Jeremy Orville
     yt1an - Dela Torre, Kristian Elmer
+    joshsky-bunny - Bunyad, Alfred Joshua T.
