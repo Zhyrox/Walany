@@ -130,7 +130,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             <div class="hero-content">
                 <h1>Walania</h1>
                 <p>Click. Register. Experience.</p>
-                <button class="primary-button" id="registerNowBtn" type="button">Register Now!</button>
+                <form action="user_register.php">
+                    <button class="primary-button" id="registerNowBtn" type="submit">Sign Up Now!</button>
+                </form>
             </div>
         </section>
 
