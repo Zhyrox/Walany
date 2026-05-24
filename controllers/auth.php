@@ -4,16 +4,25 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/**
+ * Returns current user, if not, returns null
+ */
 function current_user(): ?array
 {
     return $_SESSION['user'] ?? null;
 }
 
+/**
+ * Check whether user is logged in
+ */
 function user_is_logged_in(): bool
 {
     return current_user() !== null;
 }
 
+/**
+ * Stores logged in user in session
+ */
 function login_user(array $user): void
 {
     session_regenerate_id(true);
@@ -25,6 +34,9 @@ function login_user(array $user): void
     ];
 }
 
+/**
+ * Logs out current user and clears session
+ */
 function logout_user(): void
 {
     $_SESSION = [];

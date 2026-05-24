@@ -11,6 +11,7 @@
     <link rel="icon" type="image/svg+xml" href="images/Walania.svg">
 </head>
 <body class="login-page">
+    <!-- Public Login Page -->
     <header class="site-header">
         <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
@@ -29,6 +30,7 @@
     </header>
 
     <main>
+        <!-- Login Page Hero -->
         <section class="login-section" aria-labelledby="loginTitle">
             <div class="hero-orb hero-orb-left"></div>
             <div class="hero-orb hero-orb-right"></div>
@@ -40,6 +42,7 @@
                     <p>Sign in to manage event registrations, participants, and upcoming activities.</p>
                 </div>
 
+                <!-- Admin Sign in Form -->
                 <form class="login-form" action="admin.php" method="POST">
                     <h2>Login</h2>
 

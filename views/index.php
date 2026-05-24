@@ -2,12 +2,14 @@
 require_once __DIR__ . '../../models/db.php';
 require_once __DIR__ . '../../controllers/auth.php';
 
+// Initialization
 $registrationStatus = null;
 $registrationErrors = [];
 $events = [];
 $eventsMessage = null;
 $user = current_user();
 
+// Load available events
 try {
     $eventResult = walania_db()->query(
         'SELECT event_date_label, event_name, event_description
@@ -17,9 +19,11 @@ try {
 
     $events = $eventResult->fetch_all(MYSQLI_ASSOC);
 } catch (Throwable $error) {
+    // If no events availabe, display message
     $eventsMessage = 'Events are not available yet. Please import events.sql and start MySQL.';
 }
 
+// Create a list of valid event names that can be used for server-side validation.
 $allowedEvents = array_column($events, 'event_name');
 
 function h(?string $value): string
@@ -27,6 +31,7 @@ function h(?string $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// Process registration form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form'])) {
     $fullName = trim($_POST['full_name'] ?? '');
     $age = filter_input(INPUT_POST, 'age', FILTER_VALIDATE_INT);
@@ -35,10 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
     $eventName = trim($_POST['event_name'] ?? '');
     $preferenceAllergy = trim($_POST['preference_allergy'] ?? '');
 
+    // Makes it so only logged in users can register
     if (!user_is_logged_in()) {
         $registrationErrors[] = 'Please login or create a user account before submitting an event registration.';
     }
 
+    // Checks each form field for errors
     if ($fullName === '') {
         $registrationErrors[] = 'Full name is required.';
     }
@@ -61,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
 
     if ($registrationErrors === []) {
         try {
+            // Save registration to DATABASE
             $statement = walania_db()->prepare(
                 'INSERT INTO event_registrations (full_name, age, email, contact_number, event_name, preference_allergy)
                  VALUES (?, ?, ?, ?, ?, ?)'
@@ -79,11 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             $statement->execute();
             $registrationStatus = 'success';
         } catch (Throwable $error) {
+            // Error message for if the SQL file isnt imported
             $registrationStatus = 'error';
             $registrationErrors[] = 'Registration could not be saved. Please make sure the database is imported and MySQL is running.';
         }
-    } else {
-        $registrationStatus = 'error';
+    } else {$registrationStatus = 'error';
     }
 }
 ?>
@@ -100,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
 <link rel="icon" type="image/svg+xml" href="images\Walania.svg">
 </head>
 <body>
+    <!-- Header -->
     <header class="site-header">
         <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
@@ -123,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
     </header>
 
     <main>
+        <!-- Hero Section -->
         <section class="hero-section" id="home">
             <div class="hero-orb hero-orb-left"></div>
             <div class="hero-orb hero-orb-right"></div>
@@ -136,6 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             </div>
         </section>
 
+        <!-- Events Section -->
         <section class="events-section" id="events">
             <div class="section-inner">
                 <div class="section-heading">
@@ -174,6 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             </div>
         </section>
 
+        <!-- Registration Section -->
         <section class="registration-section" id="registration">
             <div class="section-inner registration-layout">
                 <div class="section-heading">
@@ -247,6 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
             </div>
         </section>
 
+        <!-- Contact Section -->
         <section class="contacts-section" id="contacts">
             <div class="section-inner contact-layout">
                 <div class="contact-image-placeholder">

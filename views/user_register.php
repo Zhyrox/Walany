@@ -12,11 +12,13 @@ function h(?string $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// Redirect users straight into event registration
 if (user_is_logged_in()) {
     header('Location: index.php#registration');
     exit;
 }
 
+// Form Handling for Registration
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim($_POST['full_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -41,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($registerErrors === []) {
         try {
+            // Creates a new account (saves it into the database)
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $statement = walania_db()->prepare(
                 'INSERT INTO user_accounts (full_name, email, password_hash)
@@ -50,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $statement->execute();
 
             $userId = walania_db()->insert_id;
+            // automatically logs in user after registration
             login_user([
                 'user_id' => $userId,
                 'full_name' => $fullName,
@@ -83,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/svg+xml" href="images/Walania.svg">
 </head>
 <body class="login-page">
+    <!-- User Registration -->
     <header class="site-header">
         <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
@@ -101,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <main>
+        <!-- Registration Hero Section -->
         <section class="login-section" aria-labelledby="registerTitle">
             <div class="hero-orb hero-orb-left"></div>
             <div class="hero-orb hero-orb-right"></div>
@@ -112,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p>Register as a user before submitting an event registration form.</p>
                 </div>
 
+                <!-- Displays user credentials -->
                 <form class="login-form" action="user_register.php" method="POST">
                     <h2>User Registration</h2>
 

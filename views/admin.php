@@ -7,11 +7,13 @@ $databaseMessage = null;
 $eventStatus = null;
 $eventErrors = [];
 
+// Add or Delete Events (admin side)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
     $eventAction = $_POST['event_action'];
 
     try {
         if ($eventAction === 'add') {
+            // Sanitize inputs before validation.
             $eventDateLabel = trim($_POST['event_date_label'] ?? '');
             $eventName = trim($_POST['event_name'] ?? '');
             $eventDescription = trim($_POST['event_description'] ?? '');
@@ -29,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
             }
 
             if ($eventErrors === []) {
+                // Add the event to database when no errors occur.
                 $statement = walania_db()->prepare(
                     'INSERT INTO events (event_date_label, event_name, event_description)
                      VALUES (?, ?, ?)'
@@ -40,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
         }
 
         if ($eventAction === 'delete') {
+            // Delete event from the database.
             $eventId = filter_input(INPUT_POST, 'event_id', FILTER_VALIDATE_INT);
 
             if ($eventId === false || $eventId === null) {
@@ -54,16 +58,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
             }
         }
     } catch (mysqli_sql_exception $error) {
+        // Detect duplicate event names
         $eventErrors[] = $error->getCode() === 1062
             ? 'An event with that name already exists.'
             : 'Event changes could not be saved. Please make sure events.sql is imported.';
     } catch (Throwable $error) {
+        // Generic error handling for database failures
         $eventErrors[] = 'Event changes could not be saved. Please make sure events.sql is imported.';
     }
 }
 
+// Determine whether to display a success message or validation errors.
 $eventFormStatus = $eventErrors === [] ? $eventStatus : null;
 
+// Load recent participant registrations for the admin database table.
 try {
     $result = walania_db()->query(
         'SELECT registration_id, full_name, age, email, contact_number, event_name, preference_allergy, registered_at
@@ -77,6 +85,7 @@ try {
     $databaseMessage = 'Import event_registrations.sql and start MySQL to view saved registrations.';
 }
 
+// Display existing events from db
 try {
     $eventResult = walania_db()->query(
         'SELECT event_id, event_date_label, event_name, event_description
@@ -89,6 +98,7 @@ try {
     $eventErrors[] = 'Import events.sql and start MySQL to manage events.';
 }
 
+// Default display when no participants are selected (no input)
 $selectedRegistration = $registrations[0] ?? [
     'full_name' => '',
     'age' => '',
@@ -116,6 +126,7 @@ function h(?string $value): string
     <link rel="icon" type="image/svg+xml" href="images/Walania.svg">
 </head>
 <body class="admin-page">
+    <!-- Admin Page -->
     <header class="site-header admin-header">
         <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
@@ -135,6 +146,7 @@ function h(?string $value): string
     </header>
 
     <main>
+        <!-- Admin Dashboard -->
         <section class="admin-section" id="eventDatabase">
             <div class="hero-orb hero-orb-left"></div>
             <div class="hero-orb hero-orb-right"></div>
@@ -188,6 +200,7 @@ function h(?string $value): string
                     </div>
                 </div>
 
+                <!-- Event Management -->
                 <div class="admin-event-manager" id="eventManager">
                     <div class="admin-form-heading">
                         <p class="eyebrow">Event Controls</p>
@@ -251,6 +264,7 @@ function h(?string $value): string
                     </div>
                 </div>
 
+                <!-- Editable Participant Form -->
                 <form class="admin-edit-form" id="editParticipant" action="" method="POST">
                     <div class="admin-form-heading">
                         <p class="eyebrow">Editable Fields</p>

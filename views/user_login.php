@@ -2,6 +2,7 @@
 require_once __DIR__ . '../../models/db.php';
 require_once __DIR__ . '../../controllers/auth.php';
 
+// Initialization
 $loginErrors = [];
 $loginStatus = null;
 $email = '';
@@ -11,11 +12,13 @@ function h(?string $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// Redirects logged in users straight to event registration
 if (user_is_logged_in()) {
     header('Location: index.php#registration');
     exit;
 }
 
+// Login Form Handling
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -30,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($loginErrors === []) {
         try {
+            // Checks record by email
             $statement = walania_db()->prepare(
                 'SELECT user_id, full_name, email, password_hash
                  FROM user_accounts
@@ -41,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $statement->get_result()->fetch_assoc();
 
             if ($user !== null && password_verify($password, $user['password_hash'])) {
+                // starts session if login details are correct
                 login_user($user);
                 header('Location: index.php#registration');
                 exit;
@@ -68,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/svg+xml" href="images/Walania.svg">
 </head>
 <body class="login-page">
+    <!-- User Login -->
     <header class="site-header">
         <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
@@ -86,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <main>
+        <!-- User Login Hero Section -->
         <section class="login-section" aria-labelledby="loginTitle">
             <div class="hero-orb hero-orb-left"></div>
             <div class="hero-orb hero-orb-right"></div>
@@ -97,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p>Login to submit your event registration form.</p>
                 </div>
 
+                <!-- Displays user credentials for authentication -->
                 <form class="login-form" action="user_login.php" method="POST">
                     <h2>User Login</h2>
 
