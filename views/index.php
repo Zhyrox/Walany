@@ -9,13 +9,13 @@ $eventsMessage = null;
 $user = current_user();
 
 try {
-    $eventResult = walania_db()->query(
+    $eventStmt = walania_db()->query(
         'SELECT event_date_label, event_name, event_description
          FROM events
          ORDER BY event_id ASC'
     );
 
-    $events = $eventResult->fetch_all(MYSQLI_ASSOC);
+    $events = $eventStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $error) {
     $eventsMessage = 'Events are not available yet. Please import events.sql and start MySQL.';
 }
@@ -66,17 +66,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registration_form']))
                  VALUES (?, ?, ?, ?, ?, ?)'
             );
 
-            $statement->bind_param(
-                'sissss',
+            $statement->execute([
                 $fullName,
                 $age,
                 $email,
                 $contactNumber,
                 $eventName,
                 $preferenceAllergy
-            );
+            ]);
 
-            $statement->execute();
             $registrationStatus = 'success';
         } catch (Throwable $error) {
             $registrationStatus = 'error';

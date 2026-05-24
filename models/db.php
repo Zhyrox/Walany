@@ -1,17 +1,26 @@
 <?php
 
-function walania_db(): mysqli
+function walania_db(): PDO
 {
-    static $connection = null;
+    static $pdo = null;
 
-    if ($connection instanceof mysqli) {
-        return $connection;
+    if ($pdo instanceof PDO) {
+        return $pdo;
     }
 
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $dsn = 'mysql:host=localhost;dbname=walania;charset=utf8mb4';
+    $user = 'root';
+    $pass = '';
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ];
 
-    $connection = new mysqli('localhost', 'root', '', 'walania');
-    $connection->set_charset('utf8mb4');
-
-    return $connection;
+    try {
+        $pdo = new PDO($dsn, $user, $pass, $options);
+        return $pdo;
+    } catch (\PDOException $e) {
+        throw new \RuntimeException('Database connection error: ' . $e->getMessage(), (int)$e->getCode(), $e);
+    }
 }

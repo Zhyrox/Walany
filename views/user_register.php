@@ -42,14 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($registerErrors === []) {
         try {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
             $statement = walania_db()->prepare(
                 'INSERT INTO user_accounts (full_name, email, password_hash)
                  VALUES (?, ?, ?)'
             );
-            $statement->bind_param('sss', $fullName, $email, $passwordHash);
-            $statement->execute();
+            $statement->execute([
+                $fullName,
+                $email,
+                $passwordHash
+            ]);
 
-            $userId = walania_db()->insert_id;
+            $userId = (int) walania_db()->lastInsertId();
             login_user([
                 'user_id' => $userId,
                 'full_name' => $fullName,
@@ -58,8 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             header('Location: index.php#registration');
             exit;
-        } catch (mysqli_sql_exception $error) {
-            $registerErrors[] = $error->getCode() === 1062
+        } catch (PDOException $error) {
+            $isDuplicate = isset($error->errorInfo[1]) && (int)$error->errorInfo[1] === 1062;
+            $registerErrors[] = $isDuplicate
                 ? 'An account with that email already exists.'
                 : 'Account could not be created. Please import user_accounts.sql first.';
         } catch (Throwable $error) {

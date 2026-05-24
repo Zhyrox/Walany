@@ -30,23 +30,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($loginErrors === []) {
         try {
-            $statement = walania_db()->prepare(
+            $stmt = walania_db()->prepare(
                 'SELECT user_id, full_name, email, password_hash
                  FROM user_accounts
                  WHERE email = ?
                  LIMIT 1'
             );
-            $statement->bind_param('s', $email);
-            $statement->execute();
-            $user = $statement->get_result()->fetch_assoc();
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user !== null && password_verify($password, $user['password_hash'])) {
+            if ($user !== false && isset($user['password_hash']) && password_verify($password, $user['password_hash'])) {
                 login_user($user);
                 header('Location: index.php#registration');
                 exit;
             }
 
             $loginErrors[] = 'Invalid email or password.';
+        } catch (PDOException $error) {
+            $loginErrors[] = 'Login is not available yet. Please import user_accounts.sql first.';
         } catch (Throwable $error) {
             $loginErrors[] = 'Login is not available yet. Please import user_accounts.sql first.';
         }

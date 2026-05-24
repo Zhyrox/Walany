@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
                     'INSERT INTO events (event_date_label, event_name, event_description)
                      VALUES (?, ?, ?)'
                 );
-                $statement->bind_param('sss', $eventDateLabel, $eventName, $eventDescription);
-                $statement->execute();
+                $statement->execute([$eventDateLabel, $eventName, $eventDescription]);
                 $eventStatus = 'Event added successfully.';
             }
         }
@@ -48,13 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
 
             if ($eventErrors === []) {
                 $statement = walania_db()->prepare('DELETE FROM events WHERE event_id = ?');
-                $statement->bind_param('i', $eventId);
-                $statement->execute();
+                $statement->execute([$eventId]);
                 $eventStatus = 'Event removed successfully.';
             }
         }
-    } catch (mysqli_sql_exception $error) {
-        $eventErrors[] = $error->getCode() === 1062
+    } catch (PDOException $error) {
+        $isDuplicate = isset($error->errorInfo[1]) && (int)$error->errorInfo[1] === 1062;
+        $eventErrors[] = $isDuplicate
             ? 'An event with that name already exists.'
             : 'Event changes could not be saved. Please make sure events.sql is imported.';
     } catch (Throwable $error) {
@@ -65,27 +64,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_action'])) {
 $eventFormStatus = $eventErrors === [] ? $eventStatus : null;
 
 try {
-    $result = walania_db()->query(
+    $stmt = walania_db()->query(
         'SELECT registration_id, full_name, age, email, contact_number, event_name, preference_allergy, registered_at
          FROM event_registrations
          ORDER BY registered_at DESC
          LIMIT 25'
     );
 
-    $registrations = $result->fetch_all(MYSQLI_ASSOC);
-} catch (Throwable $error) {
+    $registrations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $error) {
     $databaseMessage = 'Import event_registrations.sql and start MySQL to view saved registrations.';
 }
 
 try {
-    $eventResult = walania_db()->query(
+    $eventStmt = walania_db()->query(
         'SELECT event_id, event_date_label, event_name, event_description
          FROM events
          ORDER BY event_id ASC'
     );
 
-    $events = $eventResult->fetch_all(MYSQLI_ASSOC);
-} catch (Throwable $error) {
+    $events = $eventStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $error) {
     $eventErrors[] = 'Import events.sql and start MySQL to manage events.';
 }
 
