@@ -1,0 +1,78 @@
+<?php
+
+require_once "db.php";
+
+//new code @elmer
+
+class UserModel{
+
+
+    private $db;
+
+    public function __construct($dbConnection){
+        $this->db = $dbConnection;
+    }
+
+    public function getUserById($id){
+        $stmt = $this->db->prepare("SELECT * FROM walania_user WHERE id = ?");
+        $stmt->execute([$id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function loginUser($username, $password){
+        $stmt = $this->db->prepare("SELECT * FROM walania_user WHERE username = ?");
+        
+        $stmt->execute([$username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+
+        return false;
+    }
+    
+    public function registerUser($username, $password){
+        
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = $this->db->prepare("INSERT INTO walania_user (username, password) VALUES (?, ?)");
+
+        return $stmt->execute([$username, $passwordHash]);
+    }
+}
+
+    // old codes
+
+
+
+    function registerUser($username, $password) {
+        $pdo = walania_db();
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO walania_user (username, password) VALUES (?, ?)";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([$username, $hashedPassword]);
+    }
+
+    function loginUser($username) {
+        $pdo = walania_db();
+        $sql = "SELECT * FROM walania_user WHERE username = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$username]);
+        return $stmt->fetch();
+    }
+
+    function getUserById($id) {
+        $pdo = walania_db();
+        $sql = "SELECT * FROM walania_user WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+
+
+
+
+?>
