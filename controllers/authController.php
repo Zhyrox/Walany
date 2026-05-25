@@ -4,6 +4,11 @@ session_start();
 
 require_once "../models/userModel.php";
 
+//test user: hunter password: 111
+
+// username: admin -> password: admin123
+// password: admin123 -> hash: $2y$10$tVAv5pLY4aSTnsYzaL1Ng.PuOXz61gu4f/ER.EjNEA9T3xP0dJhG6
+
 if (isset($_POST['register'])) {
 
     $username = $_POST['username'];

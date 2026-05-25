@@ -3,25 +3,25 @@ require_once "db.php";
 
 function getAllRegistrants() {
     $pdo = walania_db();
-    $stmt = $pdo->query("SELECT * FROM registrants");
+    $stmt = $pdo->query("SELECT * FROM walania_registrant");
     return $stmt->fetchAll();
 }
 
-function addRegistrant($name, $email, $phone, $preference) {
+function addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id) {
     $pdo = walania_db();
-    $stmt = $pdo->prepare("INSERT INTO registrants (name, email, phone, preference) VALUES (?, ?, ?, ?)");
-    return $stmt->execute([$name, $email, $phone, $preference]);
+    $stmt = $pdo->prepare("INSERT INTO walania_registrant (fullname, age, email, contact_number, preference_allergy, event_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    return $stmt->execute([$fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id]);
 }
 
-function updateRegistrant($id, $name, $email, $phone, $preference) {
+function updateRegistrant($id, $fullname, $age, $email, $contact_number, $preference_allergy, $event_id) {
     $pdo = walania_db();
-    $stmt = $pdo->prepare("UPDATE registrants SET name=?, email=?, phone=?, preference=? WHERE id=?");
-    return $stmt->execute([$name, $email, $phone, $preference, $id]);
+    $stmt = $pdo->prepare("UPDATE walania_registrant SET fullname=?, age=?, email=?, contact_number=?, preference_allergy=?, event_id=? WHERE id=?");
+    return $stmt->execute([$fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $id]);
 }
 
 function deleteRegistrant($id) {
     $pdo = walania_db();
-    $stmt = $pdo->prepare("DELETE FROM registrants WHERE id=?");
+    $stmt = $pdo->prepare("DELETE FROM walania_registrant WHERE id=?");
     return $stmt->execute([$id]);
 }
 

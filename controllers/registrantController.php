@@ -1,35 +1,21 @@
-<?php
+<?php 
 require_once "../models/registrantModel.php";
 
-function listRegistrants() {
-    $registrants = getAllRegistrants();
-    include "../views/registrantList.php";
-}
-
-function createRegistrant($data) {
-    $success = addRegistrant($data['name'], $data['email'], $data['phone'], $data['preference']);
-    if ($success) {
-        header("Location: /registrants");
-        exit();
-    } else {
-        include "../views/registrantForm.php";
-    }
-}
-
-function editRegistrant($id, $data) {
-    $success = updateRegistrant($id, $data['name'], $data['email'], $data['phone'], $data['preference']);
-    if ($success) {
-        header("Location: /registrants");
-        exit();
-    } else {
-        include "../views/registrantForm.php";
-    }
-}
-
-function deleteRegistrant($id) {
-    $success = deleteRegistrant($id);
-    header("Location: /registrants");
+if (isset($_POST['add'])) {
+    addRegistrant($_POST['fullname'], $_POST['age'], $_POST['email'], $_POST['contact_number'], $_POST['preference_allergy'], $_POST['event_id'], $_SESSION['user_id']);
+    header("Location: ../views/dashboard.php");
     exit();
 }
 
+if (isset($_POST['update'])) {
+    updateRegistrant($_POST['id'], $_POST['fullname'], $_POST['age'], $_POST['email'], $_POST['contact_number'], $_POST['preference_allergy'], $_POST['event_id']);
+    header("Location: ../views/dashboard.php");
+    exit();
+}
+
+if (isset($_GET['delete'])) {
+    deleteRegistrant($_GET['delete']);
+    header("Location: ../views/dashboard.php");
+    exit();
+}
 ?>

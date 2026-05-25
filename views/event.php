@@ -12,14 +12,14 @@ $events = getAllEvents();
 </head>
 <body>
 
-    <h1>Event Registration</h1>
+    <h1>Event Creation</h1>
     <form action="../controllers/eventController.php" method="POST">
 
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required>
+        <label for="event_date">Date:</label>
+        <input type="date" id="event_date" name="event_date" required>
 
         <label for="location">Location:</label>
         <input type="text" id="location" name="location" required>
@@ -43,7 +43,7 @@ $events = getAllEvents();
         <?php foreach ($events as $event): ?>
         <tr>
             <td><?= htmlspecialchars($event['name']) ?></td>
-            <td><?= htmlspecialchars($event['date']) ?></td>
+            <td><?= htmlspecialchars($event['event_date']) ?></td>
             <td><?= htmlspecialchars($event['location']) ?></td>
             <td><?= htmlspecialchars($event['description']) ?></td>
             <td>
@@ -54,7 +54,7 @@ $events = getAllEvents();
                 <button onclick="openUpdateModal(
                     '<?= $event['id'] ?>',
                     '<?= htmlspecialchars($event['name'], ENT_QUOTES) ?>',
-                    '<?= htmlspecialchars($event['date'], ENT_QUOTES) ?>',
+                    '<?= htmlspecialchars($event['event_date'], ENT_QUOTES) ?>',
                     '<?= htmlspecialchars($event['location'], ENT_QUOTES) ?>',
                     '<?= htmlspecialchars($event['description'], ENT_QUOTES) ?>'
              )">
