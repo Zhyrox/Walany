@@ -1,8 +1,5 @@
 <?php
-
-require_once "db.php";
-
-//new code @elmer
+//author @elmer - Lahat ng babaguhin pasabi sakin
 
 //UserModel.php
 class UserModel{
@@ -56,7 +53,7 @@ class Database{
     private $dbh;
 
     public function __construct(){
-        $dsn = 'mysql:host=localhost;dbname=walania;charset=utf8mb4';
+        $dsn = 'mysql:host=127.0.0.1;dbname=walania;port=3307;charset=utf8mb4'; // <-- 3307 yung port nung sa pc ko palitan nyo nlng if ever
         $user = 'root';
         $pass = '';
         $options = [
@@ -76,60 +73,3 @@ class Database{
         return $this->dbh;
     }
 }
-
-    // old codes
-    // usermodel
-    function registerUser($username, $password) {
-        $pdo = walania_db();
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO walania_user (username, password) VALUES (?, ?)";
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute([$username, $hashedPassword]);
-    }
-
-    function loginUser($username) {
-        $pdo = walania_db();
-        $sql = "SELECT * FROM walania_user WHERE username = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$username]);
-        return $stmt->fetch();
-    }
-
-    function getUserById($id) {
-        $pdo = walania_db();
-        $sql = "SELECT * FROM walania_user WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$id]);
-        return $stmt->fetch();
-    }
-
-    //db
-
-    function walania_db(): PDO
-    {
-        static $pdo = null;
-
-        if ($pdo instanceof PDO) {
-            return $pdo;
-        }
-
-        $dsn = 'mysql:host=localhost;dbname=walania;charset=utf8mb4';
-        $user = 'root';
-        $pass = '';
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ];
-
-        try {
-            $pdo = new PDO($dsn, $user, $pass, $options);
-            return $pdo;
-        } catch (\PDOException $e) {
-            throw new \RuntimeException('Database connection error: ' . $e->getMessage(), (int)$e->getCode(), $e);
-        }
-    }
-
-
-
-?>
