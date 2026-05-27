@@ -1,10 +1,8 @@
 <?php
 /*
-Auth Controller
+Login Controller
 Author: Elmer
 */
-
-
 
 session_start();
 

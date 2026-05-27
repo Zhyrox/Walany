@@ -19,6 +19,13 @@ class UserModel{
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function usernameExists($username){
+        $stmt = $this->db->prepare("SELECT id FROM walania_user WHERE username = ?");
+        $stmt->execute([$username]);
+
+        return $stmt->fetch() ? true : false;
+    }
+
     public function loginUser($username, $password){
         $stmt = $this->db->prepare("SELECT * FROM walania_user WHERE username = ?");
         

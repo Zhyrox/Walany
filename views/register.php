@@ -16,7 +16,7 @@
                     <p>Create your user account to register for events and access the dashboard.</p>
                 </div>
             </div>
-            <form class="registration-form" action="../controllers/authController.php" method="POST" novalidate>
+            <form class="registration-form" action="../controllers/RegisterController.php" method="POST" novalidate>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="username">Username</label>
