@@ -1,7 +1,6 @@
 <?php
 class UserModel{
 
-
     private $db;
 
     public function __construct($dbConnection){

@@ -14,7 +14,28 @@ $user = [
     'id' => $_SESSION['user_id'],
     'username' => $_SESSION['username']
 ];
-$events = getAllEvents();
+
+/*
+
+Test Code by Elmer/ much better gawin itong separate file
+
+*/
+
+require_once "../models/Database.php";
+
+$database = new Database();
+$dbConnection = $database->getConnection();
+
+$event = new EventModel($dbConnection);
+$events = $event->getAllEvents();
+
+/*
+
+Test Code by Elmer
+
+*/
+
+
 $eventsMessage = $events === [] ? 'No events available yet.' : null;
 
 // safe defaults for view-only variables (controller may set these in a full MVC flow)

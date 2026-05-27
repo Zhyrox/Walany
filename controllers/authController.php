@@ -55,8 +55,8 @@ if (isset($_POST['login'])) {
     if (password_verify($password, $storedHash)) {
         session_regenerate_id(true);
         // set user_id so dashboard.php check passes; support both possible column names
-        $_SESSION['user_id'] = $user['id'] ?? $user['user_id'] ?? null;
-        $_SESSION['username'] = $user['username'] ?? $user['email'] ?? '';
+        $_SESSION['user_id'] = $userData['id'] ?? $userData['user_id'] ?? null;
+        $_SESSION['username'] = $userData['username'] ?? $userData['email'] ?? '';
 
         header("Location: ../views/dashboard.php");
         exit;
