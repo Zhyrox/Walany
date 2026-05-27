@@ -1,4 +1,11 @@
 <?php
+session_start();
+$namepass_error = $_SESSION['namepass_error'] ?? '';
+$login_error = $_SESSION['login_error'] ?? '';
+
+
+unset($_SESSION['namepass_error']);
+unset($_SESSION['login_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -17,6 +24,15 @@
             </div>
             <article class="login-form" aria-labelledby="loginTitle">
                 <h2 id="loginTitle">Sign in</h2>
+
+                <?php if ($namepass_error): ?>
+                    <p class="error-message"><?php echo $namepass_error; ?></p>
+                <?php endif; ?>
+
+                <?php if ($login_error): ?>
+                    <p class="error-message"><?php echo $login_error; ?></p>
+                <?php endif; ?>
+
                 <form action="../controllers/authController.php" method="POST" novalidate>
                     <div class="form-group">
                         <label for="login-username">Username</label>

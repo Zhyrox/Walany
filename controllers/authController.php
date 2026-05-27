@@ -25,15 +25,20 @@ if (isset($_POST['login'])) {
     $username = trim((string)($_POST['username'] ?? ''));
     $password = $_POST['password'] ?? '';
 
+    $_SESSION['namepass_error'] = '';
+    $_SESSION['login_error'] = '';
+
     if ($username === '' || $password === '') {
-        echo "Username and password are required.";
-        exit;
+        $_SESSION['namepass_error'] = 'Username and Password are required.';
+        header("Location: ../views/login.php");
+        exit();
     }
 
     $user = loginUser($username);
 
     if (!$user || !is_array($user)) {
-        echo "Invalid username or password";
+        $_SESSION['login_error'] = "Invalid Username or Password.";
+        header("Location: ../views/login.php");
         exit;
     }
 
@@ -42,7 +47,8 @@ if (isset($_POST['login'])) {
 
     if ($storedHash === null) {
         error_log('Login failed: no password field for user ' . $username);
-        echo "Invalid username or password";
+        $_SESSION['login_error'] = "Invalid Username or Password.";
+        header("Location: ../views/login.php");
         exit;
     }
 
@@ -55,7 +61,8 @@ if (isset($_POST['login'])) {
         header("Location: ../views/dashboard.php");
         exit;
     } else {
-        echo "Invalid username or password";
+        $_SESSION['login_error'] = "Invalid Username or Password.";
+        header("Location: ../views/login.php");
         exit;
     }
 }

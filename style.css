@@ -46,7 +46,13 @@
     --border: rgba(240, 244, 244, 0.16);
     --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
 }
-
+.no-scrollbar::-webkit-scrollbar{
+    display:none;
+}
+.no-scrollbar{
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
 
 * {
@@ -615,6 +621,15 @@ button {
 
 .login-page {
     min-height: 100vh;
+    margin:0;
+    padding:0;
+    overflow: hidden;
+}
+
+.error-message {
+    color: #d93025;
+    font-size: 14px;
+    margin-top: 6px;
 }
 
 .login-section {
@@ -635,11 +650,14 @@ button {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
     gap: 56px;
-    align-items: center;
-    margin:70px;
+    align-items: start;
     padding:150px;
 }
 
+.login-copy{
+    padding-top: 150px;
+    align-items: center;
+}
 .login-copy h1 {
     margin: 0;
     color: transparent;
