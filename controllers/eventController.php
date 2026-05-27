@@ -1,21 +1,58 @@
-<?php 
+<?php
+/*
+Refactored by: Elmer
+*/
+
 require_once "../models/eventModel.php";
-    
-if (isset($_POST['add'])) {
-    addEvent($_POST['name'], $_POST['event_date'], $_POST['location'], $_POST['description']);
-    header("Location: ../views/event.php");
-    exit();
-}
+require_once "../models/Database.php";
 
-if (isset($_POST['update'])) {
-    updateEvent($_POST['id'], $_POST['name'], $_POST['event_date'], $_POST['location'], $_POST['description']);
-    header("Location: ../views/event.php");
-    exit();
-}
+$database = new Database();
+$dbConnection = $database->getConnection();
 
-if (isset($_GET['delete'])) {
-    deleteEvent($_GET['delete']);
-    header("Location: ../views/event.php");
-    exit();
+$eventModel = new EventModel($dbConnection);
+
+
+//Handle POST Requests (Create, Update, Delete)
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+    $name = trim($_POST['name'] ?? '');
+    $event_date = $_POST['event_date'] ?? '';
+    $location = trim($_POST['location'] ?? '');
+    $id = $_POST['id'] ?? '';
+    $description = trim($_POST['description'] ?? '');
+
+    //Add Event
+    if (isset($_POST['add'])) {
+        //Input Validation
+        if(empty($name) OR empty($event_date) OR empty($location) OR empty($description)){
+            //Will add the error next time
+        } else {
+            $eventModel->addEvent($name, $event_date, $location, $description);
+            header("Location: ../views/event.php");
+            exit();
+        }
+    }
+
+    //Update Event
+    if (isset($_POST['update'])){
+        
+        if(empty($id) OR empty($name) OR empty($event_date) OR empty($location) OR empty($description)){
+            //Will add the error next time
+        } else {
+            $eventModel->updateEvent($id, $name, $event_date, $location, $description);
+            header("Location: ../views/event.php");
+            exit();
+        }
+    }
+
+    if (isset($_POST['delete'])){
+
+        if(empty($id)){
+            //Will add the error next time
+        } else {
+            $eventModel->deleteEvent($id);
+            header("Location: ../views/event.php");
+            exit();
+        }
+    }
 }
-?>

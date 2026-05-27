@@ -1,6 +1,12 @@
 <?php
-require_once "../models/eventModel.php";
-$events = getAllEvents();
+require_once "../models/EventModel.php";
+require_once "../models/Database.php";
+
+$database = new Database();
+$dbConnection = $database->getConnection();
+
+$eventModel = new EventModel($dbConnection);
+$events = $eventModel->getAllEvents();
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +77,33 @@ $events = getAllEvents();
                                         <td><?= htmlspecialchars($event['location']) ?></td>
                                         <td><?= htmlspecialchars($event['description']) ?></td>
                                         <td>
-                                            <a class="text-button" href="../controllers/eventController.php?delete=<?= $event['id'] ?>">Delete</a>
+                                            
+
+
+
+
+                                        <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>" style="background: none; border: none; padding: 0; color: red; cursor: pointer; font: inherit;">
+                                            Delete
+                                        </button>
+
+
+                                        <div id="confirmPanel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 999;">
+                                            <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                                <h3>Are you sure?</h3>
+                                                <p>You are about to delete: <strong id="deleteEventName"></strong></p>
+                                                
+                                                <form action="../controllers/eventController.php" method="POST">
+                                                    <input type="hidden" name="id" id="modalEventId" value="">
+                                                    <button type="button" id="cancelBtn" style="margin-right: 10px; padding: 8px 16px;">Cancel</button>
+                                                    <button type="submit" name="delete" style="background: red; color: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px;">Yes, Delete It</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+
+
+
+
                                         </td>
                                         <td>
                                             <button class="secondary-button" type="button" onclick="openUpdateModal(
@@ -142,5 +174,28 @@ $events = getAllEvents();
             document.getElementById("updateModal").classList.remove('active');
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmPanel = document.getElementById('confirmPanel');
+            const modalEventId = document.getElementById('modalEventId');
+            const deleteEventName = document.getElementById('deleteEventName');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            document.querySelectorAll('.delete-trigger').forEach(button => {
+                button.addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-id');
+                    const eventName = this.getAttribute('data-name');
+
+                    modalEventId.value = eventId;
+                    deleteEventName.textContent = eventName;
+                    confirmPanel.style.display = 'flex';
+                });
+            });
+
+            cancelBtn.addEventListener('click', function() {
+                confirmPanel.style.display = 'none';
+            });
+        });
+</script>
 </body>
 </html>
