@@ -1,4 +1,9 @@
 <?php
+/*
+
+Author: Elmer
+
+*/
 class UserModel{
 
     private $db;

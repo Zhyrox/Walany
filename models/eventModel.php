@@ -1,4 +1,9 @@
 <?php
+/*
+
+Author: Elmer
+
+*/
 class EventModel{
 
     private $db;
