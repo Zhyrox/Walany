@@ -27,7 +27,7 @@ class UserModel{
 
         return false;
     }
-    s
+    
     public function registerUser($username, $password){
         
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
