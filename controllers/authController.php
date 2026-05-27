@@ -1,5 +1,7 @@
 <?php
 
+//Wag nyo muna idelete to gawin ko tong reference for register later
+
 session_start();
 
 require_once "../models/userModel.php";

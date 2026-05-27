@@ -33,7 +33,7 @@ unset($_SESSION['login_error']);
                     <p class="error-message"><?php echo $login_error; ?></p>
                 <?php endif; ?>
 
-                <form action="../elmer drafts/LoginController.php" method="POST" novalidate>
+                <form action="../controllers/LoginController.php" method="POST" novalidate>
                     <div class="form-group">
                         <label for="login-username">Username</label>
                         <input id="login-username" name="username" type="text" required autocomplete="username" />
