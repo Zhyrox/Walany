@@ -18,12 +18,12 @@ class RegistrantModel{
     }
 
     public function addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id){
-        $stmt = $this->db->prepare("INSERT INTO walania_registrant (fullname, age, email, contact_number, preference_allergy, event_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO walania_registrant (full_name, age, email, contact_number, preference_allergy, event_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
         return $stmt->execute([$fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id]);
     }
 
     public function updateRegistrant($id, $fullname, $age, $email, $contact_number, $preference_allergy, $event_id){
-        $stmt = $this->db->prepare("UPDATE walania_registrant SET fullname=?, age=?, email=?, contact_number=?, preference_allergy=?, event_id=? WHERE id=?");
+        $stmt = $this->db->prepare("UPDATE walania_registrant SET full_name=?, age=?, email=?, contact_number=?, preference_allergy=?, event_id=? WHERE id=?");
         return $stmt->execute([$fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $id]);
     }
 

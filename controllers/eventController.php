@@ -3,6 +3,8 @@
 Refactored by: Elmer
 */
 
+session_start();
+
 require_once "../models/eventModel.php";
 require_once "../models/Database.php";
 
@@ -45,6 +47,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         }
     }
 
+    //Delete Event
     if (isset($_POST['delete'])){
 
         if(empty($id)){
@@ -56,3 +59,4 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         }
     }
 }
+?>

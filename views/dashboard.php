@@ -157,7 +157,7 @@ $registrationErrors = $registrationErrors ?? [];
                         </div>
                     </div>
 
-                    <button class="primary-button submit-button" type="submit" name="register">Register</button>
+                    <button class="primary-button submit-button" type="submit" name="add">Register</button>
                 </form>
             </div>
         </section>
