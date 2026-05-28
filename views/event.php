@@ -14,7 +14,6 @@ $events = fetch_events();
     <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
     <link rel="stylesheet" href="../style.css">
 </head>
-<<<<<<< HEAD
 <body class="admin-page event-admin-page">
     <header class="site-header admin-header">
         <!-- I made the logo act like a shortcut to the login page so I can get back in fast. -->
@@ -40,33 +39,6 @@ $events = fetch_events();
                 <div class="admin-section-card">
                     <div class="admin-panel-heading">
                         <h1>Event Manager</h1>
-=======
-<body class="admin-page">
-    <header class="site-header">
-        <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
-            <img src="images/Walania.svg" alt="Walania logo">
-        </a>
-        <p>Welcome, <?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
-
-        <nav class="main-nav" aria-label="Main navigation">
-            <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
-                <a href="event.php">Manage Events</a>
-                <a href="registrant.php">Manage Registrants</a>
-            <?php endif; ?>
-            <a href="#create-event">Create</a>
-            <a href="#events-list">List</a>
-            <?php if ($user !== null) : ?>
-                <a href="../controllers/logout.php">Logout</a>
-            <?php endif; ?>
-        </nav>
-    </header>
-    <main class="admin-section">
-        <div class="admin-workspace">
-            <section id="create-event" class="admin-event-manager">
-                <div class="admin-section-card">
-                    <div class="admin-panel-heading">
-                        <h1>Event Manager</h1>
->>>>>>> d9f4dbb105c65c31f3eff6511daa53ab9e7f4d78
                     </div>
                     <form class="admin-event-form" action="../controllers/eventController.php" method="POST">
                         <div class="form-grid">
@@ -227,7 +199,6 @@ $events = fetch_events();
             document.querySelectorAll('.delete-trigger').forEach(button => {
                 button.addEventListener('click', function() {
                     const eventId = this.getAttribute('data-id');
-<<<<<<< HEAD
                     const eventName = this.getAttribute('data-name');
 
                     modalEventId.value = eventId;
@@ -275,20 +246,3 @@ $events = fetch_events();
     </script>
 </body>
 </html>
-=======
-                    const eventName = this.getAttribute('data-name');
-
-                    modalEventId.value = eventId;
-                    deleteEventName.textContent = eventName;
-                    confirmPanel.style.display = 'flex';
-                });
-            });
-
-            cancelBtn.addEventListener('click', function() {
-                confirmPanel.style.display = 'none';
-            });
-        });
-</script>
-</body>
-</html>
->>>>>>> d9f4dbb105c65c31f3eff6511daa53ab9e7f4d78

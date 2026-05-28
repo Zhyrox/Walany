@@ -24,9 +24,11 @@ $registrants = $data['registrants'];
             <img src="images/Walania.svg" alt="Walania logo">
         </a>
         <p>Welcome, <?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
-
-<<<<<<< HEAD
         <nav class="main-nav" aria-label="Main navigation">
+            <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
+                <a href="event.php">Manage Events</a>
+                <a href="registrant.php">Manage Registrants</a>
+            <?php endif; ?>
             <a href="#events">Events</a>
             <a href="#registration">Register</a>
             <a href="#contacts">Contacts</a>
@@ -41,21 +43,6 @@ $registrants = $data['registrants'];
             <img class="theme-toggle-icon" data-theme-icon src="../images/LightModeIcon.svg" alt="" aria-hidden="true">
         </button>
     </header>
-=======
-        <nav class="main-nav" aria-label="Main navigation">
-            <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
-                <a href="event.php">Manage Events</a>
-                <a href="registrant.php">Manage Registrants</a>
-            <?php endif; ?>
-            <a href="#events">Events</a>
-            <a href="#registration">Register</a>
-            <a href="#contacts">Contacts</a>
-            <?php if ($user !== null) : ?>
-                <a href="../controllers/logout.php">Logout</a>
-            <?php endif; ?>
-        </nav>
-    </header>
->>>>>>> d9f4dbb105c65c31f3eff6511daa53ab9e7f4d78
 
     <main>
         <section id="events" class="events-section">
@@ -149,8 +136,6 @@ $registrants = $data['registrants'];
                 </form>
             </div>
         </section>
-<<<<<<< HEAD
-
         <section id="contacts" class="contacts-section">
             <div class="registration-layout contact-layout">
                 <div class="section-heading">
@@ -212,8 +197,3 @@ $registrants = $data['registrants'];
     </script>
 </body>
 </html>
-=======
-    </main>
-</body>
-</html>
->>>>>>> d9f4dbb105c65c31f3eff6511daa53ab9e7f4d78

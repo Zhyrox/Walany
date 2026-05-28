@@ -529,8 +529,10 @@ button {
 
 .registration-section {
     position: relative;
-    padding: 96px 0 72px;
-    min-height: auto;
+    min-height: 100vh;
+    padding: 132px 0 72px;
+    display: grid;
+    align-items: center;
     overflow: hidden;
     background:
         radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--secondary) 24%, transparent) 0 14%, transparent 34%),
@@ -547,6 +549,7 @@ button {
     align-items: start;
     width: min(1180px, calc(100% - 48px));
     margin: 0 auto;
+    padding-bottom: 12px;
 }
 
 .registration-layout .section-heading {
