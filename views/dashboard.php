@@ -52,7 +52,7 @@ $registrationErrors = $registrationErrors ?? [];
 </head>
 <body>
     <header class="site-header">
-        <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
+        <a href="" class="logo-placeholder" aria-label="Refresh page">
             <img src="images/Walania.svg" alt="Walania logo">
         </a>
 
@@ -159,6 +159,34 @@ $registrationErrors = $registrationErrors ?? [];
 
                     <button class="primary-button submit-button" type="submit" name="add">Register</button>
                 </form>
+            </div>
+        </section>
+
+        <section id="contacts" class="contacts-section">
+            <div class="registration-layout contact-layout">
+                <div class="section-heading">
+                    <p class="eyebrow">Contact</p>
+                    <h2>Reach Out</h2>
+                    <div class="contact-copy">
+                        <p>Need help with events, registration, or admin access? Use the details below and I’ll keep this section easy to find at the bottom of the page.</p>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-item">
+                        <span class="contact-label">Email</span>
+                        <a href="mailto:walaniaevents@gmail.com">walaniaevents@gmail.com</a>
+                    </div>
+
+                    <div class="contact-item">
+                        <span class="contact-label">Location</span>
+                        <p>Cavite, Philippines</p>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-label">Office Hours</span>
+                        <p>Monday to Friday, 9:00 AM - 5:00 PM</p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
