@@ -30,6 +30,9 @@ $events = $eventModel->getAllEvents();
             <a href="#event-list">Event List</a>
             <a href="../controllers/logout.php">Logout</a>
         </nav>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+            <img class="theme-toggle-icon" data-theme-icon src="../images/LightModeIcon.svg" alt="" aria-hidden="true">
+        </button>
     </header>
 
     <main class="admin-section">
@@ -214,5 +217,35 @@ $events = $eventModel->getAllEvents();
             });
         });
 </script>
+    <script>
+        (function(){
+            const root = document.documentElement;
+            const themeToggle = document.querySelector('[data-theme-toggle]');
+            const storedTheme = localStorage.getItem('walania-theme');
+            const initialTheme = storedTheme || root.getAttribute('data-theme') || 'light';
+            root.setAttribute('data-theme', initialTheme);
+
+            function syncThemeButton(theme) {
+                if (!themeToggle) return;
+                themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+                themeToggle.dataset.theme = theme;
+                const icon = themeToggle.querySelector('[data-theme-icon]');
+                if (icon) {
+                    icon.src = theme === 'dark' ? '../images/DarkModeIcon.svg' : '../images/LightModeIcon.svg';
+                }
+            }
+
+            syncThemeButton(initialTheme);
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    root.setAttribute('data-theme', nextTheme);
+                    localStorage.setItem('walania-theme', nextTheme);
+                    syncThemeButton(nextTheme);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

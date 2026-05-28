@@ -152,6 +152,21 @@ button {
     font-weight: 900;
 }
 
+.theme-toggle {
+    padding: 0;
+}
+
+.theme-toggle-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}
+
+.theme-toggle[data-theme="dark"] .theme-toggle-icon {
+    transform: none;
+}
+
 .hero-section {
     position: relative;
     min-height: 100vh;
@@ -513,11 +528,19 @@ button {
 }
 
 .registration-section {
+    position: relative;
     padding: 96px 0 72px;
     min-height: auto;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--secondary) 24%, transparent) 0 14%, transparent 34%),
+        radial-gradient(circle at 86% 82%, color-mix(in srgb, var(--primary) 14%, transparent) 0 12%, transparent 30%),
+        linear-gradient(180deg, color-mix(in srgb, var(--background) 95%, var(--secondary)) 0%, var(--background) 100%);
 }
 
 .registration-layout {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
     gap: 42px;
@@ -579,6 +602,81 @@ button {
     border: 1px solid color-mix(in srgb, var(--primary) 32%, transparent);
     color: #203b3b;
     background: color-mix(in srgb, var(--secondary) 54%, var(--surface));
+}
+
+:root[data-theme="dark"] .form-alert-success {
+    color: #ffffff;
+    background: color-mix(in srgb, var(--primary) 22%, var(--surface));
+}
+
+:root[data-theme="dark"] .form-alert-success a {
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] .admin-panel-heading h1,
+:root[data-theme="dark"] .admin-form-heading h2,
+:root[data-theme="dark"] .admin-event-form label,
+:root[data-theme="dark"] .admin-table th {
+    color: #f7fbfb;
+}
+
+:root[data-theme="dark"] .admin-table th {
+    background: color-mix(in srgb, var(--secondary) 24%, var(--surface));
+    border-bottom-color: color-mix(in srgb, var(--secondary) 22%, transparent);
+}
+
+:root[data-theme="dark"] .admin-table td {
+    color: #eef5f5;
+}
+
+:root[data-theme="dark"] .admin-table td:nth-child(4) {
+    color: #c9d7d7;
+}
+
+:root[data-theme="dark"] .login-form .submit-button,
+:root[data-theme="dark"] .registration-form .submit-button,
+:root[data-theme="dark"] .admin-event-form .primary-button {
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] .admin-section-card,
+:root[data-theme="dark"] .admin-edit-form,
+:root[data-theme="dark"] .admin-event-manager .admin-section-card,
+:root[data-theme="dark"] .admin-panel .admin-section-card {
+    background: color-mix(in srgb, var(--surface) 86%, var(--secondary));
+    border-color: color-mix(in srgb, var(--secondary) 24%, var(--border));
+}
+
+:root[data-theme="dark"] .admin-event-form input,
+:root[data-theme="dark"] .admin-event-form textarea,
+:root[data-theme="dark"] .admin-edit-form input,
+:root[data-theme="dark"] .admin-edit-form select {
+    color: #f7fbfb;
+    background: color-mix(in srgb, var(--surface) 82%, var(--background));
+    border-color: color-mix(in srgb, var(--secondary) 28%, var(--border));
+}
+
+:root[data-theme="dark"] .admin-event-form input::placeholder,
+:root[data-theme="dark"] .admin-event-form textarea::placeholder,
+:root[data-theme="dark"] .admin-edit-form input::placeholder,
+:root[data-theme="dark"] .admin-edit-form select::placeholder {
+    color: color-mix(in srgb, #f7fbfb 66%, var(--muted));
+}
+
+:root[data-theme="dark"] .events-section .admin-table-wrap,
+:root[data-theme="dark"] .admin-table-wrap {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 80%, var(--background)) 100%);
+    border-color: color-mix(in srgb, var(--secondary) 22%, var(--border));
+}
+
+:root[data-theme="dark"] .events-section .admin-table tbody tr,
+:root[data-theme="dark"] .admin-table tbody tr {
+    background: color-mix(in srgb, var(--surface) 88%, var(--background));
+}
+
+:root[data-theme="dark"] .events-section .admin-table tbody tr:nth-child(even),
+:root[data-theme="dark"] .admin-table tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--surface) 84%, var(--secondary));
 }
 
 .form-alert-error {
@@ -754,7 +852,13 @@ button {
     min-height: 100vh;
     margin:0;
     padding:0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background:
+        radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--secondary) 28%, transparent) 0 14%, transparent 34%),
+        radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--primary) 16%, transparent) 0 12%, transparent 30%),
+        radial-gradient(circle at 72% 88%, color-mix(in srgb, var(--secondary) 18%, transparent) 0 16%, transparent 36%),
+        linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, var(--secondary)) 0%, var(--background) 100%);
 }
 
 .error-message {
@@ -768,62 +872,194 @@ button {
     min-height: 100vh;
     display: grid;
     align-items: center;
-    overflow: hidden;
-    padding: 132px 0 72px;
+    overflow: visible;
+    padding: 110px 0 72px;
     background:
-        radial-gradient(circle at 34% 42%, color-mix(in srgb, var(--secondary) 22%, transparent) 0 18%, transparent 43%),
+        radial-gradient(circle at 34% 42%, color-mix(in srgb, var(--secondary) 20%, transparent) 0 18%, transparent 43%),
         linear-gradient(180deg, color-mix(in srgb, var(--background) 96%, var(--secondary)) 0%, var(--background) 100%);
+}
+
+.login-section::before,
+.registration-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--secondary) 16%, transparent) 0 8%, transparent 22%),
+        radial-gradient(circle at 84% 78%, color-mix(in srgb, var(--primary) 12%, transparent) 0 10%, transparent 24%);
+    opacity: 0.9;
 }
 
 .login-layout {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-    gap: 56px;
+    grid-template-columns: minmax(0, 1.05fr) minmax(360px, 430px);
+    gap: 24px;
     align-items: start;
-    padding:150px;
+    width: min(1160px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 0;
 }
 
-.login-copy{
-    padding-top: 150px;
-    align-items: center;
+.login-header {
+    top: 20px;
 }
-.login-copy h1 {
+
+.login-header,
+.event-admin-page .site-header,
+.site-header {
+    gap: 14px;
+}
+
+.login-page {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.login-visual {
+    position: relative;
+    min-height: 640px;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--secondary) 34%, transparent) 0 18%, transparent 42%),
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 90%, var(--secondary)) 100%);
+    box-shadow: 0 24px 70px rgba(31, 77, 76, 0.14);
+    overflow: hidden;
+}
+
+.login-slideshow {
+    position: relative;
+    height: 100%;
+    min-height: 604px;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--secondary) 56%, var(--surface)) 0%, color-mix(in srgb, var(--background) 84%, var(--primary)) 100%);
+}
+
+.login-slide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: end;
+    padding: 32px;
+    opacity: 0;
+    transform: scale(1.02);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    overflow: hidden;
+}
+
+.login-slide.is-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.login-slide-image {
+    position: absolute;
+    inset: 18px;
+    width: calc(100% - 36px);
+    height: calc(100% - 36px);
+    border-radius: 18px;
+    object-fit: cover;
+    object-position: center;
+    background: color-mix(in srgb, var(--secondary) 14%, var(--surface));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.login-slide:nth-child(1) .login-slide-image {
+    background: color-mix(in srgb, var(--secondary) 16%, var(--surface));
+}
+
+.login-slide:nth-child(2) .login-slide-image {
+    background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+}
+
+.login-slide:nth-child(3) .login-slide-image {
+    background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+}
+
+:root[data-theme="dark"] .login-slideshow {
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--secondary) 72%, var(--surface)) 0%, color-mix(in srgb, var(--background) 82%, var(--primary)) 100%);
+}
+
+:root[data-theme="dark"] .login-slide-image {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--secondary) 24%, transparent);
+}
+
+:root[data-theme="dark"] .login-slide:nth-child(1) .login-slide-image {
+    background: color-mix(in srgb, var(--secondary) 28%, var(--surface));
+}
+
+:root[data-theme="dark"] .login-slide:nth-child(2) .login-slide-image {
+    background: color-mix(in srgb, var(--primary) 20%, var(--surface));
+}
+
+:root[data-theme="dark"] .login-slide:nth-child(3) .login-slide-image {
+    background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+
+.slide-caption {
+    position: relative;
+    z-index: 1;
+    max-width: 320px;
+    color: #fff;
+}
+
+.slide-caption p {
+    margin: 0 0 8px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.slide-caption h2 {
     margin: 0;
-    color: transparent;
-    background: linear-gradient(135deg, #9fcfce 0%, #6ca7a6 48%, #468181 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    font-size: clamp(2.4rem, 6vw, 4.5rem);
-    line-height: 0.9;
-    letter-spacing: 0;
-    text-shadow: 0 18px 42px rgba(70, 129, 129, 0.12);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.02;
     font-family: 'ArchivoExpandedExtraBold';
 }
 
-.login-copy p:not(.eyebrow) {
-    max-width: 520px;
-    margin: 24px 0 0;
-    color: var(--muted);
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
-    font-style: italic;
-    font-weight: 700;
-    font-family: 'ArchivoExtraBold';
+.slide-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    display: flex;
+    gap: 10px;
+    transform: translateX(-50%);
+}
+
+.slide-dots span {
+    width: 28px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.28);
+    transition: width 0.2s ease, background 0.2s ease;
+}
+
+.slide-dots span.is-active {
+    width: 42px;
+    background: rgba(255, 255, 255, 0.92);
 }
 
 .login-form {
-    padding: 30px;
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    background: color-mix(in srgb, var(--surface) 90%, transparent);
-    box-shadow: var(--shadow);
+    padding: 32px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+    border-radius: 30px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 100%);
+    box-shadow: 0 24px 70px rgba(31, 77, 76, 0.12);
     backdrop-filter: blur(18px);
     
 }
 .login-form h2 {
     margin: 0 0 24px;
-    font-size: 1.55rem;
+    font-size: 1.7rem;
     font-family: 'ArchivoExtraBold';
 }
 
@@ -895,7 +1131,8 @@ button {
 }
 
 .login-form .submit-button {
-    width: 30%;
+    width: 100%;
+    margin-top: 20px;
     font-family: 'ArchivoBold';
 }
 
@@ -1421,19 +1658,21 @@ section.admin-panel {
         grid-template-columns: 1fr;
     }
 
+    .login-layout {
+        width: min(100% - 20px, 720px);
+    }
+
     .registration-layout .section-heading {
         position: static;
         text-align: center;
     }
 
     .login-layout {
-        margin: 0 16px;
-        padding: 0;
         align-items: start;
         grid-template-columns: 1fr;
     }
 
-    .login-copy,
+    .login-visual,
     .login-form {
         grid-column: 1 / -1;
     }
@@ -1443,26 +1682,7 @@ section.admin-panel {
         width: min(100%, 460px);
     }
 
-    .login-copy {
-        text-align: center;
-        max-width: 100%;
-        padding: 0 12px;
-        margin: 0 auto 24px;
-        order: -1;
-    }
-
-    .login-copy h1 {
-        font-size: clamp(2.4rem, 8vw, 3.6rem);
-        line-height: 1.05;
-        overflow: visible;
-    }
-
-    .login-copy p:not(.eyebrow) {
-        max-width: 100%;
-        margin: 24px auto 0;
-        font-size: clamp(1rem, 2.5vw, 1.2rem);
-    }
-
+    .login-visual,
     .login-form {
         width: min(100%, 460px);
         margin: 0 auto;
@@ -1627,6 +1847,7 @@ section.admin-panel {
 
     .login-section {
         padding: 112px 0 48px;
+        overflow: visible;
     }
 
     .login-form {
@@ -1650,6 +1871,23 @@ section.admin-panel {
 
     .login-options a {
         white-space: nowrap;
+    }
+
+    .login-visual {
+        min-height: 520px;
+        order: -1;
+    }
+
+    .login-slideshow {
+        min-height: 484px;
+    }
+
+    .slide-caption {
+        max-width: 240px;
+    }
+
+    .slide-caption h2 {
+        font-size: 1.65rem;
     }
 
     .admin-section {
