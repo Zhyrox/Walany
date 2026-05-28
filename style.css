@@ -249,6 +249,23 @@ button {
     background: var(--primary);
 }
 
+.export-button {
+     /* keep rectangular shape but match secondary-button appearance */
+     border-radius: 8px;
+     padding: 6px 16px;
+     min-width: 150px;
+     line-height: 1.1;
+     font-size: 0.95rem;
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     color: var(--background);
+     background: var(--primary);
+     font-weight: 800;
+     box-shadow: none;
+     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
 .primary-button:hover,
 .secondary-button:hover,
 .theme-toggle:hover,
@@ -563,10 +580,6 @@ button {
 
 .eventName, .preferenceAllergy{
     font-family: 'ArchivoLight';
-}
-
-.submit-button {
-    
 }
 
 .contacts-section {
@@ -963,6 +976,11 @@ section.admin-panel {
     justify-content: flex-end;
     gap: 12px;
     margin-top: 22px;
+}
+
+.export-button-row {
+    justify-content: center;
+    align-items: center;
 }
 
 .admin-event-form .admin-actions {

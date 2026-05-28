@@ -122,6 +122,9 @@ $events = $eventModel->getAllEvents();
                             </table>
                         </div>
                     </div>
+                    <div class="admin-actions export-button-row">
+                        <a class="export-button" href="../controllers/exportXML.php">Export XML</a>
+                    </div>
                 </div>
             </section>
         </div>
