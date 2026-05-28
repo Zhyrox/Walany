@@ -11,6 +11,7 @@ $events = fetch_events();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Manager</title>
+    <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
     <link rel="stylesheet" href="../style.css">
 </head>
 <<<<<<< HEAD
