@@ -14,7 +14,7 @@ class RegistrantModel{
 
     public function getAllRegistrants(){
         $stmt = $this->db->query("SELECT * FROM walania_registrant");
-        return $stmt->fetchA;;(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id){

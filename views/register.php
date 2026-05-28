@@ -1,3 +1,11 @@
+<?php 
+session_start();
+$namepass_error = $_SESSION['namepass_error'] ?? '';
+$accexist_error = $_SESSION['accexist_error'] ?? '';
+
+unset($_SESSION['namepass_error']);
+unset($_SESSION['accexist_error']);
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -17,6 +25,12 @@
                 </div>
             </div>
             <form class="registration-form" action="../controllers/RegisterController.php" method="POST" novalidate>
+                <?php if ($namepass_error): ?>
+                    <p class="error-message"><?php echo $namepass_error; ?></p>
+                <?php endif; ?>
+                <?php if ($accexist_error): ?>
+                    <p class="error-message"><?php echo $accexist_error; ?></p>
+                <?php endif; ?>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="username">Username</label>

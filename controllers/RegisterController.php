@@ -17,7 +17,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
+    $_SESSION['namepass_error'] = '';
+    $_SESSION['accexist_error'] = '';
+
     if (empty($username) || empty($password)) {
+
+        $_SESSION['namepass_error'] = 'Username and Password are required.';
 
         header("Location: ../views/register.php");
         exit();
@@ -27,7 +32,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $exists = $userModel->usernameExists($username);
 
     if($exists){
-        //add error later
+        
+        $_SESSION['accexist_error'] = 'Account already exists.';
+
         header("Location: ../views/register.php");
         exit();
     }
