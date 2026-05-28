@@ -293,12 +293,13 @@ button {
 
 .events-section .admin-table-wrap {
     overflow-x: auto;
-    overflow-y: auto;
-    padding: 28px;
-    background: color-mix(in srgb, var(--surface) 96%, var(--secondary));
-    border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
-    border-radius: 24px;
-    box-shadow: var(--shadow);
+    overflow-y: hidden;
+    padding: 18px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 100%);
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+    border-radius: 28px;
+    box-shadow: 0 18px 48px rgba(31, 77, 76, 0.10);
     max-width: min(1120px, 100%);
     margin: 0 auto;
     min-height: 440px;
@@ -306,12 +307,67 @@ button {
 
 .events-section .admin-table {
     width: 100%;
-    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0 10px;
 }
 
 .events-section .admin-table th,
 .events-section .admin-table td {
     text-align: left;
+}
+
+.events-section .admin-table th {
+    color: #244242;
+    background: color-mix(in srgb, var(--secondary) 34%, var(--surface));
+    font-size: 0.76rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+    padding: 16px 18px;
+}
+
+.events-section .admin-table tbody tr {
+    background: var(--surface);
+    box-shadow: 0 10px 24px rgba(31, 77, 76, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.events-section .admin-table tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(31, 77, 76, 0.10);
+}
+
+.events-section .admin-table td {
+    padding: 16px 18px;
+    vertical-align: top;
+    border-bottom: 0;
+    background: transparent;
+}
+
+.events-section .admin-table td:first-child {
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
+.events-section .admin-table td:last-child {
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+.events-section .admin-table tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--surface) 92%, var(--secondary));
+}
+
+.events-section .admin-table td:nth-child(1),
+.events-section .admin-table td:nth-child(2),
+.events-section .admin-table td:nth-child(3) {
+    white-space: nowrap;
+}
+
+.events-section .admin-table td:nth-child(4) {
+    color: var(--muted);
+    white-space: normal;
 }
 
 .eyebrow {
@@ -457,31 +513,35 @@ button {
 }
 
 .registration-section {
-    padding: 104px 0;
-    min-height: 100vh;
+    padding: 96px 0 72px;
+    min-height: auto;
 }
 
 .registration-layout {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
     gap: 42px;
-    align-items: center;
-    place-items: center;
-    margin-top: 10rem;
+    align-items: start;
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
 }
 
 .registration-layout .section-heading {
     position: sticky;
-    top: 120px;
+    top: 112px;
     text-align: left;
+    padding-top: 8px;
 }
 
 .registration-form {
-    padding: 28px 28px 44px;
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    background: var(--surface);
-    box-shadow: var(--shadow);
+    width: min(100%, 420px);
+    justify-self: end;
+    padding: 22px 22px 28px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+    border-radius: 26px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 94%, var(--secondary)) 100%);
+    box-shadow: 0 18px 48px rgba(31, 77, 76, 0.10);
 }
 
 .registration-form h3 {
@@ -495,7 +555,7 @@ button {
 .registration-form .submit-button {
     padding: 10px 24px;
     min-height: 40px;
-    margin-top: 18px;
+    margin-top: 8px;
 }
 
 .form-alert {
@@ -546,12 +606,12 @@ button {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 16px;
 }
 
 .form-group {
     display: grid;
-    gap: 8px;
+    gap: 7px;
 }
 
 .form-group-wide {
@@ -576,6 +636,21 @@ button {
 .admin-event-form input {
     min-height: 46px;
     padding: 11px 13px;
+}
+
+.registration-form textarea {
+    min-height: 76px;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+}
+
+.registration-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .eventName, .preferenceAllergy{
@@ -613,6 +688,49 @@ button {
     color: var(--muted);
     font-size: 1.05rem;
     font-family: 'ArchivoLight';
+}
+
+.contact-card {
+    display: grid;
+    gap: 14px;
+    width: min(100%, 420px);
+    justify-self: end;
+    padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+    border-radius: 26px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 94%, var(--secondary)) 100%);
+    box-shadow: 0 18px 48px rgba(31, 77, 76, 0.10);
+}
+
+.contact-item {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--secondary) 18%, var(--surface));
+}
+
+.contact-label {
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: 'ArchivoCondensedMedium';
+}
+
+.contact-item a,
+.contact-item p {
+    margin: 0;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.contact-item a:hover {
+    color: var(--primary);
 }
 
 .back-to-top {
@@ -804,11 +922,21 @@ button {
         linear-gradient(180deg, color-mix(in srgb, var(--background) 97%, var(--secondary)) 0%, var(--background) 100%);
 }
 
+.event-admin-page .site-header {
+    width: min(1160px, calc(100% - 32px));
+}
+
 .admin-workspace {
     position: relative;
     z-index: 1;
+    width: min(1160px, calc(100% - 32px));
+    margin: 0 auto;
     display: grid;
     gap: 28px;
+}
+
+.event-admin-page .admin-workspace {
+    width: min(1040px, calc(100% - 32px));
 }
 
 section.admin-event-manager,
@@ -817,6 +945,26 @@ section.admin-panel {
     display: grid;
     place-items: center;
     padding: 72px 0;
+}
+
+.event-admin-page section.admin-event-manager,
+.event-admin-page section.admin-panel {
+    min-height: auto;
+    padding: 0;
+}
+
+.event-admin-page #event-manager,
+.event-admin-page #event-list {
+    scroll-margin-top: 128px;
+}
+
+.event-admin-page .admin-section-card {
+    width: min(1040px, calc(100% - 40px));
+}
+
+.event-admin-page .admin-event-manager .admin-section-card,
+.event-admin-page .admin-panel .admin-section-card {
+    width: min(1040px, calc(100% - 40px));
 }
 
 .admin-panel {
@@ -845,7 +993,9 @@ section.admin-panel {
     min-height: 68vh;
     max-height: calc(100vh - 88px);
     border-color: var(--border);
-    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--secondary) 28%, transparent) 0 16%, transparent 36%),
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 94%, var(--secondary)) 100%);
 }
 
 .admin-panel .admin-section-card {
@@ -866,6 +1016,64 @@ section.admin-panel {
     letter-spacing: 0;
 }
 
+.admin-event-form {
+    display: grid;
+    gap: 22px;
+    padding: 8px 2px 0;
+}
+
+.admin-event-form .form-grid {
+    gap: 20px;
+}
+
+.admin-event-form .form-group {
+    gap: 10px;
+}
+
+.admin-event-form label {
+    color: #244242;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.admin-event-form input,
+.admin-event-form textarea {
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
+    border-radius: 16px;
+    color: var(--text);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, var(--surface) 100%);
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.admin-event-form input {
+    min-height: 50px;
+    padding: 12px 15px;
+}
+
+.admin-event-form textarea {
+    min-height: 132px;
+    padding: 14px 15px;
+    resize: vertical;
+}
+
+.admin-event-form input::placeholder,
+.admin-event-form textarea::placeholder {
+    color: color-mix(in srgb, var(--muted) 72%, var(--background));
+}
+
+.admin-event-form input:focus,
+.admin-event-form textarea:focus {
+    border-color: color-mix(in srgb, var(--primary) 70%, white);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--primary) 18%, transparent);
+    transform: translateY(-1px);
+}
+
 .admin-database {
     min-height: 340px;
     overflow: hidden;
@@ -877,11 +1085,12 @@ section.admin-panel {
 .admin-table-wrap {
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 24px;
-    background: color-mix(in srgb, var(--surface) 95%, var(--secondary));
-    border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
-    border-radius: 24px;
-    box-shadow: var(--shadow);
+    padding: 18px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, var(--secondary)) 0%, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 100%);
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+    border-radius: 28px;
+    box-shadow: 0 18px 48px rgba(31, 77, 76, 0.10);
     max-width: min(1120px, 100%);
     margin: 0 auto;
     max-height: 580px;
@@ -902,11 +1111,54 @@ section.admin-panel {
 }
 
 .admin-table th {
-    color: #203b3b;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    font-size: 0.78rem;
+    color: #244242;
+    background: color-mix(in srgb, var(--secondary) 34%, var(--surface));
+    font-size: 0.76rem;
     font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.admin-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.admin-table tbody tr {
+    background: var(--surface);
+    box-shadow: 0 10px 24px rgba(31, 77, 76, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(31, 77, 76, 0.10);
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 16px 18px;
+}
+
+.admin-table td {
+    vertical-align: top;
+    border-bottom: 0;
+    background: transparent;
+}
+
+.admin-table td:first-child {
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
+.admin-table td:last-child {
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+.admin-table tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--surface) 92%, var(--secondary));
 }
 
 .admin-table tr:last-child td {
@@ -914,12 +1166,48 @@ section.admin-panel {
 }
 
 .text-button {
-    border: 0;
-    color: #203b3b;
-    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid color-mix(in srgb, #b3261e 18%, transparent);
+    border-radius: 999px;
+    color: #b3261e;
+    background: color-mix(in srgb, #b3261e 8%, var(--surface));
     font-weight: 900;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration: none;
+    box-shadow: 0 10px 18px rgba(179, 38, 30, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.delete-trigger {
+    cursor: pointer;
+}
+
+.text-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 22px rgba(31, 77, 76, 0.10);
+}
+
+.secondary-button {
+    min-width: 96px;
+    box-shadow: 0 12px 24px rgba(108, 167, 166, 0.18);
+}
+
+.secondary-button:hover {
+    background: color-mix(in srgb, var(--primary) 90%, #ffffff 10%);
+}
+
+.admin-table td:nth-child(5),
+.admin-table td:nth-child(6) {
+    white-space: nowrap;
+    text-align: center;
+    width: 1%;
+}
+
+.admin-table td:nth-child(4) {
+    color: var(--muted);
 }
 
 .admin-section-card,
@@ -952,13 +1240,75 @@ section.admin-panel {
     display: flex;
 }
 
-#updateModal .admin-edit-form {
-    background: white;
-    width: min(92%, 420px);
+#updateModal,
+.confirm-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 120;
+    align-items: center;
+    justify-content: center;
     padding: 24px;
-    margin: 0 auto;
-    border-radius: 18px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    background: color-mix(in srgb, var(--background) 46%, rgba(0, 0, 0, 0.58));
+    backdrop-filter: blur(10px);
+}
+
+.confirm-panel.active {
+    display: flex;
+}
+
+.confirm-dialog,
+#updateModal .admin-edit-form {
+    width: min(100%, 460px);
+    padding: 28px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--surface) 96%, var(--secondary));
+    box-shadow: 0 26px 70px rgba(31, 77, 76, 0.22);
+    text-align: center;
+}
+
+.confirm-dialog h3,
+.admin-form-heading h2 {
+    margin: 0 0 12px;
+    font-size: 1.55rem;
+    font-family: 'ArchivoBold';
+}
+
+.confirm-dialog p {
+    margin: 0 0 22px;
+    color: var(--muted);
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.confirm-cancel {
+    min-width: 112px;
+}
+
+.confirm-danger {
+    border: 0;
+    min-width: 132px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    color: #fff;
+    background: linear-gradient(135deg, #ff4a43 0%, #db1d14 100%);
+    box-shadow: 0 14px 28px rgba(219, 29, 20, 0.28);
+    font-weight: 900;
+    font-family: 'ArchivoExtraBold';
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.confirm-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(219, 29, 20, 0.34);
 }
 
 .admin-form-heading {
@@ -988,8 +1338,15 @@ section.admin-panel {
 }
 
 .admin-event-form .primary-button {
+    min-width: 220px;
     padding: 16px 34px;
-    min-width: 180px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #b8dcdc 0%, #7eb9b9 100%);
+    box-shadow: 0 18px 34px rgba(108, 167, 166, 0.26);
+}
+
+.admin-event-form .primary-button:hover {
+    box-shadow: 0 22px 40px rgba(108, 167, 166, 0.32);
 }
 
 .admin-event-form {
@@ -1049,6 +1406,11 @@ section.admin-panel {
         font-size: 0.82rem;
     }
 
+    .event-admin-page .site-header,
+    .event-admin-page .admin-workspace {
+        width: min(100% - 20px, 720px);
+    }
+
     .hero-section {
         min-height: 92vh;
     }
@@ -1074,6 +1436,11 @@ section.admin-panel {
     .login-copy,
     .login-form {
         grid-column: 1 / -1;
+    }
+
+    .contact-card {
+        justify-self: center;
+        width: min(100%, 460px);
     }
 
     .login-copy {
@@ -1197,6 +1564,13 @@ section.admin-panel {
 
     .main-nav {
         gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .event-admin-page .site-header,
+    .event-admin-page .admin-workspace {
+        width: calc(100% - 20px);
     }
 
     .login-layout {
