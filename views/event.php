@@ -1,12 +1,8 @@
 <?php
-require_once "../models/EventModel.php";
-require_once "../models/Database.php";
-
-$database = new Database();
-$dbConnection = $database->getConnection();
-
-$eventModel = new EventModel($dbConnection);
-$events = $eventModel->getAllEvents();
+require_once __DIR__ . '/../controllers/pageData.php';
+require_login_redirect('login.php');
+$user = current_user();
+$events = fetch_events();
 ?>
 
 <!DOCTYPE html>
@@ -17,25 +13,28 @@ $events = $eventModel->getAllEvents();
     <title>Event Manager</title>
     <link rel="stylesheet" href="../style.css">
 </head>
-<body class="admin-page event-admin-page">
-    <header class="site-header admin-header">
-        <!-- I made the logo act like a shortcut to the login page so I can get back in fast. -->
-        <a href="login.php" class="logo-placeholder" aria-label="Walania login">
+<body class="admin-page">
+    <header class="site-header">
+        <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
         </a>
+        <p>Welcome, <?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
 
-        <!-- I kept the top nav simple here so I can jump straight to the form, the list, or log out. -->
-        <nav class="main-nav" aria-label="Event navigation">
-            <a href="#event-manager">Event Manager</a>
-            <a href="#event-list">Event List</a>
-            <a href="../controllers/logout.php">Logout</a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
+                <a href="event.php">Manage Events</a>
+                <a href="registrant.php">Manage Registrants</a>
+            <?php endif; ?>
+            <a href="#create-event">Create</a>
+            <a href="#events-list">List</a>
+            <?php if ($user !== null) : ?>
+                <a href="../controllers/logout.php">Logout</a>
+            <?php endif; ?>
         </nav>
     </header>
-
     <main class="admin-section">
         <div class="admin-workspace">
-            <!-- I turned the event form into its own card so the page feels cleaner and less cramped. -->
-            <section id="event-manager" class="admin-event-manager">
+            <section id="create-event" class="admin-event-manager">
                 <div class="admin-section-card">
                     <div class="admin-panel-heading">
                         <h1>Event Manager</h1>
@@ -66,8 +65,7 @@ $events = $eventModel->getAllEvents();
                 </div>
             </section>
 
-            <!-- I separated the list into another card so the actions stay easy to scan. -->
-            <section id="event-list" class="admin-panel">
+            <section id="events-list" class="admin-panel">
                 <div class="admin-section-card">
                     <div class="admin-panel-heading">
                         <h1>Events List</h1>
@@ -94,9 +92,32 @@ $events = $eventModel->getAllEvents();
                                         <td><?= htmlspecialchars($event['description']) ?></td>
                                         <td>
                                             
-                                        <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>">
+
+
+
+
+                                        <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>" style="background: none; border: none; padding: 0; color: red; cursor: pointer; font: inherit;">
                                             Delete
                                         </button>
+
+
+                                        <div id="confirmPanel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 999;">
+                                            <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                                <h3>Are you sure?</h3>
+                                                <p>You are about to delete: <strong id="deleteEventName"></strong></p>
+                                                
+                                                <form action="../controllers/eventController.php" method="POST">
+                                                    <input type="hidden" name="id" id="modalEventId" value="">
+                                                    <button type="button" id="cancelBtn" style="margin-right: 10px; padding: 8px 16px;">Cancel</button>
+                                                    <button type="submit" name="delete" style="background: red; color: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px;">Yes, Delete It</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+
+
+
+
                                         </td>
                                         <td>
                                             <button class="secondary-button" type="button" onclick="openUpdateModal(
@@ -115,34 +136,14 @@ $events = $eventModel->getAllEvents();
                             </table>
                         </div>
                     </div>
-                    <div class="admin-actions export-button-row">
-                        <a class="export-button" href="../controllers/exportXML.php">Export XML</a>
-                    </div>
                 </div>
             </section>
         </div>
 
-    <!-- I use this overlay so delete actions feel deliberate instead of instant. -->
-    <div id="confirmPanel" class="confirm-panel" aria-hidden="true">
-        <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-            <h3 id="confirmTitle">Are you sure?</h3>
-            <p>You are about to delete: <strong id="deleteEventName"></strong></p>
-
-            <form action="../controllers/eventController.php" method="POST">
-                <input type="hidden" name="id" id="modalEventId" value="">
-                <div class="confirm-actions">
-                    <button type="button" id="cancelBtn" class="secondary-button confirm-cancel">Cancel</button>
-                    <button type="submit" name="delete" class="confirm-danger">Yes, Delete It</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- I keep the update form in a modal so editing doesn't push me away from the table. -->
-    <div id="updateModal" class="update-modal">
-        <div class="admin-edit-form">
-            <div class="admin-form-heading">
-                <h2>Update Event</h2>
+        <div id="updateModal">
+            <div class="admin-edit-form">
+                <div class="admin-form-heading">
+                    <h2>Update Event</h2>
                 </div>
                 <form action="../controllers/eventController.php" method="POST">
                     <input type="hidden" name="id" id="updateId">
@@ -153,7 +154,7 @@ $events = $eventModel->getAllEvents();
                         </div>
                         <div class="form-group">
                             <label for="updateDate">Date</label>
-                        <input type="date" name="date" id="updateDate" required>
+                            <input type="date" name="date" id="updateDate" required>
                         </div>
                         <div class="form-group">
                             <label for="updateLocation">Location</label>
@@ -175,7 +176,6 @@ $events = $eventModel->getAllEvents();
 
     <script>
         function openUpdateModal(id, name, date, location, description) {
-            // I copy the row data into the modal so I can edit the same event without retyping it.
             document.getElementById("updateId").value = id;
             document.getElementById("updateName").value = name;
             document.getElementById("updateDate").value = date;
@@ -190,7 +190,6 @@ $events = $eventModel->getAllEvents();
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // I wired the delete buttons to a shared confirm overlay so the table stays uncluttered.
             const confirmPanel = document.getElementById('confirmPanel');
             const modalEventId = document.getElementById('modalEventId');
             const deleteEventName = document.getElementById('deleteEventName');
@@ -203,14 +202,12 @@ $events = $eventModel->getAllEvents();
 
                     modalEventId.value = eventId;
                     deleteEventName.textContent = eventName;
-                    confirmPanel.classList.add('active');
-                    confirmPanel.setAttribute('aria-hidden', 'false');
+                    confirmPanel.style.display = 'flex';
                 });
             });
 
             cancelBtn.addEventListener('click', function() {
-                confirmPanel.classList.remove('active');
-                confirmPanel.setAttribute('aria-hidden', 'true');
+                confirmPanel.style.display = 'none';
             });
         });
 </script>

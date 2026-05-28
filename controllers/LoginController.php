@@ -37,9 +37,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if($userData){
         session_regenerate_id(true);
 
-        $_SESSION['user_id'] = $userData['id'] ?? null;
-        $_SESSION['username'] = $userData['username'] ?? '';
-
+        $_SESSION['user_id']   = $userData['id'] ?? null;
+        $_SESSION['username']  = $userData['username'] ?? '';
+        // set role so views can show admin links
+        $_SESSION['role']      = $userData['role'] ?? 'user';
             header("Location: ../views/dashboard.php");
             exit();
         } else {

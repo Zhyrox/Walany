@@ -1,48 +1,15 @@
 <?php
-require_once __DIR__ . '/../models/registrantModel.php';
-require_once __DIR__ . '/../models/eventModel.php';
+require_once __DIR__ . '/../controllers/pageData.php';
 
-session_start();
+// enforce login and get page data
+require_login_redirect('login.php');
+$data = get_page_data();
 
-if (!isset($_SESSION['user_id'])) {
-
-    header("Location: login.php");
-    exit();
-}
-
-$user = [
-    'id' => $_SESSION['user_id'],
-    'username' => $_SESSION['username']
-];
-
-/*
-
-Test Code by Elmer/ much better gawin itong separate file
-
-*/
-
-require_once "../models/Database.php";
-
-$database = new Database();
-$dbConnection = $database->getConnection();
-
-$event = new EventModel($dbConnection);
-$events = $event->getAllEvents();
-
-/*
-
-Test Code by Elmer
-
-*/
-
-
-$eventsMessage = $events === [] ? 'No events available yet.' : null;
-
-// safe defaults for view-only variables (controller may set these in a full MVC flow)
-$registrationStatus = $registrationStatus ?? null;
-$registrationErrors = $registrationErrors ?? [];
-?>
-<!DOCTYPE html>
+$user = $data['user'];
+$events = $data['events'];
+$eventsMessage = $data['eventsMessage'];
+$registrants = $data['registrants'];
+?><!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8" />
@@ -52,19 +19,21 @@ $registrationErrors = $registrationErrors ?? [];
 </head>
 <body>
     <header class="site-header">
-        <a href="" class="logo-placeholder" aria-label="Refresh page">
+        <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
         </a>
+        <p>Welcome, <?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
 
         <nav class="main-nav" aria-label="Main navigation">
+            <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
+                <a href="event.php">Manage Events</a>
+                <a href="registrant.php">Manage Registrants</a>
+            <?php endif; ?>
             <a href="#events">Events</a>
             <a href="#registration">Register</a>
             <a href="#contacts">Contacts</a>
             <?php if ($user !== null) : ?>
                 <a href="../controllers/logout.php">Logout</a>
-            <?php else : ?>
-                <a href="user_login.php">User Login</a>
-                <a href="login.php">Admin</a>
             <?php endif; ?>
         </nav>
     </header>
@@ -159,34 +128,6 @@ $registrationErrors = $registrationErrors ?? [];
 
                     <button class="primary-button submit-button" type="submit" name="add">Register</button>
                 </form>
-            </div>
-        </section>
-
-        <section id="contacts" class="contacts-section">
-            <div class="registration-layout contact-layout">
-                <div class="section-heading">
-                    <p class="eyebrow">Contact</p>
-                    <h2>Reach Out</h2>
-                    <div class="contact-copy">
-                        <p>Need help with events, registration, or admin access? Use the details below and I’ll keep this section easy to find at the bottom of the page.</p>
-                    </div>
-                </div>
-
-                <div class="contact-card">
-                    <div class="contact-item">
-                        <span class="contact-label">Email</span>
-                        <a href="mailto:walaniaevents@gmail.com">walaniaevents@gmail.com</a>
-                    </div>
-
-                    <div class="contact-item">
-                        <span class="contact-label">Location</span>
-                        <p>Cavite, Philippines</p>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-label">Office Hours</span>
-                        <p>Monday to Friday, 9:00 AM - 5:00 PM</p>
-                    </div>
-                </div>
             </div>
         </section>
     </main>
