@@ -7,12 +7,14 @@ $login_error = $_SESSION['login_error'] ?? '';
 unset($_SESSION['namepass_error']);
 unset($_SESSION['login_error']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body class="login-page">
@@ -58,6 +60,8 @@ unset($_SESSION['login_error']);
         </div>
     </main>
 
+
+    <!-- Show Password Function -->
     <script>
         (function(){
             const buttons = document.querySelectorAll('.toggle-password');
@@ -74,5 +78,6 @@ unset($_SESSION['login_error']);
             });
         })();
     </script>
+
 </body>
 </html>
