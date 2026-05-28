@@ -295,15 +295,17 @@ button {
 }
 
 .events-section {
-    padding: 92px 0;
+    padding: 128px 0 92px;
     background: color-mix(in srgb, var(--secondary) 38%, var(--background));
     min-height: 100vh;
 }
 
 .events-section .section-heading {
+    position: relative;
+    z-index: 1;
     text-align: center;
     width: min(860px, 100%);
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 2rem;
 }
 
 .events-section .admin-table-wrap {

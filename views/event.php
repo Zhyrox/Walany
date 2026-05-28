@@ -93,31 +93,9 @@ $events = fetch_events();
                                         <td><?= htmlspecialchars($event['description']) ?></td>
                                         <td>
                                             
-
-
-
-
-                                        <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>" style="background: none; border: none; padding: 0; color: red; cursor: pointer; font: inherit;">
+                                        <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>">
                                             Delete
                                         </button>
-
-
-                                        <div id="confirmPanel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 999;">
-                                            <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                                                <h3>Are you sure?</h3>
-                                                <p>You are about to delete: <strong id="deleteEventName"></strong></p>
-                                                
-                                                <form action="../controllers/eventController.php" method="POST">
-                                                    <input type="hidden" name="id" id="modalEventId" value="">
-                                                    <button type="button" id="cancelBtn" style="margin-right: 10px; padding: 8px 16px;">Cancel</button>
-                                                    <button type="submit" name="delete" style="background: red; color: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px;">Yes, Delete It</button>
-                                                </form>
-                                            </div>
-                                        </div>
-
-
-
-
 
                                         </td>
                                         <td>
@@ -174,6 +152,21 @@ $events = fetch_events();
             </div>
         </div>
     </main>
+
+    <div id="confirmPanel" class="confirm-panel" aria-hidden="true">
+        <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <h3 id="confirmTitle">Are you sure?</h3>
+            <p>You are about to delete: <strong id="deleteEventName"></strong></p>
+
+            <form action="../controllers/eventController.php" method="POST">
+                <input type="hidden" name="id" id="modalEventId" value="">
+                <div class="confirm-actions">
+                    <button type="button" id="cancelBtn" class="secondary-button confirm-cancel">Cancel</button>
+                    <button type="submit" name="delete" class="confirm-danger">Yes, Delete It</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         function openUpdateModal(id, name, date, location, description) {
