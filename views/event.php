@@ -61,6 +61,8 @@ $events = fetch_events();
                         </div>
                         <div class="admin-actions">
                             <button class="primary-button submit-button" type="submit" name="add">Register Event</button>
+                            <button class="primary-button submit-button" type="button" onclick="exportXml('events')">Export Events</button>
+                            <button class="primary-button submit-button" type="button" onclick="exportXml('registrants')">Export Registrants</button>
                         </div>
                     </form>
                 </div>

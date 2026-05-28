@@ -182,3 +182,8 @@ function updateThemeButton(theme) {
 
     themeIcon.textContent = isDark ? "L" : "D";
 }
+
+function exportXml(type) {
+    const action = type === 'events' ? 'export_events' : 'export_registrants';
+    window.location.href = '../controllers/XML.php?action=' + action;
+}
