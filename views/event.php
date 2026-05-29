@@ -1,8 +1,28 @@
+<!-- page data -->
+
 <?php
-require_once __DIR__ . '/../controllers/pageData.php';
-require_login_redirect('login.php');
-$user = current_user();
-$events = fetch_events();
+// Include dependencies
+require_once __DIR__ . '../../models/Database.php';
+require_once __DIR__ . '../../models/EventModel.php';
+require_once __DIR__ . '../../models/RegistrantModel.php';
+require_once __DIR__ . '../../controllers/PageData.php';
+
+// Initialize your core database connection
+$database = new Database();
+$conn = $database->getConnection();
+
+// Instantiate the controller, passing the connection into the constructor
+$pageController = new PageDataController($conn);
+
+// Request the structural array for the view
+$data = $pageController->getPageData();
+
+// Extract variables
+$user = $data['user'];
+$events = $data['events'];
+$eventsMessage = $data['eventsMessage'];
+$registrants = $data['registrants'];
+
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +35,17 @@ $events = fetch_events();
     <link rel="stylesheet" href="../style.css">
 </head>
 <body class="admin-page event-admin-page">
+
+    <!-- Restricted Access for this specific page -@elmer -->
+
+    <?php
+    if (!empty($user['role']) && $user['role'] !== 'admin'){
+        header("Location: dashboard.php");
+        exit();
+    }
+    ?>
+
+
     <header class="site-header admin-header">
         <!-- I made the logo act like a shortcut to the login page so I can get back in fast. -->
         <a href="login.php" class="logo-placeholder" aria-label="Walania login">

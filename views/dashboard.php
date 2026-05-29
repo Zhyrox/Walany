@@ -1,15 +1,32 @@
+<!-- page data -->
+
 <?php
-require_once __DIR__ . '/../controllers/pageData.php';
+// Include dependencies
+require_once __DIR__ . '../../models/Database.php';
+require_once __DIR__ . '../../models/EventModel.php';
+require_once __DIR__ . '../../models/RegistrantModel.php';
+require_once __DIR__ . '../../controllers/PageData.php';
 
-// enforce login and get page data
-require_login_redirect('login.php');
-$data = get_page_data();
+// Initialize your core database connection
+$database = new Database();
+$conn = $database->getConnection();
 
+// Instantiate the controller, passing the connection into the constructor
+$pageController = new PageDataController($conn);
+
+// Request the structural array for the view
+$data = $pageController->getPageData();
+
+// Extract variables
 $user = $data['user'];
 $events = $data['events'];
 $eventsMessage = $data['eventsMessage'];
 $registrants = $data['registrants'];
-?><!DOCTYPE html>
+
+?>
+
+
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8" />
@@ -25,10 +42,12 @@ $registrants = $data['registrants'];
         </a>
         <p>Welcome, <?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
         <nav class="main-nav" aria-label="Main navigation">
-            <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
+
+        <?php if (!empty($user['role']) && $user['role'] !== 'user') : ?>
                 <a href="event.php">Manage Events</a>
                 <a href="registrant.php">Manage Registrants</a>
             <?php endif; ?>
+
             <a href="#events">Events</a>
             <a href="#registration">Register</a>
             <a href="#contacts">Contacts</a>
