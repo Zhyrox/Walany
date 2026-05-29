@@ -1577,11 +1577,18 @@ section.admin-panel {
 
 .admin-event-form .admin-actions {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-event-form .admin-actions button {
+    flex: 1 1 160px;
+    max-width: 220px;
+    min-width: 140px;
 }
 
 .admin-event-form .primary-button {
-    min-width: 220px;
-    padding: 16px 34px;
+    padding: 12px 24px;
     border-radius: 999px;
     background: linear-gradient(135deg, #b8dcdc 0%, #7eb9b9 100%);
     box-shadow: 0 18px 34px rgba(108, 167, 166, 0.26);

@@ -94,7 +94,13 @@ $registrants = $data['registrants'];
                             <button class="primary-button submit-button" type="submit" name="add">Register Event</button>
                             <button class="primary-button submit-button" type="button" onclick="exportXml('events')">Export Events</button>
                             <button class="primary-button submit-button" type="button" onclick="exportXml('registrants')">Export Registrants</button>
+                            <button class="primary-button submit-button" type="button" onclick="startImport('import_events')">Import Events</button>
+                            <button class="primary-button submit-button" type="button" onclick="startImport('import_registrants')">Import Registrants</button>
                         </div>
+                    </form>
+                    <form id="import-form" action="../controllers/XML.php" method="POST" enctype="multipart/form-data" hidden>
+                        <input type="hidden" name="action" id="import-action">
+                        <input type="file" id="import-file" name="xml_file" accept=".xml" onchange="if (this.files.length) document.getElementById('import-form').submit();">
                     </form>
                 </div>
             </section>

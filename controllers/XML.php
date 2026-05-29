@@ -55,6 +55,59 @@ function exportRegistrants() {
     return $xml;
 }
 
+function importEvents($xmlContent) {
+    $xml = simplexml_load_string($xmlContent);
+    if (!$xml || !isset($xml->event)) {
+        return 'Successfully imported (0) rows';
+    }
+
+    $model = new EventModel((new Database())->getConnection());
+    $count = 0;
+
+    foreach ($xml->event as $event) {
+        $name = trim((string) $event->name);
+        $date = trim((string) $event->event_date);
+        if ($name === '' || $date === '') {
+            continue;
+        }
+        if ($model->addEvent($name, $date, trim((string) $event->location), trim((string) $event->description))) {
+            $count++;
+        }
+    }
+
+    return 'Successfully imported ('. $count .') rows';
+}
+
+function importRegistrants($xmlContent) {
+    $xml = simplexml_load_string($xmlContent);
+    if (!$xml || !isset($xml->registrant)) {
+        return 'Successfully imported (0) rows';
+    }
+
+    $model = new RegistrantModel((new Database())->getConnection());
+    $count = 0;
+
+    foreach ($xml->registrant as $registrant) {
+        $name = trim((string) $registrant->full_name);
+        $email = trim((string) $registrant->email);
+        if ($name === '' || $email === '') {
+            continue;
+        }
+        if ($model->addRegistrant(
+            $name,
+            trim((string) $registrant->age),
+            $email,
+            trim((string) $registrant->contact_number),
+            trim((string) $registrant->preference_allergy),
+            trim((string) $registrant->event_id),
+            trim((string) $registrant->user_id)
+        )) {
+            $count++;
+        }
+    }
+
+    return 'Successfully imported ('. $count .') rows';
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['export_events'])) {
@@ -64,12 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $xml->asXML();
         exit;
     }
-    
-    if (isset($_POST['export_registrants'])) {
-        $xml = exportRegistrants();
-        header('Content-Type: application/xml; charset=UTF-8');
-        header('Content-Disposition: attachment; filename="registrants_' . date('Y-m-d_H-i-s') . '.xml"');
-        echo $xml->asXML();
+
+    if (!empty($_FILES['xml_file']['tmp_name']) && !empty($_POST['action'])) {
+        $content = file_get_contents($_FILES['xml_file']['tmp_name']);
+        $message = $_POST['action'] === 'import_events'
+            ? importEvents($content)
+            : importRegistrants($content);
+
+        header('Content-Type: text/plain; charset=UTF-8');
+        echo $message;
         exit;
     }
 }

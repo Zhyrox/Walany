@@ -183,6 +183,15 @@ function updateThemeButton(theme) {
     themeIcon.textContent = isDark ? "L" : "D";
 }
 
+function startImport(action) {
+    const input = document.getElementById('import-file');
+    const actionInput = document.getElementById('import-action');
+    if (!input || !actionInput) return;
+    actionInput.value = action;
+    input.value = '';
+    input.click();
+}
+
 function exportXml(type) {
     const action = type === 'events' ? 'export_events' : 'export_registrants';
     window.location.href = '../controllers/XML.php?action=' + action;

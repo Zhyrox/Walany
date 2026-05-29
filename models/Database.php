@@ -11,7 +11,7 @@ class Database{
     private $dbh;
 
     public function __construct(){
-        $dsn = 'mysql:host=127.0.0.1;dbname=walania;port=3307;charset=utf8mb4'; // <-- 3307 yung port nung sa pc ko palitan nyo nlng if ever (CHECK PORT BY GOING TO XAMPP -> CONFIG -> SERVICE AND PORT SETTINGS -> MYSQL)
+        $dsn = 'mysql:host=127.0.0.1;dbname=walania;port=3306;charset=utf8mb4'; // <-- 3307 yung port nung sa pc ko palitan nyo nlng if ever (CHECK PORT BY GOING TO XAMPP -> CONFIG -> SERVICE AND PORT SETTINGS -> MYSQL)
         $user = 'root';
         $pass = '';
         $options = [
