@@ -52,6 +52,7 @@ $registrants = $data['registrants'];
             <a href="#events">Events</a>
             <a href="#registration">Register</a>
             <a href="#contacts">Contacts</a>
+            <a href="FeedbackForm.php">Feedback Forms</a>
             <?php if ($user !== null) : ?>
                 <a href="../controllers/logout.php">Logout</a>
             <?php else : ?>
