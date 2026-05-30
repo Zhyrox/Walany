@@ -815,7 +815,7 @@ button {
 }
 
 .registration-form textarea {
-    min-height: 92px;
+    min-height: 80px;
     padding: 11px 13px;
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -1285,6 +1285,12 @@ section.admin-panel {
     width: min(1040px, calc(100% - 40px));
 }
 
+.event-admin-page .admin-event-manager .admin-section-card {
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+}
+
 .admin-panel {
     background: transparent;
     border: 0;
@@ -1670,6 +1676,46 @@ section.admin-panel {
     box-shadow: 0 18px 34px rgba(108, 167, 166, 0.26);
 }
 
+.event-admin-page .admin-event-form .primary-button,
+.event-admin-page .admin-event-form .secondary-button,
+.event-admin-page .admin-event-form .submit-button {
+    padding: 10px 16px;
+    min-height: 40px;
+    font-size: 0.9rem;
+    border-radius: 14px;
+}
+
+.event-admin-page .admin-event-form .primary-button {
+    min-width: 0;
+}
+
+.event-admin-page .admin-actions {
+    gap: 8px;
+}
+
+.event-admin-page .admin-actions button {
+    flex: 1 1 132px;
+    max-width: 180px;
+    min-width: 112px;
+}
+
+.event-admin-page .admin-event-form .form-grid {
+    gap: 16px;
+}
+
+.event-admin-page .admin-event-form {
+    gap: 18px;
+    padding-top: 4px;
+}
+
+.event-admin-page .admin-event-form input {
+    min-height: 46px;
+}
+
+.event-admin-page .admin-event-form textarea {
+    min-height: 104px;
+}
+
 .admin-event-form .primary-button:hover {
     box-shadow: 0 22px 40px rgba(108, 167, 166, 0.32);
 }
@@ -1718,6 +1764,33 @@ section.admin-panel {
 }
 
 @media (max-width: 820px) {
+    .dashboard-page .site-header {
+        top: 12px;
+        width: min(100% - 14px, 760px);
+        padding: 10px 12px;
+        border-radius: 24px;
+        gap: 8px;
+    }
+
+    .dashboard-page .main-nav {
+        gap: 8px 10px;
+        justify-content: center;
+    }
+
+    .dashboard-page .main-nav a {
+        font-size: 0.74rem;
+    }
+
+    .dashboard-page .theme-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .dashboard-page .logo-placeholder {
+        width: 36px;
+        height: 36px;
+    }
+
     .site-header {
         top: 12px;
         width: min(100% - 16px, 720px);
@@ -1771,6 +1844,11 @@ section.admin-panel {
         font-size: clamp(2.2rem, 8vw, 4rem);
     }
 
+    .dashboard-page .section-heading h2,
+    .dashboard-page .contact-copy h2 {
+        font-size: clamp(2rem, 8vw, 3.4rem);
+    }
+
     .registration-layout,
     .login-layout,
     .contact-layout {
@@ -1789,6 +1867,20 @@ section.admin-panel {
         top: auto;
         max-width: 720px;
         margin: 0 auto 8px;
+    }
+
+    .dashboard-page .registration-layout,
+    .dashboard-page .contact-layout {
+        width: min(100% - 16px, 760px);
+        gap: 20px;
+    }
+
+    .dashboard-page .events-section .section-heading,
+    .dashboard-page .registration-layout .section-heading,
+    .dashboard-page .contact-layout .section-heading {
+        width: min(100%, 760px);
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .login-layout {
@@ -1852,12 +1944,131 @@ section.admin-panel {
     .admin-header .main-nav {
         gap: 10px;
     }
+
+    .event-admin-page .admin-section-card {
+        width: min(100% - 16px, 760px);
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .event-admin-page .admin-event-form .admin-actions {
+        justify-content: stretch;
+    }
+
+    .event-admin-page .admin-event-form .admin-actions button {
+        max-width: 180px;
+        min-width: 0;
+        width: 100%;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 560px) {
-    .site-header {
+    .dashboard-page .site-header {
         gap: 8px;
         padding: 10px;
+    }
+
+    .event-admin-page .site-header {
+        width: calc(100% - 12px);
+        padding: 8px 10px;
+        border-radius: 18px;
+    }
+
+    .event-admin-page .site-header .main-nav {
+        width: 100%;
+        justify-content: center;
+        gap: 6px 8px;
+    }
+
+    .event-admin-page .site-header .main-nav a {
+        font-size: 0.65rem;
+    }
+
+    .event-admin-page .admin-section {
+        padding: 92px 0 36px;
+    }
+
+    .event-admin-page .admin-workspace {
+        width: min(100% - 12px, 760px);
+    }
+
+    .event-admin-page .admin-section-card {
+        width: min(100%, 100%);
+        padding: 14px;
+        border-radius: 18px;
+        min-height: auto;
+        max-height: none;
+    }
+
+    .event-admin-page .admin-panel-heading h1 {
+        font-size: clamp(1.2rem, 6vw, 1.8rem);
+        line-height: 1.02;
+    }
+
+    .event-admin-page .admin-event-form {
+        gap: 12px;
+        padding-top: 4px;
+    }
+
+    .event-admin-page .admin-event-form .form-grid {
+        gap: 10px;
+    }
+
+    .event-admin-page .admin-event-form .admin-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .event-admin-page .admin-event-form .admin-actions button {
+        width: min(100%, 220px);
+        max-width: 220px;
+        min-width: 0;
+        min-height: 32px;
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        border-radius: 14px;
+    }
+
+    .event-admin-page .admin-event-form .primary-button,
+    .event-admin-page .admin-event-form .secondary-button,
+    .event-admin-page .admin-event-form .submit-button {
+        padding: 6px 10px;
+        min-height: 32px;
+        font-size: 0.72rem;
+        border-radius: 14px;
+    }
+
+    .event-admin-page .admin-event-form .primary-button {
+        width: min(100%, 220px);
+    }
+
+    .event-admin-page .admin-event-form .secondary-button {
+        width: min(100%, 220px);
+    }
+
+    .event-admin-page .admin-actions button {
+        width: min(100%, 220px);
+    }
+
+    .event-admin-page .admin-actions.export-button-row button {
+        width: min(100%, 180px);
+    }
+
+    .event-admin-page .admin-table-wrap {
+        padding: 12px;
+        border-radius: 18px;
+    }
+
+    .event-admin-page .admin-table {
+        min-width: 560px;
+        font-size: 0.82rem;
+    }
+
+    .event-admin-page .admin-table th,
+    .event-admin-page .admin-table td {
+        padding: 10px 12px;
     }
 
     .dashboard-hero {
@@ -1878,24 +2089,62 @@ section.admin-panel {
         font-size: clamp(2rem, 12vw, 3.3rem);
     }
 
-    .site-header p {
+    .dashboard-page .site-header p {
         display: none;
     }
 
-    .site-header .logo-placeholder,
-    .site-header .theme-toggle {
+    .dashboard-page .site-header .logo-placeholder,
+    .dashboard-page .site-header .theme-toggle {
         flex: 0 0 auto;
     }
 
-    .main-nav {
+    .dashboard-page .main-nav {
         order: 3;
         width: 100%;
         justify-content: center;
         gap: 8px 10px;
     }
 
-    .main-nav a {
+    .dashboard-page .main-nav a {
         font-size: 0.72rem;
+    }
+
+    .dashboard-page .registration-section {
+        padding: 32px 0 56px;
+    }
+
+    .dashboard-page .contacts-section {
+        padding: 32px 0 56px;
+    }
+
+    .dashboard-page .events-section {
+        padding: 64px 0 56px;
+    }
+
+    .dashboard-page .events-section .section-heading,
+    .dashboard-page .registration-layout .section-heading,
+    .dashboard-page .contact-layout .section-heading {
+        text-align: center;
+    }
+
+    .dashboard-page .registration-form,
+    .dashboard-page .contact-card,
+    .dashboard-page .login-form {
+        width: min(100%, 100%);
+    }
+
+    .dashboard-page .registration-layout,
+    .dashboard-page .contact-layout {
+        width: min(100% - 12px, 700px);
+        gap: 16px;
+    }
+
+    .dashboard-page .admin-table-wrap {
+        border-radius: 20px;
+    }
+
+    .dashboard-page .admin-table {
+        min-width: 640px;
     }
 }
 
