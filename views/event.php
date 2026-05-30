@@ -124,16 +124,14 @@ $registrants = $data['registrants'];
                                 <tbody>
                                     <?php foreach ($events as $event): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($event['name']) ?></td>
-                                        <td><?= htmlspecialchars($event['event_date']) ?></td>
-                                        <td><?= htmlspecialchars($event['location']) ?></td>
-                                        <td><?= htmlspecialchars($event['description']) ?></td>
+                                        <td data-label="Name"><?= htmlspecialchars($event['name']) ?></td>
+                                        <td data-label="Date"><?= htmlspecialchars($event['event_date']) ?></td>
+                                        <td data-label="Location"><?= htmlspecialchars($event['location']) ?></td>
+                                        <td data-label="Description"><?= htmlspecialchars($event['description']) ?></td>
                                         <td>
-                                            
-                                        <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>">
-                                            Delete
-                                        </button>
-
+                                            <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>">
+                                                Delete
+                                            </button>
                                         </td>
                                         <td>
                                             <button class="secondary-button" type="button" onclick="openUpdateModal(
