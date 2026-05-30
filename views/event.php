@@ -55,7 +55,7 @@ $registrants = $data['registrants'];
         <!-- I kept the top nav simple here so I can jump straight to the form, the list, or log out. -->
         <nav class="main-nav" aria-label="Event navigation">
             <a href="#event-manager">Event Manager</a>
-            <a href="#event-list">Event List</a>
+            <a href="#events-list">Event List</a>
             <a href="../controllers/logout.php">Logout</a>
         </nav>
         <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
@@ -124,10 +124,10 @@ $registrants = $data['registrants'];
                                 <tbody>
                                     <?php foreach ($events as $event): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($event['name']) ?></td>
-                                        <td><?= htmlspecialchars($event['event_date']) ?></td>
-                                        <td><?= htmlspecialchars($event['location']) ?></td>
-                                        <td><?= htmlspecialchars($event['description']) ?></td>
+                                        <td data-label="Name"><?= htmlspecialchars($event['name']) ?></td>
+                                        <td data-label="Date"><?= htmlspecialchars($event['event_date']) ?></td>
+                                        <td data-label="Location"><?= htmlspecialchars($event['location']) ?></td>
+                                        <td data-label="Description"><?= htmlspecialchars($event['description']) ?></td>
                                         <td>
                                             
                                         <button type="button" class="text-button delete-trigger" data-id="<?= $event['id'] ?>" data-name="<?= htmlspecialchars($event['name']) ?>">
