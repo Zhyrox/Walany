@@ -3152,6 +3152,84 @@ section.admin-panel {
         gap: 8px;
     }
 
+    /* ─── Events List: card layout on mobile (≤ 560px) ─── */
+@media (max-width: 560px) {
+    .event-admin-page #events-list .admin-table thead {
+        display: none;
+    }
+
+    .event-admin-page #events-list .admin-table,
+    .event-admin-page #events-list .admin-table tbody,
+    .event-admin-page #events-list .admin-table tr,
+    .event-admin-page #events-list .admin-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .event-admin-page #events-list .admin-table tbody tr {
+        padding: 16px;
+        margin-bottom: 0;
+        border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: 0 10px 24px rgba(31, 77, 76, 0.07);
+    }
+
+    .event-admin-page #events-list .admin-table td {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 1fr);
+        align-items: start;
+        gap: 8px;
+        padding: 8px 0;
+        border: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .event-admin-page #events-list .admin-table td + td {
+        border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    }
+
+    .event-admin-page #events-list .admin-table td::before {
+        content: attr(data-label);
+        color: var(--primary);
+        font-family: 'ArchivoCondensedMedium', sans-serif;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding-top: 2px;
+    }
+
+    .event-admin-page #events-list .admin-table td:nth-child(5),
+    .event-admin-page #events-list .admin-table td:nth-child(6) {
+        grid-template-columns: 1fr;
+        padding-top: 10px;
+    }
+
+    .event-admin-page #events-list .admin-table td:nth-child(5)::before,
+    .event-admin-page #events-list .admin-table td:nth-child(6)::before {
+        display: none;
+    }
+
+    .event-admin-page #events-list .admin-table td:nth-child(5) .text-button,
+    .event-admin-page #events-list .admin-table td:nth-child(6) .secondary-button {
+        width: 100%;
+        max-width: none;
+        justify-content: center;
+    }
+
+    .event-admin-page #events-list .admin-table td:first-child,
+    .event-admin-page #events-list .admin-table td:last-child {
+        border-radius: 0;
+    }
+
+    .event-admin-page #events-list .admin-table-scroll {
+        display: grid;
+        gap: 12px;
+        padding: 4px 2px;
+    }
+}
     .registrant-admin-page #registrant-list .export-button-row .primary-button,
     .registrant-admin-page #registrant-list .export-button-row .submit-button {
         flex-basis: 150px;
