@@ -22,21 +22,9 @@ This folder contains page screenshots for the main UI states that were captured 
 - [Mobile Light](./feedback/mobile-light.png)
 - [Mobile Dark](./feedback/mobile-dark.png)
 
-### Login
-- [Desktop Light](./login/desktop-light.png)
-- [Desktop Dark](./login/desktop-dark.png)
-
-### Registrant
-- [Desktop Light](./registrant/desktop-light.png)
-- [Desktop Dark](./registrant/desktop-dark.png)
-- [Mobile Light](./registrant/mobile-light.png)
-- [Mobile Dark](./registrant/mobile-dark.png)
-
 ## Not Yet Captured
 
-- `register.php` timed out in the browser automation runtime during repeated screenshot attempts, so its gallery is not included yet.
+- `feedback.php`
+- `register.php`
+- `attendanceform.php`
 
-## Notes
-
-- Screenshots were captured from the local XAMPP app at `http://localhost/Walany`.
-- Theme variants were captured with the app's built-in light/dark toggle.
