@@ -35,9 +35,10 @@ $registrants = $data['registrants'];
     <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
     <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body class="dashboard-page">
     <header class="site-header">
-        <a href="index.php#home" class="logo-placeholder" aria-label="Walania home">
+        <!-- Header: brand, navigation, and theme toggle -->
+        <a href="#dashboard-hero" class="logo-placeholder" aria-label="Walania home">
             <img src="images/Walania.svg" alt="Walania logo">
         </a>
         <p>Welcome, <?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
@@ -64,6 +65,22 @@ $registrants = $data['registrants'];
     </header>
 
     <main>
+        <!-- Hero block: primary welcome message and quick actions -->
+        <section id="dashboard-hero" class="dashboard-hero" aria-labelledby="dashboard-hero-title">
+            <div class="dashboard-hero-content">
+                <h1 id="dashboard-hero-title">Welcome to Walania</h1>
+                <p class="dashboard-hero-copy">
+                    A calm place to explore upcoming events, manage registrations, and keep everything in one polished space.
+                </p>
+
+                <div class="dashboard-hero-actions">
+                    <a class="primary-button" href="#events">View Events</a>
+                    <a class="secondary-button" href="#registration">Register Now</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events block: upcoming schedule table -->
         <section id="events" class="events-section">
             <div class="section-heading">
                 <p class="eyebrow">Upcoming</p>
@@ -100,6 +117,7 @@ $registrants = $data['registrants'];
             <?php endif; ?>
         </section>
 
+        <!-- Registration block: event signup form -->
         <section id="registration" class="registration-section">
             <div class="registration-layout">
                 <div class="section-heading">
@@ -111,6 +129,7 @@ $registrants = $data['registrants'];
                 </div>
 
                 <form class="registration-form" action="../controllers/registrantController.php" method="POST">
+                    <!-- Form status and validation messaging -->
                     <?php if ($user === null) : ?>
                         <div class="form-alert form-alert-info">
                             <p>You need a user account to submit this form.</p>
@@ -155,6 +174,8 @@ $registrants = $data['registrants'];
                 </form>
             </div>
         </section>
+
+        <!-- Contact block: support details and office info -->
         <section id="contacts" class="contacts-section">
             <div class="registration-layout contact-layout">
                 <div class="section-heading">
