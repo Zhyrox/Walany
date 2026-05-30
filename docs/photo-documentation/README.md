@@ -19,8 +19,6 @@ This folder contains page screenshots for the main UI states that were captured 
 ### Feedback
 - [Desktop Light](./feedback/desktop-light.png)
 - [Desktop Dark](./feedback/desktop-dark.png)
-- [Mobile Light](./feedback/mobile-light.png)
-- [Mobile Dark](./feedback/mobile-dark.png)
 
 ## Not Yet Captured
 
