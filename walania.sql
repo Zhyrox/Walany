@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 28, 2026 at 09:34 AM
+-- Generation Time: May 30, 2026 at 01:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,9 +31,16 @@ CREATE TABLE `walania_attendance` (
   `id` int(11) NOT NULL,
   `registrant_id` int(11) NOT NULL,
   `event_id` int(11) NOT NULL,
-  `attendance_status` enum('present','absent') NOT NULL DEFAULT 'absent',
+  `attendance_status` enum('N/A','present','absent','late') DEFAULT 'N/A',
   `time_checked_in` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `walania_attendance`
+--
+
+INSERT INTO `walania_attendance` (`id`, `registrant_id`, `event_id`, `attendance_status`, `time_checked_in`) VALUES
+(2, 1002, 3, 'absent', NULL);
 
 -- --------------------------------------------------------
 
@@ -91,6 +98,13 @@ CREATE TABLE `walania_registrant` (
   `event_id` int(11) DEFAULT NULL,
   `user_id` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `walania_registrant`
+--
+
+INSERT INTO `walania_registrant` (`id`, `full_name`, `age`, `email`, `contact_number`, `preference_allergy`, `registered_at`, `event_id`, `user_id`) VALUES
+(1002, 'test1', 34, 'idk@idk.com', '09112223333', 'Idk', '2026-05-30 10:41:05', 3, 2);
 
 -- --------------------------------------------------------
 
@@ -163,7 +177,7 @@ ALTER TABLE `walania_user`
 -- AUTO_INCREMENT for table `walania_attendance`
 --
 ALTER TABLE `walania_attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `walania_event`
@@ -181,7 +195,7 @@ ALTER TABLE `walania_event_feedback`
 -- AUTO_INCREMENT for table `walania_registrant`
 --
 ALTER TABLE `walania_registrant`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1003;
 
 --
 -- AUTO_INCREMENT for table `walania_user`

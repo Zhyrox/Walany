@@ -4,6 +4,7 @@ require_once __DIR__ . '../../models/Database.php';
 require_once __DIR__ . '../../models/EventModel.php';
 require_once __DIR__ . '../../models/RegistrantModel.php';
 require_once __DIR__ . '../../controllers/PageData.php';
+require_once __DIR__ . '../../models/attendanceModel.php';
 
 
 // Initialize your core database connection
@@ -29,7 +30,7 @@ $registrants = $data['registrants'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Manager</title>
+    <title>Registrant Manager</title>
     <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
     <link rel="stylesheet" href="../style.css">
 </head>
@@ -131,6 +132,7 @@ $registrants = $data['registrants'];
                                         <th>Contact #</th>
                                         <th>Preferences</th>
                                         <th>Event</th>
+                                        <th>Attendance</th>
                                         <th>Delete</th>
                                         <th>Update</th>
                                     </tr>
@@ -144,6 +146,19 @@ $registrants = $data['registrants'];
                                         <td><?= htmlspecialchars($registrant['contact_number']) ?></td>
                                         <td><?= htmlspecialchars($registrant['preference_allergy']) ?></td>
                                         <td><?= htmlspecialchars($registrant['event_name'] ?? 'N/A') ?></td>
+                                        <td>
+                                            <form action="../controllers/registrantController.php" method="POST">
+                                                <input type="hidden" name="registrant_id" value="<?= $registrant['id'] ?>">
+                                                <input type="hidden" name="attendance_update" value="1">
+                                                <?php $status = strtolower($registrant['attendance_status'] ?? 'n/a'); ?>
+                                                <select name="attendance_status" onchange="this.form.submit()">
+                                                    <option value="N/A" <?= $status === 'n/a' ? 'selected' : '' ?>>N/A</option>
+                                                    <option value="present" <?= $status === 'present' ? 'selected' : '' ?>>Present</option>
+                                                    <option value="absent" <?= $status === 'absent' ? 'selected' : '' ?>>Absent</option>
+                                                    <option value="late" <?= $status === 'late' ? 'selected' : '' ?>>Late</option>
+                                                </select>
+                                            </form>
+                                        </td>
                                         <td>
                                             <button type="button" class="text-button delete-trigger" data-id="<?= $registrant['id'] ?>" data-name="<?= htmlspecialchars($registrant['full_name']) ?>">
                                                 Delete

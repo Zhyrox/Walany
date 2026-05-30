@@ -1,17 +1,19 @@
 <?php
 /*
-Refactored by: Elmer
+Refactored by: Elmer (Pake ko, agaw credits lng boss)
 */
 
 session_start();
 
 require_once "../models/registrantModel.php";
 require_once "../models/Database.php";
+require_once "../models/attendanceModel.php";
 
 $database = new Database();
 $dbConnection = $database->getConnection();
 
 $registrantModel = new RegistrantModel($dbConnection);
+$attendanceModel = new Attendance($dbConnection);
 
 
 //Handle POST Requests (Create, Update, Delete)
@@ -32,7 +34,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(empty($fullname) OR empty($age) OR empty($email) OR empty($contact_number) OR empty($event_id)){
             //Will add the error next time
         } else {
-            $registrantModel->addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id);
+            $registrant_id = $registrantModel->addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id);
+            //added attendance entry for the new registrant, due to the action accpeting one url only
+            $attendanceModel->addAttendance($registrant_id, $event_id);
             header("Location: ../views/registrant.php");
             exit();
         }
@@ -45,6 +49,22 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             //Will add the error next time
         } else {
             $registrantModel->updateRegistrant($id, $fullname, $age, $email, $contact_number, $preference_allergy, $event_id);
+            header("Location: ../views/registrant.php");
+            exit();
+        }
+    }
+
+    //Attendance Update, due to this being the only function in an attendance controller. I've taken the liberty to add it here
+    //Since it also accepts the same url as the other functions, and it would be a hassle to create another controller just for this.
+
+    if (isset($_POST['attendance_update'])){
+        $id = $_POST['registrant_id'] ?? null;
+        $attendance_status = $_POST['attendance_status'] ?? null;
+
+        if(empty($id) OR empty($attendance_status)){
+            //Will add the error next time
+        } else {
+            $attendanceModel->updateAttendance($attendance_status, $id);
             header("Location: ../views/registrant.php");
             exit();
         }
