@@ -29,11 +29,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     //Add Registrant
     if (isset($_POST['add'])) {
         //Input Validation
-        if(empty($fullname) OR empty($age) OR empty($email) OR empty($contact_number) OR empty($preference_allergy)){
+        if(empty($fullname) OR empty($age) OR empty($email) OR empty($contact_number) OR empty($event_id)){
             //Will add the error next time
         } else {
             $registrantModel->addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id);
-            header("Location: ../views/dashboard.php");
+            header("Location: ../views/registrant.php");
             exit();
         }
     }
@@ -41,11 +41,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     //Update Registrant
     if (isset($_POST['update'])){
         
-        if(empty($id) OR empty($fullname) OR empty($age) OR empty($email) OR empty($contact_number) OR empty($preference_allergy) OR empty($event_id)){
+        if(empty($id) OR empty($fullname) OR empty($age) OR empty($email) OR empty($contact_number) OR empty($event_id)){
             //Will add the error next time
         } else {
             $registrantModel->updateRegistrant($id, $fullname, $age, $email, $contact_number, $preference_allergy, $event_id);
-            header("Location: ../views/dashboard.php");
+            header("Location: ../views/registrant.php");
             exit();
         }
     }
@@ -57,7 +57,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             //Will add the error next time
         } else {
             $registrantModel->deleteRegistrant($id);
-            header("Location: ../views/dashboard.php");
+            header("Location: ../views/registrant.php");
             exit();
         }
     }

@@ -48,7 +48,7 @@ $registrants = $data['registrants'];
 
     <header class="site-header admin-header">
         <!-- I made the logo act like a shortcut to the login page so I can get back in fast. -->
-        <a href="login.php" class="logo-placeholder" aria-label="Walania login">
+        <a href="dashboard.php" class="logo-placeholder" aria-label="Walania login">
             <img src="images/Walania.svg" alt="Walania logo">
         </a>
 
@@ -93,9 +93,7 @@ $registrants = $data['registrants'];
                         <div class="admin-actions">
                             <button class="primary-button submit-button" type="submit" name="add">Register Event</button>
                             <button class="primary-button submit-button" type="button" onclick="exportXml('events')">Export Events</button>
-                            <button class="primary-button submit-button" type="button" onclick="exportXml('registrants')">Export Registrants</button>
                             <button class="primary-button submit-button" type="button" onclick="startImport('import_events')">Import Events</button>
-                            <button class="primary-button submit-button" type="button" onclick="startImport('import_registrants')">Import Registrants</button>
                         </div>
                     </form>
                     <form id="import-form" action="../controllers/XML.php" method="POST" enctype="multipart/form-data" hidden>

@@ -63,6 +63,48 @@ function openUpdateModal(id, name, date, location, description) {
     updateModal.classList.add('active');
 }
 
+function populateRegistrantManagerForm(id, fullName, age, email, contactNumber, preferenceAllergy, eventId) {
+    const registrantId = document.getElementById("registrantId");
+    const fullnameField = document.getElementById("fullname");
+    const ageField = document.getElementById("age");
+    const emailField = document.getElementById("email");
+    const contactNumberField = document.getElementById("contact_number");
+    const preferenceField = document.getElementById("preference_allergy");
+    const eventSelect = document.getElementById("event_id");
+    const updateButton = document.getElementById("updateRegistrantButton");
+    const cancelButton = document.getElementById("cancelRegistrantUpdate");
+
+    if (!registrantId || !fullnameField || !ageField || !emailField || !contactNumberField || !preferenceField || !eventSelect || !updateButton || !cancelButton) {
+        return;
+    }
+
+    registrantId.value = id;
+    fullnameField.value = fullName;
+    ageField.value = age;
+    emailField.value = email;
+    contactNumberField.value = contactNumber;
+    preferenceField.value = preferenceAllergy;
+    eventSelect.value = eventId;
+    updateButton.disabled = false;
+    cancelButton.hidden = false;
+    window.location.hash = '#registrant-manager';
+}
+
+function resetRegistrantForm() {
+    const registrantForm = document.getElementById("registrantForm");
+    const updateButton = document.getElementById("updateRegistrantButton");
+    const cancelButton = document.getElementById("cancelRegistrantUpdate");
+
+    if (!registrantForm || !updateButton || !cancelButton) {
+        return;
+    }
+
+    registrantForm.reset();
+    document.getElementById("registrantId").value = "";
+    updateButton.disabled = true;
+    cancelButton.hidden = true;
+}
+
 function closeModal() {
     const updateModal = document.getElementById("updateModal");
     if (!updateModal) return;

@@ -13,7 +13,7 @@ class RegistrantModel{
     }
 
     public function getAllRegistrants(){
-        $stmt = $this->db->query("SELECT * FROM walania_registrant");
+        $stmt = $this->db->query("SELECT r.*, e.name AS event_name FROM walania_registrant r LEFT JOIN walania_event e ON r.event_id = e.id");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
