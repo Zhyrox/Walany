@@ -33,7 +33,7 @@ $registrants = $data['registrants'];
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Walania | Dashboard</title>
     <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=dashboard-events-scroll">
 </head>
 <body class="dashboard-page">
     <header class="site-header">
@@ -105,10 +105,10 @@ $registrants = $data['registrants'];
                         <tbody>
                             <?php foreach ($events as $event) : ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($event['date'] ?? $event['event_date'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?= htmlspecialchars($event['name'] ?? $event['event_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?= htmlspecialchars($event['location'] ?? $event['event_location'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?= nl2br(htmlspecialchars($event['description'] ?? $event['event_description'] ?? '', ENT_QUOTES, 'UTF-8')); ?></td>
+                                    <td data-label="Date"><?= htmlspecialchars($event['date'] ?? $event['event_date'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td data-label="Event"><?= htmlspecialchars($event['name'] ?? $event['event_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td data-label="Location"><?= htmlspecialchars($event['location'] ?? $event['event_location'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td data-label="Description"><?= nl2br(htmlspecialchars($event['description'] ?? $event['event_description'] ?? '', ENT_QUOTES, 'UTF-8')); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
