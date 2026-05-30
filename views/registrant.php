@@ -32,9 +32,9 @@ $registrants = $data['registrants'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrant Manager</title>
     <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=registrant-fit-3">
 </head>
-<body class="admin-page event-admin-page">
+<body class="admin-page event-admin-page registrant-admin-page">
 
     <!-- Restricted Access for this specific page -@elmer -->
 
@@ -122,66 +122,64 @@ $registrants = $data['registrants'];
                         <h1>Registrant List</h1>
                     </div>
                     <div class="admin-table-wrap">
-                        <div class="admin-table-scroll">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Age</th>
-                                        <th>Email</th>
-                                        <th>Contact #</th>
-                                        <th>Preferences</th>
-                                        <th>Event</th>
-                                        <th>Attendance</th>
-                                        <th>Delete</th>
-                                        <th>Update</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($registrants as $registrant): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($registrant['full_name']) ?></td>
-                                        <td><?= htmlspecialchars($registrant['age']) ?></td>
-                                        <td><?= htmlspecialchars($registrant['email']) ?></td>
-                                        <td><?= htmlspecialchars($registrant['contact_number']) ?></td>
-                                        <td><?= htmlspecialchars($registrant['preference_allergy']) ?></td>
-                                        <td><?= htmlspecialchars($registrant['event_name'] ?? 'N/A') ?></td>
-                                        <td>
-                                            <form action="../controllers/registrantController.php" method="POST">
-                                                <input type="hidden" name="registrant_id" value="<?= $registrant['id'] ?>">
-                                                <input type="hidden" name="attendance_update" value="1">
-                                                <?php $status = strtolower($registrant['attendance_status'] ?? 'n/a'); ?>
-                                                <select name="attendance_status" onchange="this.form.submit()">
-                                                    <option value="N/A" <?= $status === 'n/a' ? 'selected' : '' ?>>N/A</option>
-                                                    <option value="present" <?= $status === 'present' ? 'selected' : '' ?>>Present</option>
-                                                    <option value="absent" <?= $status === 'absent' ? 'selected' : '' ?>>Absent</option>
-                                                    <option value="late" <?= $status === 'late' ? 'selected' : '' ?>>Late</option>
-                                                </select>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="text-button delete-trigger" data-id="<?= $registrant['id'] ?>" data-name="<?= htmlspecialchars($registrant['full_name']) ?>">
-                                                Delete
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button class="secondary-button" type="button" onclick="populateRegistrantManagerForm(
-                                                '<?= $registrant['id'] ?>',
-                                                '<?= htmlspecialchars($registrant['full_name'], ENT_QUOTES) ?>',
-                                                '<?= htmlspecialchars($registrant['age'], ENT_QUOTES) ?>',
-                                                '<?= htmlspecialchars($registrant['email'], ENT_QUOTES) ?>',
-                                                '<?= htmlspecialchars($registrant['contact_number'], ENT_QUOTES) ?>',
-                                                '<?= htmlspecialchars($registrant['preference_allergy'], ENT_QUOTES) ?>',
-                                                '<?= htmlspecialchars($registrant['event_id'], ENT_QUOTES) ?>'
-                                            )">
-                                                Update
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="admin-table registrant-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Email</th>
+                                    <th>Contact #</th>
+                                    <th>Preferences</th>
+                                    <th>Event</th>
+                                    <th>Attendance</th>
+                                    <th>Delete</th>
+                                    <th>Update</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($registrants as $registrant): ?>
+                                <tr>
+                                    <td data-label="Name"><?= htmlspecialchars($registrant['full_name']) ?></td>
+                                    <td data-label="Age"><?= htmlspecialchars($registrant['age']) ?></td>
+                                    <td data-label="Email"><?= htmlspecialchars($registrant['email']) ?></td>
+                                    <td data-label="Contact"><?= htmlspecialchars($registrant['contact_number']) ?></td>
+                                    <td data-label="Preferences"><?= htmlspecialchars($registrant['preference_allergy']) ?></td>
+                                    <td data-label="Event"><?= htmlspecialchars($registrant['event_name'] ?? 'N/A') ?></td>
+                                    <td data-label="Attendance">
+                                        <form action="../controllers/registrantController.php" method="POST">
+                                            <input type="hidden" name="registrant_id" value="<?= $registrant['id'] ?>">
+                                            <input type="hidden" name="attendance_update" value="1">
+                                            <?php $status = strtolower($registrant['attendance_status'] ?? 'n/a'); ?>
+                                            <select name="attendance_status" onchange="this.form.submit()">
+                                                <option value="N/A" <?= $status === 'n/a' ? 'selected' : '' ?>>N/A</option>
+                                                <option value="present" <?= $status === 'present' ? 'selected' : '' ?>>Present</option>
+                                                <option value="absent" <?= $status === 'absent' ? 'selected' : '' ?>>Absent</option>
+                                                <option value="late" <?= $status === 'late' ? 'selected' : '' ?>>Late</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td data-label="Delete">
+                                        <button type="button" class="text-button delete-trigger" data-id="<?= $registrant['id'] ?>" data-name="<?= htmlspecialchars($registrant['full_name']) ?>">
+                                            Delete
+                                        </button>
+                                    </td>
+                                    <td data-label="Update">
+                                        <button class="secondary-button" type="button" onclick="populateRegistrantManagerForm(
+                                            '<?= $registrant['id'] ?>',
+                                            '<?= htmlspecialchars($registrant['full_name'], ENT_QUOTES) ?>',
+                                            '<?= htmlspecialchars($registrant['age'], ENT_QUOTES) ?>',
+                                            '<?= htmlspecialchars($registrant['email'], ENT_QUOTES) ?>',
+                                            '<?= htmlspecialchars($registrant['contact_number'], ENT_QUOTES) ?>',
+                                            '<?= htmlspecialchars($registrant['preference_allergy'], ENT_QUOTES) ?>',
+                                            '<?= htmlspecialchars($registrant['event_id'], ENT_QUOTES) ?>'
+                                        )">
+                                            Update
+                                        </button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="admin-actions export-button-row">
                         <button class="primary-button submit-button" type="button" onclick="exportXml('registrants')">Export Registrants</button>
