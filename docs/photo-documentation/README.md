@@ -69,25 +69,3 @@ Each folder contains screenshots for light and dark mode, plus desktop and mobil
 ![Login Mobile Dark](./Login/MobileDarkMode.png)
 
 ## Registrant Management
-
-### Desktop
-
-![Registrant Management Desktop Light](./RegistrantManagement/DesktopLightMode.png)
-
-![Registrant Management Desktop Dark](./RegistrantManagement/DesktopDarkMode.png)
-
-### Mobile
-
-![Registrant Management Mobile Light](./RegistrantManagement/MobileLightMode.png)
-
-![Registrant Management Mobile Dark](./RegistrantManagement/MobileDarkMode.png)
-
-## Notes
-
-- The screenshots are organized by page name, not by route name, to make browsing easier.
-- If you add new views later, create a matching folder and follow the same naming pattern:
-  - `DesktopLightMode.png`
-  - `DesktopDarkMode.png`
-  - `MobileLightMode.png`
-  - `MobileDarkMode.png`
-
