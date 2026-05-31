@@ -17,8 +17,8 @@ class Attendance {
     }
 
     public function updateAttendance($attendance_status, $registrant_id){
-        $stmt = $this->db->prepare("UPDATE walania_attendance SET attendance_status = ? WHERE registrant_id = ?");
-        $stmt->execute([$attendance_status, $registrant_id]);
+        $stmt = $this->db->prepare("UPDATE walania_attendance SET attendance_status = ?, time_checked_in = CASE WHEN ? IN ('late', 'present') THEN NOW() WHEN ? IN ('absent' , 'n/a') THEN NULL ELSE attendance_status END WHERE registrant_id = ?");
+        $stmt->execute([$attendance_status, $attendance_status, $attendance_status, $registrant_id]);
     }
 }
 ?>
