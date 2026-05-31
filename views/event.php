@@ -190,6 +190,10 @@ $registrants = $data['registrants'];
         </div>
     </main>
 
+    <footer class="site-footer">
+        <p>&copy; 2026 Walania. All rights reserved.</p>
+    </footer>
+
     <div id="confirmPanel" class="confirm-panel" aria-hidden="true">
         <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
             <h3 id="confirmTitle">Are you sure?</h3>

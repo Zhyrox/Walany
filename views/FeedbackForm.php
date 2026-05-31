@@ -164,6 +164,10 @@ $allComments = $feedbackModel->getAllComments();
         </section>
     </main>
 
+    <footer class="site-footer">
+        <p>&copy; 2026 Walania. All rights reserved.</p>
+    </footer>
+
     <script src="../script.js"></script>
 </body>
 </html>

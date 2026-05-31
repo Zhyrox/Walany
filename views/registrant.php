@@ -32,7 +32,7 @@ $registrants = $data['registrants'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrant Manager</title>
     <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
-    <link rel="stylesheet" href="../style.css?v=registrant-mobile-fit">
+    <link rel="stylesheet" href="../style.css?v=registrant-actions-small">
 </head>
 <body class="admin-page event-admin-page registrant-admin-page">
 
@@ -182,14 +182,18 @@ $registrants = $data['registrants'];
                         </table>
                     </div>
                     <div class="admin-actions export-button-row">
-                        <button class="primary-button submit-button" type="button" onclick="exportXml('registrants')">Export Registrants</button>
-                        <button class="primary-button submit-button" type="button" onclick="startImport('import_registrants')">Import Registrants</button>
+                        <button class="primary-button export-button" type="button" onclick="exportXml('registrants')">Export Registrants</button>
+                        <button class="primary-button export-button" type="button" onclick="startImport('import_registrants')">Import Registrants</button>
                     </div>
                 </div>
             </section>
         </div>
 
     </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Walania. All rights reserved.</p>
+    </footer>
 
     <div id="confirmPanel" class="confirm-panel" aria-hidden="true">
         <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
