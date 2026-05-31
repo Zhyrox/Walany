@@ -80,6 +80,7 @@ body {
         radial-gradient(circle at 6% 74%, color-mix(in srgb, var(--secondary) 24%, transparent) 0 12%, transparent 13%),
         linear-gradient(180deg, color-mix(in srgb, var(--background) 92%, var(--secondary)) 0%, color-mix(in srgb, var(--background) 98%, white) 100%);
     overflow-x: hidden;
+    min-height: 100vh;
 }
 
 button,
@@ -182,6 +183,7 @@ button {
     overflow: visible;
     padding: 132px 24px 72px;
     scroll-margin-top: 112px;
+    min-height: 100vh;
 }
 
 .dashboard-hero-content {
@@ -189,7 +191,7 @@ button {
     z-index: 1;
     width: min(1080px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 18px 0 10px;
+    padding: 160px 0 10px;
 }
 
 .dashboard-hero-content h1 {
@@ -385,7 +387,7 @@ button {
     padding: 92px 0 84px;
     background: transparent;
     min-height: 100vh;
-    scroll-margin-top: 112px;
+    scroll-margin-top: 80px;
 }
 
 .events-section .section-heading {
@@ -623,13 +625,13 @@ button {
 
 .registration-section {
     position: relative;
-    min-height: auto;
+    min-height: 100vh;
     padding: 48px 0 72px;
     display: grid;
     align-items: center;
     overflow: hidden;
     background: transparent;
-    scroll-margin-top: 92px;
+    
 }
 
 .registration-layout {
