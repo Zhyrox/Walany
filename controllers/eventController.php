@@ -18,7 +18,7 @@ $eventModel = new EventModel($dbConnection);
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     $name = trim($_POST['name'] ?? '');
-    $event_date = $_POST['event_date'] ?? '';
+    $event_date = $_POST['date'] ?? '';
     $location = trim($_POST['location'] ?? '');
     $id = $_POST['id'] ?? '';
     $description = trim($_POST['description'] ?? '');

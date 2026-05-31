@@ -1,6 +1,8 @@
 <!-- page data -->
 
 <?php
+session_start();
+
 // Include dependencies
 require_once __DIR__ . '../../models/Database.php';
 require_once __DIR__ . '../../models/EventModel.php';
