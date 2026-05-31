@@ -17,51 +17,19 @@ Walania is an event management system built to help organizers handle event list
 
 ![Walania Login Desktop Light](docs/photo-documentation/Login/DesktopLightMode.png)
 
-![Walania Login Desktop Dark](docs/photo-documentation/Login/DesktopDarkMode.png)
-
-![Walania Login Mobile Light](docs/photo-documentation/Login/MobileLightMode.png)
-
-![Walania Login Mobile Dark](docs/photo-documentation/Login/MobileDarkMode.png)
-
-### Dashboard
-
-![Walania Dashboard Desktop Light](docs/photo-documentation/Dashboard/DesktopLightMode.png)
-
-![Walania Dashboard Desktop Dark](docs/photo-documentation/Dashboard/DesktopDarkMode.png)
-
-![Walania Dashboard Mobile Light](docs/photo-documentation/Dashboard/MobileLightMode.png)
-
-![Walania Dashboard Mobile Dark](docs/photo-documentation/Dashboard/MobileDarkMode.png)
 
 ### Event Management
 
 ![Walania Event Management Desktop Light](docs/photo-documentation/EventManagement/DesktopLightMode.png)
 
-![Walania Event Management Desktop Dark](docs/photo-documentation/EventManagement/DesktopDarkMode.png)
-
-![Walania Event Management Mobile Light](docs/photo-documentation/EventManagement/MobileLightMode.png)
-
-![Walania Event Management Mobile Dark](docs/photo-documentation/EventManagement/MobileDarkMode.png)
 
 ### Feedback Forms
 
 ![Walania Feedback Forms Desktop Light](docs/photo-documentation/FeedbackForms/DesktopLightMode.png)
 
-![Walania Feedback Forms Desktop Dark](docs/photo-documentation/FeedbackForms/DesktopDarkMode.png)
-
-![Walania Feedback Forms Mobile Light](docs/photo-documentation/FeedbackForms/MobileLightMode.png)
-
-![Walania Feedback Forms Mobile Dark](docs/photo-documentation/FeedbackForms/MobileDarkMode.png)
-
 ### Registrant Management
 
 ![Walania Registrant Management Desktop Light](docs/photo-documentation/RegistrantManagement/DesktopLightMode.png)
-
-![Walania Registrant Management Desktop Dark](docs/photo-documentation/RegistrantManagement/DesktopDarkMode.png)
-
-![Walania Registrant Management Mobile Light](docs/photo-documentation/RegistrantManagement/MobileLightMode.png)
-
-![Walania Registrant Management Mobile Dark](docs/photo-documentation/RegistrantManagement/MobileDarkMode.png)
 
 ## ERD
 
