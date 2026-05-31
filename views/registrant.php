@@ -151,7 +151,7 @@ $registrants = $data['registrants'];
                                             <input type="hidden" name="attendance_update" value="1">
                                             <?php $status = strtolower($registrant['attendance_status'] ?? 'n/a'); ?>
                                             <select name="attendance_status" onchange="this.form.submit()">
-                                                <option value="N/A" <?= $status === 'n/a' ? 'selected' : '' ?>>N/A</option>
+                                                <option value="n/a" <?= $status === 'n/a' ? 'selected' : '' ?>>N/A</option>
                                                 <option value="present" <?= $status === 'present' ? 'selected' : '' ?>>Present</option>
                                                 <option value="absent" <?= $status === 'absent' ? 'selected' : '' ?>>Absent</option>
                                                 <option value="late" <?= $status === 'late' ? 'selected' : '' ?>>Late</option>

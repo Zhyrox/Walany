@@ -61,8 +61,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $id = $_POST['registrant_id'] ?? null;
         $attendance_status = $_POST['attendance_status'] ?? null;
 
-        if(empty($id) OR empty($attendance_status)){
-            //Will add the error next time
+        if(empty($id) OR $attendance_status === ''){
+            echo "ERROR";
         } else {
             $attendanceModel->updateAttendance($attendance_status, $id);
             header("Location: ../views/registrant.php");
