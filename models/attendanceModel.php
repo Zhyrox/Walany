@@ -36,5 +36,16 @@ class Attendance {
             'registrant_id' => $registrant_id
             ]);
     }
+
+    public function deleteAttendance($id) {
+        $stmt = $this->db->prepare("
+            DELETE FROM walania_attendance
+            WHERE id = :id
+        ");
+
+        return $stmt->execute([
+            'id' => $id
+        ]);
+    }
 }
 ?>
