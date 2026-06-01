@@ -1,9 +1,4 @@
 <?php
-/*
-
-Author: Elmer
-
-*/
 class EventModel{
 
     private $db;
@@ -18,18 +13,31 @@ class EventModel{
     }
 
     public function addEvent($name, $event_date, $location, $description){
-        $stmt = $this->db->prepare("INSERT INTO walania_event (name, event_date, location, description) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$name, $event_date, $location, $description]);
+        $stmt = $this->db->prepare("INSERT INTO walania_event (name, event_date, location, description) VALUES (:name, :event_date, :location, :description)");
+
+        return $stmt->execute([
+            'name'        => $name,
+            'event_date'  => $event_date,
+            'location'    => $location,
+            'description' => $description
+            ]);
     }
 
     public function updateEvent($id, $name, $event_date, $location, $description){
-        $stmt = $this->db->prepare("UPDATE walania_event SET name=?, event_date=?, location=?, description=? WHERE id=?");
-        return $stmt->execute([$name, $event_date, $location, $description, $id]);
+        $stmt = $this->db->prepare("UPDATE walania_event SET name=:name, event_date=:event_date, location=:location, description=:description WHERE id=:id");
+        
+        return $stmt->execute([
+            'name'        => $name,
+            'event_date'  => $event_date,
+            'location'    => $location,
+            'description' => $description,
+            'id'          => $id
+            ]);
     }
 
     public function deleteEvent($id){
-        $stmt = $this->db->prepare("DELETE FROM walania_event WHERE id=?");
-        return $stmt->execute([$id]);
+        $stmt = $this->db->prepare("DELETE FROM walania_event WHERE id=:id");
+        return $stmt->execute(['id' => $id]);
     }
 }
 ?>
