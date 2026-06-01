@@ -1,8 +1,4 @@
 <?php
-/*
-Register Controller (D kaba karmahin nyan?)
-Author: Elmer
-*/
 session_start();
 
 require_once "../models/Database.php"; // Database Model

@@ -1,7 +1,4 @@
 <?php
-
-//Refactored by elmer
-
 require_once __DIR__ . '/../models/Database.php';
 require_once __DIR__ . '/../models/eventModel.php';
 require_once __DIR__ . '/../models/registrantModel.php';

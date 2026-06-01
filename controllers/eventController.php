@@ -1,8 +1,4 @@
 <?php
-/*
-Refactored by: Elmer
-*/
-
 session_start();
 
 require_once "../models/eventModel.php";

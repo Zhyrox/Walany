@@ -1,6 +1,4 @@
 <?php
-// Author Elmer
-
 // 1. ALWAYS start the session first if you are tracking success/error alerts
 session_start();
 

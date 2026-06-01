@@ -1,9 +1,4 @@
 <?php
-/*
-Login Controller
-Author: Elmer
-*/
-
 session_start();
 
 require_once "../models/Database.php"; // Database Model
