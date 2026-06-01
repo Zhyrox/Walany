@@ -888,7 +888,7 @@ button {
     padding: 92px 0 84px;
     background: transparent;
     min-height: 100vh;
-    scroll-margin-top: 112px;
+    padding-top: 180px;
 }
 
 .contact-layout {
@@ -2117,6 +2117,7 @@ section.admin-panel {
     .dashboard-page .registration-layout,
     .dashboard-page .contact-layout {
         grid-template-columns: 1fr;
+        justify-items: center;
     }
 
     .dashboard-page .registration-layout .section-heading,
@@ -2265,6 +2266,7 @@ section.admin-panel {
     .contact-card {
         justify-self: center;
         width: min(100%, 460px);
+        margin: 0 auto;
     }
 
     .registration-form,
