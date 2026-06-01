@@ -80,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($id)) {
             echo "ERROR: Missing ID for deletion";
         } else {
+            $attendanceModel->deleteAttendance($id);
             $registrantModel->deleteRegistrant($id);
             header("Location: ../views/registrant.php");
             exit();
