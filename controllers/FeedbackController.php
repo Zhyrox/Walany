@@ -74,10 +74,18 @@ switch ($action) {
     // ACTION: DELETE FEEDBACK
     case 'delete':
         $feedbackId = (int)($_POST['feedback_id'] ?? 0);
-        if ($feedbackId > 0 && $feedbackModel->deleteFeedback($feedbackId)) {
-            $_SESSION['feedback_success'] = "Feedback deleted successfully.";
-        } else {
-            $_SESSION['feedback_error'] = "Failed to delete feedback.";
+
+        //Grab authentication data from the session
+        $currentUserId = !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+        $currentUserRole = $_SESSION['role'] ?? 'user'; // Assumes 'admin' or 'user'
+
+        if ($feedbackId > 0) {
+
+            if ($feedbackModel->deleteFeedbackSecure($feedbackId, $currentUserId, $currentUserRole)) {
+                $_SESSION['feedback_success'] = "Feedback deleted successfully.";
+            } else {
+                $_SESSION['feedback_error'] = "Unauthorized action or deletion failed.";
+            }
         }
         break;
 }

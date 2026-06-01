@@ -151,11 +151,20 @@ $allComments = $feedbackModel->getAllComments();
                             </p>
 
                             <div class="feedback-card-actions">
-                                <form action="../controllers/FeedbackController.php" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this comment?');">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="feedback_id" value="<?= (int)$commentItem['id']; ?>">
-                                    <button type="submit" class="text-button">Delete Comment</button>
-                                </form>
+                                <?php
+                                    $isAdmin = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
+                                    $isOwner = (isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] === (int)$commentItem['user_id']);
+                                    
+                                    if ($isAdmin || $isOwner) : 
+                                    ?>
+                                        <form action="../controllers/FeedbackController.php" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this comment?');">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="feedback_id" value="<?= $commentItem['id']; ?>">
+                                            <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 0.85rem; padding: 0;">
+                                                Delete Comment
+                                            </button>
+                                        </form>
+                                <?php endif; ?>
                             </div>
                         </article>
                     <?php endforeach; ?>

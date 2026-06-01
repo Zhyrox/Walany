@@ -39,5 +39,27 @@ class FeedbackModel{
         $stmt = $this->db->prepare("DELETE FROM walania_event_feedback WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    public function deleteFeedbackSecure($feedbackId, $userId, $role) {
+    //If the user is an admin, let them delete any feedback record
+    if ($role === 'admin') {
+        $query = "DELETE FROM walania_event_feedback WHERE id = :feedback_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':feedback_id', $feedbackId, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    //If standard user, they MUST own the feedback record
+    if ($userId === null) {
+        return false; // Unauthenticated guest cannot delete anything
+    }
+
+    $query = "DELETE FROM walania_event_feedback WHERE id = :feedback_id AND user_id = :user_id";
+    $stmt = $this->db->prepare($query);
+    $stmt->bindParam(':feedback_id', $feedbackId, PDO::PARAM_INT);
+    $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+    
+    return $stmt->execute();
+}
 }
 ?>
