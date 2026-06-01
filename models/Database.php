@@ -1,19 +1,12 @@
 <?php
 
-/*
-
-Author: Elmer
-Notes: Palitan port based sa kung ano yung port na gamit nyo sa pc nyo.
-
-*/
+require_once __DIR__ . '/../Config.php';
 
 class Database{
     private $dbh;
 
     public function __construct(){
-        $dsn = 'mysql:host=127.0.0.1;dbname=walania;port=3307;charset=utf8mb4'; // <-- 3307 yung port nung sa pc ko palitan nyo nlng if ever (CHECK PORT BY GOING TO XAMPP -> CONFIG -> SERVICE AND PORT SETTINGS -> MYSQL)
-        $user = 'root';
-        $pass = '';
+        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';port=' . DB_PORT . ';charset=' . DB_CHAR;
         $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -21,9 +14,13 @@ class Database{
         ];
 
         try {
-            $this->dbh = new PDO($dsn, $user, $pass, $options);
+            $this->dbh = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (\PDOException $e) {
-            throw new \RuntimeException('Database connection error: ' . $e->getMessage(), (int)$e->getCode(), $e);
+            // Securely records exact details (like port conflicts or bad passwords) in private server logs
+            error_log('Database connection error: ' . $e->getMessage());
+            // Masked message sent to front-end to protect system integrity
+            throw new \RuntimeException('Database connection error. Please contact an administrator.', (int)$e->getCode());
+
         }
     }
 
