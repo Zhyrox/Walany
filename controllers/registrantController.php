@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $registrant_id = $registrantModel->addRegistrant($fullname, $age, $email, $contact_number, $preference_allergy, $event_id, $user_id);
             $attendanceModel->addAttendance($registrant_id, $event_id);
-            header("Location: ../views/dashboard.php");
+            header("Location: ../views/registrant.php");
             exit();
         }
     }

@@ -24,11 +24,11 @@ switch ($action) {
     
     // ACTION: CREATE NEW FEEDBACK
     case 'create':
-        $comment = trim($_POST['comment'] ?? '');
+        $rawComment = trim($_POST['comment'] ?? '');
         $rating  = (int)($_POST['rating'] ?? 0);
         $eventId = (int)($_POST['event_id'] ?? 0);
         
-        if (empty($comment) || $rating < 1 || $rating > 5 || $eventId <= 0) {
+        if (empty($rawComment) || $rating < 1 || $rating > 5 || $eventId <= 0) {
             $_SESSION['feedback_error'] = "All fields are required. Please provide a valid rating and comment.";
             header("Location: ../views/FeedbackForm.php#feedback-submission");
             exit();
@@ -37,7 +37,7 @@ switch ($action) {
         $saveData = [
             'user_id'  => !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null,
             'event_id' => $eventId,
-            'comment'  => htmlspecialchars($comment, ENT_QUOTES, 'UTF-8'),
+            'comment'  => $rawComment,
             'rating'   => $rating
         ];
 

@@ -134,40 +134,43 @@ $allComments = $feedbackModel->getAllComments();
                         No feedback has been submitted yet. Be the first to share a review.
                     </div>
                 <?php else : ?>
-                    <?php foreach ($allComments as $commentItem) : ?>
-                        <article class="feedback-card">
-                            <div class="feedback-card-header">
-                                <div>
-                                    <strong><?= htmlspecialchars($commentItem['username'] ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?></strong>
-                                    <span class="feedback-event-tag">Event: <?= htmlspecialchars($commentItem['event_name'] ?? 'Unknown Event', ENT_QUOTES, 'UTF-8'); ?></span>
-                                </div>
-                                <div class="feedback-rating" aria-label="Rating <?= (int)($commentItem['rating'] ?? 0); ?> out of 5">
-                                    <?= str_repeat('&#9733;', (int)($commentItem['rating'] ?? 0)); ?>
-                                </div>
-                            </div>
 
-                            <p class="feedback-comment">
-                                <?= nl2br(htmlspecialchars($commentItem['comment'] ?? '', ENT_QUOTES, 'UTF-8')); ?>
-                            </p>
+                    
+<?php foreach ($allComments as $commentItem) : ?>
+    <article class="feedback-card">
+        <div class="feedback-card-header">
+            <div>
+                <strong><?= htmlspecialchars($commentItem['username'] ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?></strong>
+                <span class="feedback-event-tag">Event: <?= htmlspecialchars($commentItem['event_name'] ?? 'Unknown Event', ENT_QUOTES, 'UTF-8'); ?></span>
+            </div>
+            <div class="feedback-rating" aria-label="Rating <?= (int)($commentItem['rating'] ?? 0); ?> out of 5">
+                <?= str_repeat('&#9733;', (int)($commentItem['rating'] ?? 0)); ?>
+            </div>
+        </div>
 
-                            <div class="feedback-card-actions">
-                                <?php
-                                    $isAdmin = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
-                                    $isOwner = (isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] === (int)$commentItem['user_id']);
-                                    
-                                    if ($isAdmin || $isOwner) : 
-                                    ?>
-                                        <form action="../controllers/FeedbackController.php" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this comment?');">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="feedback_id" value="<?= $commentItem['id']; ?>">
-                                            <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 0.85rem; padding: 0;">
-                                                Delete Comment
-                                            </button>
-                                        </form>
-                                <?php endif; ?>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
+        <p class="feedback-comment">
+            <?= nl2br(htmlspecialchars($commentItem['comment'] ?? '', ENT_QUOTES, 'UTF-8')); ?>
+        </p>
+
+        <div class="feedback-card-actions">
+            <?php
+            $isAdmin = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
+            $isOwner = (isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] === (int)$commentItem['user_id']);
+            
+            if ($isAdmin || $isOwner) : 
+            ?>
+                <form action="../controllers/FeedbackController.php" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this comment?');">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="feedback_id" value="<?= htmlspecialchars($commentItem['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 0.85rem; padding: 0;">
+                        Delete Comment
+                    </button>
+                </form>
+            <?php endif; ?>
+        </div> </article>
+<?php endforeach; ?>
+
+
                 <?php endif; ?>
             </div>
         </section>
