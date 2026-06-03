@@ -3,74 +3,90 @@ require_once __DIR__ . "/../models/Database.php";
 require_once __DIR__ . "/../models/eventModel.php";
 require_once __DIR__ . "/../models/registrantModel.php";
 
-/**
- * Export events from walania_event table to XML format
- * @return SimpleXMLElement XML object containing all events
- */
+/*Exports events from walania into an XML*/
 function exportEvents() {
     $database = new Database();
     $dbConnection = $database->getConnection();
     $eventModel = new EventModel($dbConnection);
     $events = $eventModel->getAllEvents();
-    
-    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><events></events>');
-    
+
+    $dom = new DOMDocument('1.0', 'UTF-8');
+    $dom->formatOutput = true;
+    $root = $dom->createElement('events');
+    $dom->appendChild($root);
+
     foreach ($events as $event) {
-        $eventNode = $xml->addChild('event');
-        $eventNode->addChild('id', $event['id']);
-        $eventNode->addChild('name', htmlspecialchars($event['name'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
-        $eventNode->addChild('event_date', $event['event_date']);
-        $eventNode->addChild('location', htmlspecialchars($event['location'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
-        $eventNode->addChild('description', htmlspecialchars($event['description'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+        $eventNode = $dom->createElement('event');
+        $eventNode->appendChild($dom->createElement('id', $event['id']));
+        $eventNode->appendChild($dom->createElement('name', $event['name']));
+        $eventNode->appendChild($dom->createElement('event_date', $event['event_date']));
+        $eventNode->appendChild($dom->createElement('location', $event['location']));
+        $eventNode->appendChild($dom->createElement('description', $event['description']));
+        $root->appendChild($eventNode);
     }
-    
-    return $xml;
+
+    return $dom;
 }
 
-/**
- * Export registrants from walania_registrant table to XML format
- * @return SimpleXMLElement XML object containing all registrants
- */
+/*Exports registrants from walania into an XML*/
 function exportRegistrants() {
     $database = new Database();
     $dbConnection = $database->getConnection();
     $registrantModel = new RegistrantModel($dbConnection);
     $registrants = $registrantModel->getAllRegistrants();
-    
-    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><registrants></registrants>');
-    
+
+    $dom = new DOMDocument('1.0', 'UTF-8');
+    $dom->formatOutput = true;
+    $root = $dom->createElement('registrants');
+    $dom->appendChild($root);
+
     foreach ($registrants as $registrant) {
-        $regNode = $xml->addChild('registrant');
-        $regNode->addChild('id', $registrant['id']);
-        $regNode->addChild('full_name', htmlspecialchars($registrant['full_name'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
-        $regNode->addChild('age', $registrant['age']);
-        $regNode->addChild('email', htmlspecialchars($registrant['email'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
-        $regNode->addChild('contact_number', htmlspecialchars($registrant['contact_number'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
-        $regNode->addChild('preference_allergy', htmlspecialchars($registrant['preference_allergy'] ?? '', ENT_XML1 | ENT_COMPAT, 'UTF-8'));
-        $regNode->addChild('event_id', $registrant['event_id'] ?? '');
-        $regNode->addChild('user_id', $registrant['user_id'] ?? '');
-        $regNode->addChild('registered_at', $registrant['registered_at']);
+        $regNode = $dom->createElement('registrant');
+        $regNode->appendChild($dom->createElement('id', $registrant['id']));
+        $regNode->appendChild($dom->createElement('full_name', $registrant['full_name']));
+        $regNode->appendChild($dom->createElement('age', $registrant['age']));
+        $regNode->appendChild($dom->createElement('email', $registrant['email']));
+        $regNode->appendChild($dom->createElement('contact_number', $registrant['contact_number']));
+        $regNode->appendChild($dom->createElement('preference_allergy', $registrant['preference_allergy'] ?? ''));
+        $regNode->appendChild($dom->createElement('event_id', $registrant['event_id'] ?? ''));
+        $regNode->appendChild($dom->createElement('user_id', $registrant['user_id'] ?? ''));
+        $regNode->appendChild($dom->createElement('registered_at', $registrant['registered_at']));
+        $root->appendChild($regNode);
     }
-    
-    return $xml;
+
+    return $dom;
 }
 
 function importEvents($xmlContent) {
-    $xml = simplexml_load_string($xmlContent);
-    if (!$xml || !isset($xml->event)) {
+    $dom = new DOMDocument();
+    libxml_use_internal_errors(true);
+    if (!$dom->loadXML($xmlContent)) {
+        libxml_clear_errors();
+        return 'Successfully imported (0) rows';
+    }
+    libxml_clear_errors();
+
+    $xpath = new DOMXPath($dom);
+    $eventNodes = $xpath->query('/events/event');
+    if ($eventNodes === false || $eventNodes->length === 0) {
         return 'Successfully imported (0) rows';
     }
 
     $model = new EventModel((new Database())->getConnection());
     $count = 0;
 
-    foreach ($xml->event as $event) {
-        $name = trim((string) $event->name);
-        $date = trim((string) $event->event_date);
+    foreach ($eventNodes as $eventNode) {
+        $name = trim($xpath->evaluate('string(name)', $eventNode));
+        $date = trim($xpath->evaluate('string(event_date)', $eventNode));
         if ($name === '' || $date === '') {
             continue;
         }
-        if ($model->addEvent($name, $date, trim((string) $event->location), trim((string) $event->description))) {
+        if ($model->addEvent(
+            $name,
+            $date,
+            trim($xpath->evaluate('string(location)', $eventNode)),
+            trim($xpath->evaluate('string(description)', $eventNode))
+        )) {
             $count++;
         }
     }
@@ -79,28 +95,37 @@ function importEvents($xmlContent) {
 }
 
 function importRegistrants($xmlContent) {
-    $xml = simplexml_load_string($xmlContent);
-    if (!$xml || !isset($xml->registrant)) {
+    $dom = new DOMDocument();
+    libxml_use_internal_errors(true);
+    if (!$dom->loadXML($xmlContent)) {
+        libxml_clear_errors();
+        return 'Successfully imported (0) rows';
+    }
+    libxml_clear_errors();
+
+    $xpath = new DOMXPath($dom);
+    $registrantNodes = $xpath->query('/registrants/registrant');
+    if ($registrantNodes === false || $registrantNodes->length === 0) {
         return 'Successfully imported (0) rows';
     }
 
     $model = new RegistrantModel((new Database())->getConnection());
     $count = 0;
 
-    foreach ($xml->registrant as $registrant) {
-        $name = trim((string) $registrant->full_name);
-        $email = trim((string) $registrant->email);
+    foreach ($registrantNodes as $registrantNode) {
+        $name = trim($xpath->evaluate('string(full_name)', $registrantNode));
+        $email = trim($xpath->evaluate('string(email)', $registrantNode));
         if ($name === '' || $email === '') {
             continue;
         }
         if ($model->addRegistrant(
             $name,
-            trim((string) $registrant->age),
+            trim($xpath->evaluate('string(age)', $registrantNode)),
             $email,
-            trim((string) $registrant->contact_number),
-            trim((string) $registrant->preference_allergy),
-            trim((string) $registrant->event_id),
-            trim((string) $registrant->user_id)
+            trim($xpath->evaluate('string(contact_number)', $registrantNode)),
+            trim($xpath->evaluate('string(preference_allergy)', $registrantNode)),
+            trim($xpath->evaluate('string(event_id)', $registrantNode)),
+            trim($xpath->evaluate('string(user_id)', $registrantNode))
         )) {
             $count++;
         }
@@ -114,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $xml = exportEvents();
         header('Content-Type: application/xml; charset=UTF-8');
         header('Content-Disposition: attachment; filename="events_' . date('Y-m-d_H-i-s') . '.xml"');
-        echo $xml->asXML();
+        echo $xml->saveXML();
         exit;
     }
 
@@ -138,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $xml = exportEvents();
         header('Content-Type: application/xml; charset=UTF-8');
         header('Content-Disposition: attachment; filename="events_' . date('Y-m-d_H-i-s') . '.xml"');
-        echo $xml->asXML();
+        echo $xml->saveXML();
         exit;
     }
     
@@ -146,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $xml = exportRegistrants();
         header('Content-Type: application/xml; charset=UTF-8');
         header('Content-Disposition: attachment; filename="registrants_' . date('Y-m-d_H-i-s') . '.xml"');
-        echo $xml->asXML();
+        echo $xml->saveXML();
         exit;
     }
 }
