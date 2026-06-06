@@ -14,7 +14,7 @@ $eventModel = new EventModel($dbConnection);
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     $name = trim($_POST['name'] ?? '');
-    $event_date = $_POST['date'] ?? '';
+    $event_date = $_POST['event_date'] ?? '';
     $location = trim($_POST['location'] ?? '');
     $id = $_POST['id'] ?? '';
     $description = trim($_POST['description'] ?? '');
@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if (isset($_POST['add'])) {
         //Input Validation
         if(empty($name) OR empty($event_date) OR empty($location) OR empty($description)){
-            //Will add the error next time
+            echo "ERror";
         } else {
             $eventModel->addEvent($name, $event_date, $location, $description);
             header("Location: ../views/event.php");
