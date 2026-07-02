@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 $namepass_error = $_SESSION['namepass_error'] ?? '';
@@ -145,7 +144,7 @@ if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
             </div>
             
             <div style="margin-top: 6px; font-family: 'ArchivoCondensedMedium'; font-size: 0.9rem;">
-                STATUS: 
+                STATUS:
                 <span style="color: <?php echo ($status === 'In Progress') ? 'var(--primary)' : 'var(--accent)'; ?>; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;">
                     <?php echo htmlspecialchars($status); ?>
                 </span>
@@ -156,7 +155,7 @@ if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
             <?php if ($latest_entry->changes->change->count() > 0): ?>
                 <div style="display: grid; gap: 10px;">
                     <?php foreach ($latest_entry->changes->change as $change): ?>
-                        <?php 
+                        <?php
                             $type = isset($change['type']) ? strtolower((string)$change['type']) : 'feature';
                             
                             // Color mapping strictly derived from your system palette variables

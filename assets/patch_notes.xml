@@ -17,18 +17,20 @@
         </changes>
     </release>
 
-    <release>
-        <version>2.0.0-dev</version>
-        <date>2026-07-02</date>
-        <status>In Progress</status>
-        <changes>
-            <change type="feature">Normalized database schema to split atomic name structures (first_name, middle_name, last_name)</change>
-            <change type="feature">Built automated environment-aware schema migration manager (core/migrate.php)</change>
-            <change type="change">Scaffolded Modular MVC architecture separating Auth and Registrants domains</change>
-            <change type="feature">Implemented single-entry routing framework (index.php) with dynamic BASE_URL calculation</change>
-            <change type="change">Isolated and structured public frontend assets, scripts, and typography layout elements</change>
-        </changes>
-    </release>
+<release>
+    <version>2.0.0-dev</version>
+    <date>2026-07-03</date>
+    <status>In Progress</status>
+    <changes>
+        <change type="feature">Normalized database schema to split atomic name structures (first_name, middle_name, last_name)</change>
+        <change type="feature">Shifted schema strategy to direct execution via database engine to preserve legacy environment compatibility</change>
+        <change type="change">Scaffolded Modular MVC architecture separating Home, Auth, Events, and Registrants domains</change>
+        <change type="feature">Implemented single-entry routing framework (index.php) handling dynamic multi-module request maps</change>
+        <change type="feature">Created event-specific direct registration pipeline linked cleanly via dynamic event_id tracking</change>
+        <change type="feature">Engineered unique alphanumeric transactional token engine (ABCD-1234 pattern) mapping to reference_id tracking keys</change>
+        <change type="feature">Built cross-module validation engine inside EventFeedback model protecting submission writes against unverified reference tokens</change>
+    </changes>
+</release>
 
     
 </changelog>
