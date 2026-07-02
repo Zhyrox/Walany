@@ -218,7 +218,7 @@ function updateThemeButton(theme) {
     }
 
     if (themeIcon.tagName === "IMG") {
-        themeIcon.src = isDark ? "../images/DarkModeIcon.svg" : "../images/LightModeIcon.svg";
+        themeIcon.src = isDark ? "images/DarkModeIcon.svg" : "images/LightModeIcon.svg";
         return;
     }
 

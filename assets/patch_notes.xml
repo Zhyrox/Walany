@@ -16,12 +16,19 @@
             <change type="change">Configured database relational structure using a persistent MySQL engine backend.</change>
         </changes>
     </release>
-<!--
+
     <release>
         <version>2.0.0-dev</version>
         <date>2026-07-02</date>
         <status>In Progress</status>
         <changes>
-            </changes>
-    </release>-->
+            <change type="feature">Normalized database schema to split atomic name structures (first_name, middle_name, last_name)</change>
+            <change type="feature">Built automated environment-aware schema migration manager (core/migrate.php)</change>
+            <change type="change">Scaffolded Modular MVC architecture separating Auth and Registrants domains</change>
+            <change type="feature">Implemented single-entry routing framework (index.php) with dynamic BASE_URL calculation</change>
+            <change type="change">Isolated and structured public frontend assets, scripts, and typography layout elements</change>
+        </changes>
+    </release>
+
+    
 </changelog>

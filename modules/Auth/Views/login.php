@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 $namepass_error = $_SESSION['namepass_error'] ?? '';
@@ -10,15 +11,15 @@ unset($_SESSION['login_error']);
 
 <?php
 // Configuration Switch: Set to true to display the popup, false to hide it without deleting code
-$show_patch_notes = true; 
+$show_patch_notes = true;
 
 $latest_version = "";
 $release_date = "";
 $status = "";
 $latest_entry = null;
 
-if ($show_patch_notes && file_exists('../patch_notes.xml')) {
-    $xml = simplexml_load_file('../patch_notes.xml');
+if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
+    $xml = simplexml_load_file('assets/patch_notes.xml');
     
     // Select the absolute latest <release> entry at the bottom of the XML file
     if ($xml && $xml->release->count() > 0) {
@@ -27,6 +28,8 @@ if ($show_patch_notes && file_exists('../patch_notes.xml')) {
         $release_date = (string)$latest_entry->date;
         $status = (string)$latest_entry->status;
     }
+} else {
+    echo "HELLO THIS IS AN ERROR";
 }
 ?>
 
@@ -38,16 +41,19 @@ if ($show_patch_notes && file_exists('../patch_notes.xml')) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="icon" type="image/x-icon" href="../images/Walania.svg">
-    <link rel="stylesheet" href="../style.css">
+    
+    <base href="<?php echo BASE_URL; ?>">
+    <link rel="icon" type="image/x-icon" href="assets/images/Walania.svg">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="login-page">
+    
     <header class="site-header login-header">
         <a href="" class="logo-placeholder" aria-label="Refresh page">
-            <img src="../images/Walania.svg" alt="Walania logo">
+            <img src="assets/images/Walania.svg" alt="Walania logo">
         </a>
         <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
-            <img class="theme-toggle-icon" data-theme-icon src="../images/LightModeIcon.svg" alt="" aria-hidden="true">
+            <img class="theme-toggle-icon" data-theme-icon src="assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
         </button>
     </header>
 
@@ -56,21 +62,21 @@ if ($show_patch_notes && file_exists('../patch_notes.xml')) {
             <div class="login-visual" aria-hidden="true">
                 <div class="login-slideshow">
                     <div class="login-slide is-active">
-                        <img class="login-slide-image" src="../images/Event_Image (1).jpg" alt="Login slide 1 placeholder">
+                        <img class="login-slide-image" src="assets/images/Event_Image (1).jpg" alt="Login slide 1 placeholder">
                         <div class="slide-caption">
                             <p>Capture the moment</p>
                             <h2>Events that feel alive</h2>
                         </div>
                     </div>
                     <div class="login-slide">
-                        <img class="login-slide-image" src="../images/Event_Image (2).jpg" alt="Login slide 2 placeholder">
+                        <img class="login-slide-image" src="assets/images/Event_Image (2).jpg" alt="Login slide 2 placeholder">
                         <div class="slide-caption">
                             <p>Where events come together</p>
                             <h2>For every event worth keeping</h2>
                         </div>
                     </div>
                     <div class="login-slide">
-                        <img class="login-slide-image" src="../images/Event_Image (3).jpg" alt="Login slide 3 placeholder">
+                        <img class="login-slide-image" src="assets/images/Event_Image (3).jpg" alt="Login slide 3 placeholder">
                         <div class="slide-caption">
                             <p>Your event, your story</p>
                             <h2>Made to feel personal</h2>
@@ -196,9 +202,9 @@ if ($show_patch_notes && file_exists('../patch_notes.xml')) {
         </button>
     </div>
 </div>
-<?php endif; ?> 
+<?php endif; ?>
 
 
-    <script src="../script.js"></script>
+    <script src="assets/script.js"></script>
 </body>
 </html>

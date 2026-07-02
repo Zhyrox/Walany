@@ -1,26 +1,26 @@
 @font-face{
     font-family: 'ArchivoCondensedExtraBold';
-    src:url('./misc/fonts/Archivo_Condensed-ExtraBold.woff2') format('woff2');
+    src:url('fonts/Archivo_Condensed-ExtraBold.woff2') format('woff2');
 }
 @font-face{
     font-family: 'ArchivoExpandedExtraBold';
-    src:url('./misc/fonts/Archivo_Expanded-ExtraBold.woff2') format('woff2');
+    src:url('fonts/Archivo_Expanded-ExtraBold.woff2') format('woff2');
 }
 @font-face{
     font-family: 'ArchivoCondensedMedium';
-    src:url('./misc/fonts/Archivo_Condensed-Medium.woff2') format('woff2');
+    src:url('fonts/Archivo_Condensed-Medium.woff2') format('woff2');
 }
 @font-face {
     font-family: 'ArchivoLight';
-    src: url('./misc/fonts/Archivo-Light.woff2') format('woff2');
+    src: url('fonts/Archivo-Light.woff2') format('woff2');
 }
 @font-face {
     font-family: 'ArchivoBold';
-    src: url('./misc/fonts/Archivo-Bold.woff2') format('woff2');
+    src: url('fonts/Archivo-Bold.woff2') format('woff2');
 }
 @font-face{
     font-family: 'ArchivoExtraBold';
-    src: url('./misc/fonts/Archivo-ExtraBold.woff2') format('woff2');
+    src: url('fonts/Archivo-ExtraBold.woff2') format('woff2');
 }
 
 :root[data-theme="light"] {
