@@ -49,8 +49,8 @@ class Registrant {
             }
 
             // 2. Insert execution mapped cleanly to include event_id and reference_id
-            $sql = "INSERT INTO walania_registrant (event_id, reference_id, first_name, middle_name, last_name, email, contact_number)
-                    VALUES (:event_id, :reference_id, :first_name, :middle_name, :last_name, :email, :contact_number)";
+            $sql = "INSERT INTO walania_registrant (event_id, reference_id, first_name, middle_name, last_name, age, email, contact_number)
+                    VALUES (:event_id, :reference_id, :first_name, :middle_name, :last_name, 0, :email, :contact_number)";
             
             $stmt = $this->db->prepare($sql);
             

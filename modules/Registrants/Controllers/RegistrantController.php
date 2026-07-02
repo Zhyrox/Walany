@@ -76,7 +76,7 @@ class RegistrantController {
             'middle_name'    => isset($_POST['middle_name']) ? trim($_POST['middle_name']) : '',
             'last_name'      => isset($_POST['last_name']) ? trim($_POST['last_name']) : '',
             'email'          => isset($_POST['email']) ? trim($_POST['email']) : '',
-            'contact_number' => isset($_POST['contact_number']) ? trim($_POST['contact_number']) : (isset($_POST['phone_number']) ? trim($_POST['phone_number']) : '')
+            'contact_number' => isset($_POST['contact_number']) ? trim($_POST['contact_number']) : (isset($_POST['contact_number']) ? trim($_POST['contact_number']) : '')
         ]);
 
 if ($saveSuccess) {

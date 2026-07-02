@@ -3,13 +3,13 @@ require_once __DIR__ . '/core/config.php';
 
 // 1. Capture the requested module and action from the URL query strings
 // Example URL: localhost/walania/index.php?module=registrants&action=register
-$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Auth';    // 1. Auth 2.Registrants 3. Events 4. Home
-$action = isset($_GET['action']) ? strtolower($_GET['action']) : 'login';                // 1. login 2. register 3. evaluate
+$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Events';    // 1. Auth 2.Registrants 3. Events 4. Home
+$action = isset($_GET['action']) ? strtolower($_GET['action']) : 'evaluate';                // 1. login 2. register 3. evaluate
 
 // 2. Map routing requests to their clean modular directories
 switch ($module) {
     case 'Auth':
-        //require_once __DIR__ . '/modules/Auth/Controllers/AuthController.php';
+        require_once __DIR__ . '/modules/Auth/Controllers/AuthController.php';
         //$controller = new AuthController();
 
         if ($action === 'login') {
