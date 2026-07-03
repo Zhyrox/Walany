@@ -2,7 +2,7 @@
     <h2>⭐ Event Evaluation & Feedback</h2>
     <p>Please provide your unique registration reference ID code to submit your rating metrics.</p>
 
-    <form action="index.php?module=Events&action=submit_evaluation" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+    <form action="/PHP_Project/Walany/index.php?module=Events&action=submit_evaluation" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
         <!-- Hidden input tracking the specific event target index -->
         <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($_GET['event_id'] ?? '1'); ?>">
 

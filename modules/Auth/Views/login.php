@@ -1,14 +1,19 @@
 <?php
-session_start();
+// Ensure session context is live for error notifications
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $namepass_error = $_SESSION['namepass_error'] ?? '';
 $login_error = $_SESSION['login_error'] ?? '';
 
-
 unset($_SESSION['namepass_error']);
 unset($_SESSION['login_error']);
-?>
 
-<?php
+// Handle query string errors sent back from the router
+if (isset($_GET['login_error'])) {
+    $login_error = $_GET['login_error'];
+}
+
 // Configuration Switch: Set to true to display the popup, false to hide it without deleting code
 $show_patch_notes = true;
 
@@ -27,19 +32,14 @@ if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
         $release_date = (string)$latest_entry->date;
         $status = (string)$latest_entry->status;
     }
-} else {
-    echo "HELLO THIS IS AN ERROR";
 }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - System Management Console</title>
     
     <base href="<?php echo BASE_URL; ?>">
     <link rel="icon" type="image/x-icon" href="assets/images/Walania.svg">
@@ -88,121 +88,115 @@ if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
                     <span></span>
                 </div>
             </div>
+            
             <article class="login-form" aria-labelledby="loginTitle">
-                <h2 id="loginTitle">Sign in</h2>
+                <h2 id="loginTitle">Console Sign In</h2>
+                <p style="margin-top: -10px; margin-bottom: 20px; color: var(--muted); font-size: 0.9rem;">Access restricted strictly to System Managers</p>
 
                 <?php if ($namepass_error): ?>
-                    <p class="error-message"><?php echo $namepass_error; ?></p>
+                    <p class="error-message"><?php echo htmlspecialchars($namepass_error); ?></p>
                 <?php endif; ?>
 
                 <?php if ($login_error): ?>
-                    <p class="error-message"><?php echo $login_error; ?></p>
+                    <p class="error-message"><?php echo htmlspecialchars($login_error); ?></p>
                 <?php endif; ?>
 
-                <form action="../controllers/LoginController.php" method="POST" novalidate>
+                <!-- Form action targets the unified application entry router -->
+                <form action="/PHP_Project/Walany/index.php?module=Auth&action=login" method="POST" novalidate>
                     <div class="form-group">
-                        <label for="login-username">Username</label>
-                        <input id="login-username" name="username" type="text" required autocomplete="username" />
+                        <label for="login-email">Administrative Email</label>
+                        <!-- Changed from type="text" username to type="email" name="email" -->
+                        <input id="login-email" name="email" type="email" required autocomplete="email" placeholder="name@walany.edu.ph" />
                     </div>
 
                     <div class="form-group">
                         <label for="login-password">Password</label>
                         <div class="field">
-                            <input id="login-password" name="password" type="password" required autocomplete="current-password" />
+                            <input id="login-password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" />
                             <button type="button" class="toggle-password" data-target="login-password" aria-label="Show password">Show</button>
                         </div>
                     </div>
 
-                    <button class="primary-button submit-button" type="submit" name="login">Login</button>
+                    <button class="primary-button submit-button" type="submit" name="login">Enter Console</button>
 
-                    <p class="login-note note">
-                        Don't have an account yet? <a href="register.php">Sign up</a>
-                    </p>
-
-                    <p class="login-note note">By logging in you can submit and manage your event registrations.</p>
+                    <!-- Removed the registrant sign up links to satisfy Week 1 auth requirements -->
+                    <p class="login-note note">Authorized institutional administrative access node. Activity is logged under system security protocol.</p>
                 </form>
             </article>
         </div>
     </main>
 
-
+    <!-- Patch Notes Modal System -->
     <?php if ($show_patch_notes && $latest_entry): ?>
-<div id="patchNotesModal" class="no-scrollbar" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: color-mix(in srgb, var(--background) 75%, transparent); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(18px); padding: 16px;">
-    
-    <div style="background: linear-gradient(180deg, color-mix(in srgb, var(--background) 84%, var(--surface)) 0%, color-mix(in srgb, var(--secondary) 14%, var(--surface)) 100%); width: min(100%, 480px); max-height: 85vh; padding: 26px; border: 1px solid var(--border); border-radius: 26px; box-shadow: var(--shadow); display: flex; flex-direction: column;">
-        
-        <div style="margin-bottom: 18px;">
-            <div class="eyebrow" style="margin-bottom: 4px;">SYSTEM LOGS</div>
-            <h2 style="margin: 0; font-family: 'ArchivoCondensedExtraBold'; font-size: 2.2rem; line-height: 1.1; background: linear-gradient(135deg, #9fcfce 0%, #6ca7a6 48%, #468181 100%); -webkit-background-clip: text; background-clip: text; color: transparent;">
-                Patch Notes
-            </h2>
-            
-            <div style="margin-top: 8px; font-family: 'ArchivoBold'; font-size: 0.85rem; color: var(--muted); display: flex; gap: 12px; align-items: center;">
-                <span>VERSION: <span style="color: var(--text);"><?php echo htmlspecialchars($latest_version); ?></span></span>
-                <span>•</span>
-                <span>RELEASED: <span style="color: var(--text);"><?php echo htmlspecialchars($release_date); ?></span></span>
+    <div id="patchNotesModal" class="no-scrollbar" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: color-mix(in srgb, var(--background) 75%, transparent); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(18px); padding: 16px;">
+        <div style="background: linear-gradient(180deg, color-mix(in srgb, var(--background) 84%, var(--surface)) 0%, color-mix(in srgb, var(--secondary) 14%, var(--surface)) 100%); width: min(100%, 480px); max-height: 85vh; padding: 26px; border: 1px solid var(--border); border-radius: 26px; box-shadow: var(--shadow); display: flex; flex-direction: column;">
+            <div style="margin-bottom: 18px;">
+                <div class="eyebrow" style="margin-bottom: 4px;">SYSTEM LOGS</div>
+                <h2 style="margin: 0; font-family: 'ArchivoCondensedExtraBold'; font-size: 2.2rem; line-height: 1.1; background: linear-gradient(135deg, #9fcfce 0%, #6ca7a6 48%, #468181 100%); -webkit-background-clip: text; background-clip: text; color: transparent;">
+                    Patch Notes
+                </h2>
+                <div style="margin-top: 8px; font-family: 'ArchivoBold'; font-size: 0.85rem; color: var(--muted); display: flex; gap: 12px; align-items: center;">
+                    <span>VERSION: <span style="color: var(--text);"><?php echo htmlspecialchars($latest_version); ?></span></span>
+                    <span>•</span>
+                    <span>RELEASED: <span style="color: var(--text);"><?php echo htmlspecialchars($release_date); ?></span></span>
+                </div>
+                <div style="margin-top: 6px; font-family: 'ArchivoCondensedMedium'; font-size: 0.9rem;">
+                    STATUS:
+                    <span style="color: <?php echo ($status === 'In Progress') ? 'var(--primary)' : 'var(--accent)'; ?>; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <?php echo htmlspecialchars($status); ?>
+                    </span>
+                </div>
             </div>
             
-            <div style="margin-top: 6px; font-family: 'ArchivoCondensedMedium'; font-size: 0.9rem;">
-                STATUS:
-                <span style="color: <?php echo ($status === 'In Progress') ? 'var(--primary)' : 'var(--accent)'; ?>; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;">
-                    <?php echo htmlspecialchars($status); ?>
-                </span>
-            </div>
-        </div>
-        
-        <div class="no-scrollbar" style="flex: 1; overflow-y: auto; margin-bottom: 20px; padding-right: 2px;">
-            <?php if ($latest_entry->changes->change->count() > 0): ?>
-                <div style="display: grid; gap: 10px;">
-                    <?php foreach ($latest_entry->changes->change as $change): ?>
-                        <?php
-                            $type = isset($change['type']) ? strtolower((string)$change['type']) : 'feature';
-                            
-                            // Color mapping strictly derived from your system palette variables
-                            switch($type) {
-                                case 'feature':
-                                    $badge_border = 'var(--primary)';
-                                    $badge_bg = 'color-mix(in srgb, var(--primary) 20%, var(--surface))';
-                                    break;
-                                case 'change':
-                                    $badge_border = 'var(--accent)';
-                                    $badge_bg = 'color-mix(in srgb, var(--accent) 20%, var(--surface))';
-                                    break;
-                                case 'fix':
-                                    $badge_border = '#e04c4c';
-                                    $badge_bg = 'color-mix(in srgb, #e04c4c 15%, var(--surface))';
-                                    break;
-                                default:
-                                    $badge_border = 'var(--border)';
-                                    $badge_bg = 'var(--surface)';
-                            }
-                        ?>
-                        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface);">
-                            <span style="background: <?php echo $badge_bg; ?>; color: var(--text); border: 1px solid <?php echo $badge_border; ?>; font-family: 'ArchivoCondensedExtraBold'; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; letter-spacing: 0.06em; flex-shrink: 0; margin-top: 1px;">
-                                <?php echo strtoupper($type); ?>
-                            </span>
-                            <div style="font-family: 'ArchivoLight'; font-size: 0.92rem; line-height: 1.4; color: var(--text); word-break: break-word;">
-                                <?php echo htmlspecialchars((string)$change); ?>
+            <div class="no-scrollbar" style="flex: 1; overflow-y: auto; margin-bottom: 20px; padding-right: 2px;">
+                <?php if ($latest_entry->changes->change->count() > 0): ?>
+                    <div style="display: grid; gap: 10px;">
+                        <?php foreach ($latest_entry->changes->change as $change): ?>
+                            <?php
+                                $type = isset($change['type']) ? strtolower((string)$change['type']) : 'feature';
+                                switch($type) {
+                                    case 'feature':
+                                        $badge_border = 'var(--primary)';
+                                        $badge_bg = 'color-mix(in srgb, var(--primary) 20%, var(--surface))';
+                                        break;
+                                    case 'change':
+                                        $badge_border = 'var(--accent)';
+                                        $badge_bg = 'color-mix(in srgb, var(--accent) 20%, var(--surface))';
+                                        break;
+                                    case 'fix':
+                                        $badge_border = '#e04c4c';
+                                        $badge_bg = 'color-mix(in srgb, #e04c4c 15%, var(--surface))';
+                                        break;
+                                    default:
+                                        $badge_border = 'var(--border)';
+                                        $badge_bg = 'var(--surface)';
+                                }
+                            ?>
+                            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface);">
+                                <span style="background: <?php echo $badge_bg; ?>; color: var(--text); border: 1px solid <?php echo $badge_border; ?>; font-family: 'ArchivoCondensedExtraBold'; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; letter-spacing: 0.06em; flex-shrink: 0; margin-top: 1px;">
+                                    <?php echo strtoupper($type); ?>
+                                </span>
+                                <div style="font-family: 'ArchivoLight'; font-size: 0.92rem; line-height: 1.4; color: var(--text); word-break: break-word;">
+                                    <?php echo htmlspecialchars((string)$change); ?>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div style="padding: 24px; border: 1px dashed var(--border); border-radius: 14px; text-align: center; background: var(--surface);">
-                    <p style="margin: 0; font-family: 'ArchivoBold'; font-size: 0.95rem; color: var(--muted);">
-                        No updates logged for this milestone cycle. Building in progress...
-                    </p>
-                </div>
-            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div style="padding: 24px; border: 1px dashed var(--border); border-radius: 14px; text-align: center; background: var(--surface);">
+                        <p style="margin: 0; font-family: 'ArchivoBold'; font-size: 0.95rem; color: var(--muted);">
+                            No updates logged for this milestone cycle. Building in progress...
+                        </p>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <button onclick="document.getElementById('patchNotesModal').style.display='none'" class="primary-button" style="width: 100%; padding: 14px; font-size: 0.95rem; letter-spacing: 0.02em;">
+                Acknowledge & Proceed
+            </button>
         </div>
-        
-        <button onclick="document.getElementById('patchNotesModal').style.display='none'" class="primary-button" style="width: 100%; padding: 14px; font-size: 0.95rem; letter-spacing: 0.02em;">
-            Acknowledge & Proceed
-        </button>
     </div>
-</div>
-<?php endif; ?>
-
+    <?php endif; ?>
 
     <script src="assets/script.js"></script>
 </body>

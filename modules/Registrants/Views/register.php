@@ -3,7 +3,7 @@
     <p>Please fill out your details to reserve your slot and generate your unique reference ID token.</p>
 
     <!-- The form submits to the Registrants module action processor -->
-    <form action="index.php?module=Registrants&action=submit_registration" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+    <form action="/PHP_Project/Walany/index.php?module=Registrants&action=submit_registration" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
         
         <!-- Crucial: Capture the incoming event_id from the landing page click -->
         <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($_GET['event_id'] ?? '1'); ?>">
