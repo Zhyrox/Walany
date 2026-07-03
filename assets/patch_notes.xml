@@ -22,6 +22,7 @@
     <date>2026-07-03</date>
     <status>In Progress</status>
     <changes>
+        <change type="feature">System sends an email that contains the qr code and reference id to be used for both evaluation and attendance</change>
         <change type="feature">Normalized database schema to split atomic name structures (first_name, middle_name, last_name)</change>
         <change type="feature">Shifted schema strategy to direct execution via database engine to preserve legacy environment compatibility</change>
         <change type="change">Scaffolded Modular MVC architecture separating Home, Auth, Events, and Registrants domains</change>
