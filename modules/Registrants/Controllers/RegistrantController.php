@@ -67,6 +67,38 @@ class RegistrantController {
             ];
         }
 
+
+        // Verify if email is valid or existing
+
+        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+
+        // 1. Structural Syntax Validation
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['status' => 'error', 'message' => 'Invalid email address syntax format.'];
+        }
+
+        // 2. Reject Common Disposable / Placeholder Domains
+        $disallowedDomains = ['example.com', 'test.com', 'domain.com', 'mailinator.com', 'yopmail.com'];
+        $emailParts = explode('@', $email);
+        $domain = strtolower(end($emailParts));
+
+        if (in_array($domain, $disallowedDomains)) {
+            return [
+                'status' => 'error', 
+                'message' => 'Registration blocked: Academic or real-world email addresses only.'
+            ];
+        }
+
+        // 3. DNS MX Record Verification (Checks if the domain actually handles email)
+        // Note: This requires an active internet connection on your local machine to query DNS records.
+        if (!checkdnsrr($domain, 'MX')) {
+            return [
+                'status' => 'error', 
+                'message' => 'The email domain you provided does not appear to exist or host a valid mail server.'
+            ];
+        }
+
+
         require_once __DIR__ . '/../Models/RegistrantModel.php';
         $model = new Registrant();
         
@@ -113,7 +145,7 @@ class RegistrantController {
                 $mail->Port       = 587;
 
                 // Recipients
-                $mail->setFrom('YOUR_GMAIL_ACCOUNT@gmail.com', 'Walany Event Management');
+                $mail->setFrom('YOUR_GMAIL_ACCOUNT@gmail.com', 'Walania Event Management');
                 $mail->addAddress($email, $firstName . ' ' . $lastName);
 
                 // Inline Attachment Mapping
