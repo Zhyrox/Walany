@@ -16,7 +16,7 @@
                     
 <div class="actions" style="display: flex; gap: 10px;">
     <!-- Registration Button -->
-    <a href="/PHP_Project/Walany/modules/Registrants/Views/register.php?event_id=<?= $event['id'] ?>" class="btn btn-primary" style="padding: 8px 12px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+    <a href="/PHP_Project/Walany/modules/Registrants/Views/registration-form.php?event_id=<?= $event['id'] ?>" class="btn btn-primary" style="padding: 8px 12px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
         Register Now
     </a>
     

@@ -29,9 +29,16 @@
             <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; box-sizing: border-box;">
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label for="phone_number" style="display: block; font-weight: bold; margin-bottom: 5px;">Contact Number</label>
-            <input type="text" id="contact_number" name="contact_number" required placeholder="e.g., 09123456789" style="width: 100%; padding: 8px; box-sizing: border-box;">
+        <!-- Grouping Contact Number and Age together in a 2-column grid layout -->
+        <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label for="contact_number" style="display: block; font-weight: bold; margin-bottom: 5px;">Contact Number</label>
+                <input type="text" id="contact_number" name="contact_number" required placeholder="e.g., 09123456789" style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label for="birthdate" style="display: block; font-weight: bold; margin-bottom: 5px;">Birthdate</label>
+                <input type="date" id="birthdate" name="birthdate" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
         </div>
 
         <button type="submit" style="background: #007bff; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%;">Complete Registration</button>

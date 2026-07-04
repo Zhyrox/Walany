@@ -48,9 +48,9 @@ class Registrant {
                 }
             }
 
-            // 2. Insert execution mapped cleanly to include event_id and reference_id
-            $sql = "INSERT INTO walania_registrant (event_id, reference_id, first_name, middle_name, last_name, age, email, contact_number)
-                    VALUES (:event_id, :reference_id, :first_name, :middle_name, :last_name, 0, :email, :contact_number)";
+            // 2. Insert execution mapped cleanly to include event_id, reference_id, birthdate, and is_verified
+            $sql = "INSERT INTO walania_registrant (event_id, reference_id, first_name, middle_name, last_name, birthdate, email, contact_number, is_verified)
+                    VALUES (:event_id, :reference_id, :first_name, :middle_name, :last_name, :birthdate, :email, :contact_number, :is_verified)";
             
             $stmt = $this->db->prepare($sql);
             
@@ -60,14 +60,18 @@ class Registrant {
                 ':first_name'     => $data['first_name'],
                 ':middle_name'    => !empty($data['middle_name']) ? $data['middle_name'] : null,
                 ':last_name'      => $data['last_name'],
+                ':birthdate'      => !empty($data['birthdate']) ? $data['birthdate'] : null,
                 ':email'          => $data['email'],
-                ':contact_number' => $data['contact_number']
+                ':contact_number' => $data['contact_number'],
+                ':is_verified'    => $data['is_verified']
             ]);
 
             // Return the generated key string back to the controller layer
             return $referenceId;
             
         } catch (PDOException $e) {
+            // Log the actual error silently to system logs for debugging
+            error_log("Database Save Failure: " . $e->getMessage());
             return false;
         }
     }
