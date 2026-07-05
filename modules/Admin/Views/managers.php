@@ -1,7 +1,7 @@
 <?php
 // modules/Admin/Views/managers.php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'System Manager') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login");
     exit;
 }

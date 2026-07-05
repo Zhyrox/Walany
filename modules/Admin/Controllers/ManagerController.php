@@ -5,7 +5,9 @@ class ManagerController {
 
     public function createManager() {
         if (session_status() === PHP_SESSION_NONE) { session_start(); }
-        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'System Manager') {
+        
+        // FIX: Match the updated single-word role
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
             return ['status' => 'error', 'message' => 'Unauthorized administrative access checkpoint.'];
         }
 
@@ -14,6 +16,9 @@ class ManagerController {
             $lastName  = trim($_POST['last_name'] ?? '');
             $email     = trim($_POST['email'] ?? '');
             $password  = $_POST['password'] ?? '';
+            
+            // Capture the target role from your form dropdown (default to 'planner' if not specified)
+            $role      = trim($_POST['role'] ?? 'planner'); 
 
             // Guard: Enforce strict existence validation
             if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
@@ -37,15 +42,17 @@ class ManagerController {
                     return ['status' => 'error', 'message' => 'Conflict: An administrator with this email already exists.'];
                 }
 
-                $stmt = $db->prepare("INSERT INTO `walania_managers` (`first_name`, `last_name`, `email`, `password_hash`) VALUES (:first_name, :last_name, :email, :password_hash)");
+                // UPDATED: Added the `role` column mapping to the insert statement
+                $stmt = $db->prepare("INSERT INTO `walania_managers` (`first_name`, `last_name`, `email`, `password_hash`, `role`) VALUES (:first_name, :last_name, :email, :password_hash, :role)");
                 $stmt->execute([
                     'first_name'    => $firstName,
                     'last_name'     => $lastName,
                     'email'         => $email,
-                    'password_hash' => $passwordHash
+                    'password_hash' => $passwordHash,
+                    'role'          => $role
                 ]);
 
-                return ['status' => 'success', 'message' => 'New System Manager account provisioned successfully!'];
+                return ['status' => 'success', 'message' => 'New account provisioned successfully!'];
             } catch (PDOException $e) {
                 return ['status' => 'error', 'message' => 'Database transaction breakdown: ' . $e->getMessage()];
             }
@@ -55,7 +62,9 @@ class ManagerController {
 
     public function updateManager($managerId) {
         if (session_status() === PHP_SESSION_NONE) { session_start(); }
-        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'System Manager') {
+        
+        // FIX: Changed 'System Manager' to 'admin'
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
             return ['status' => 'error', 'message' => 'Unauthorized administrative access checkpoint.'];
         }
 
@@ -64,6 +73,7 @@ class ManagerController {
             $lastName  = trim($_POST['last_name'] ?? '');
             $email     = trim($_POST['email'] ?? '');
             $password  = $_POST['password'] ?? ''; 
+            $role      = trim($_POST['role'] ?? 'planner'); // Capture updated role selection
 
             if (empty($firstName) || empty($lastName) || empty($email)) {
                 return ['status' => 'error', 'message' => 'Profile updates require valid name and email fields.'];
@@ -73,23 +83,25 @@ class ManagerController {
                 $db = (new Database())->getConnection();
                 
                 if (!empty($password)) {
-                    // Update profile details AND overwrite password securely
+                    // Update profile details, role, AND overwrite password securely
                     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-                    $stmt = $db->prepare("UPDATE `walania_managers` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email, `password_hash` = :password_hash WHERE `id` = :id");
+                    $stmt = $db->prepare("UPDATE `walania_managers` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email, `password_hash` = :password_hash, `role` = :role WHERE `id` = :id");
                     $stmt->execute([
                         'first_name'    => $firstName,
                         'last_name'     => $lastName,
                         'email'         => $email,
                         'password_hash' => $passwordHash,
+                        'role'          => $role,
                         'id'            => intval($managerId)
                     ]);
                 } else {
-                    // Update demographic credentials without altering the active password hash field
-                    $stmt = $db->prepare("UPDATE `walania_managers` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email WHERE `id` = :id");
+                    // Update credentials and role without altering the active password hash
+                    $stmt = $db->prepare("UPDATE `walania_managers` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email, `role` = :role WHERE `id` = :id");
                     $stmt->execute([
                         'first_name' => $firstName,
                         'last_name'  => $lastName,
                         'email'      => $email,
+                        'role'       => $role,
                         'id'         => intval($managerId)
                     ]);
                 }

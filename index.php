@@ -2,9 +2,8 @@
 require_once __DIR__ . '/core/config.php';
 
 // 1. Capture the requested module and action from the URL query strings
-// Example URL: localhost/walania/index.php?module=registrants&action=register
-$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Home';    // 1. Auth 2.Registrants 3. Events 4. Home
-$action = isset($_GET['action']) ? strtolower($_GET['action']) : '';                // 1. login 2. register 3. evaluate
+$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Auth';
+$action = isset($_GET['action']) ? strtolower($_GET['action']) : 'login';
 
 // 2. Map routing requests to their clean modular directories
 switch ($module) {
@@ -16,8 +15,20 @@ switch ($module) {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Process the login submission
                 $response = $controller->handleLogin();
+                
                 if ($response['status'] === 'success') {
-                    header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers");
+
+                    // Check the session role and distribute users to their right views
+                    if ($_SESSION['role'] === 'admin') {
+                        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers");
+                    } elseif ($_SESSION['role'] === 'registrar') {
+                        header("Location: /PHP_Project/Walany/index.php?module=Attendance&action=view_events");
+                    } elseif ($_SESSION['role'] === 'planner') {
+                        header("Location: /PHP_Project/Walany/index.php?module=Events&action=dashboard"); // Modify if you use a different default action
+                    } else {
+                        // Fallback fallback if an unknown role exists
+                        header("Location: /PHP_Project/Walany/index.php?module=Home");
+                    }
                 } else {
                     header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login&login_error=" . urlencode($response['message']));
                 }
@@ -34,7 +45,6 @@ switch ($module) {
         require_once __DIR__ . '/modules/Admin/Controllers/ManagerController.php';
         $controller = new ManagerController();
         
-        // Wrap rendering the views inside an action case
         if ($action === 'view_managers') {
             require_once __DIR__ . '/modules/Admin/Views/managers.php';
             exit;
@@ -54,15 +64,36 @@ switch ($module) {
         }
         break;
 
+    case 'Attendance':
+        require_once __DIR__ . '/modules/Attendance/Controllers/AttendanceController.php';
+        $controller = new AttendanceController();
+
+        if ($action === 'view_events') {
+            $data = $controller->showEventsList();
+            $events = $data['events'] ?? [];
+            require_once __DIR__ . '/modules/Attendance/Views/events-list.php';
+            exit;
+        }
+        
+        if ($action === 'scanner') {
+            // FIX: Load the actual HTML5 webcam viewer workspace
+            require_once __DIR__ . '/modules/Attendance/Views/scanner.php';
+            exit;
+        }
+
+        if ($action === 'process_scan') {
+            // New route action catch block to intercept live camera data payloads
+            $result = $controller->processAttendanceScan();
+            echo json_encode($result);
+            exit;
+        }
+        break;
+
     case 'Home':
-
         require_once __DIR__ . '/modules/Homepage/Controllers/HomepageController.php';
-
         $controller = new HomepageController();
         $controller->index();
-        
         require_once __DIR__ . '/modules/Homepage/Views/homepage.php';
-        
         break;
 
     case 'Registrants':

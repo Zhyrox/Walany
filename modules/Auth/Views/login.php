@@ -15,7 +15,7 @@ if (isset($_GET['login_error'])) {
 }
 
 // Configuration Switch: Set to true to display the popup, false to hide it without deleting code
-$show_patch_notes = true;
+$show_patch_notes = false;
 
 $latest_version = "";
 $release_date = "";
