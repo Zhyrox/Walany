@@ -4,6 +4,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require_once __DIR__ . '/../../../core/Config.php';
+
 
 class RegistrantController {
     private $db;
@@ -23,7 +25,8 @@ class RegistrantController {
             return ['status' => 'error', 'message' => 'Invalid request method.'];
         }
 
-        $event_id   = trim(filter_input(INPUT_POST, 'event_id', FILTER_DEFAULT));
+        $event_id = isset($_POST['event_id']) ? intval($_POST['event_id']) : 0;
+
         $firstName  = trim(filter_input(INPUT_POST, 'first_name', FILTER_DEFAULT));
         $middleName = trim(filter_input(INPUT_POST, 'middle_name', FILTER_DEFAULT));
         $lastName   = trim(filter_input(INPUT_POST, 'last_name', FILTER_DEFAULT));
@@ -79,7 +82,7 @@ class RegistrantController {
             $calculatedAge = 0;
         }
 
-        $targetEventId = !empty($event_id) ? intval($event_id) : 1;
+        $targetEventId = $event_id;
         $eventStmt = $this->db->prepare("SELECT is_adult_only FROM walania_event WHERE id = ? LIMIT 1");
         $eventStmt->execute([$targetEventId]);
         $eventData = $eventStmt->fetch(PDO::FETCH_ASSOC);
@@ -132,10 +135,10 @@ class RegistrantController {
 
                 $mail = new PHPMailer\PHPMailer\PHPMailer(true);
                 $mail->isSMTP();
-                $mail->Host       = 'smtp.gmail.com';
+                $mail->Host       = SMTP_HOST;
                 $mail->SMTPAuth   = true;
-                $mail->Username   = 'yeahlow24@gmail.com';
-                $mail->Password   = 'jqtv dlyp etum ojut';
+                $mail->Username   = SMTP_USER;
+                $mail->Password   = SMTP_PASS;
                 $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = 587;
 
@@ -222,10 +225,10 @@ class RegistrantController {
             try {
                 $mail = new PHPMailer\PHPMailer\PHPMailer(true);
                 $mail->isSMTP();
-                $mail->Host       = 'smtp.gmail.com';
+                $mail->Host       = SMTP_HOST;
                 $mail->SMTPAuth   = true;
-                $mail->Username   = 'yeahlow24@gmail.com';
-                $mail->Password   = 'jqtv dlyp etum ojut';
+                $mail->Username   = SMTP_USER;
+                $mail->Password   = SMTP_PASS;
                 $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = 587;
                 $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
@@ -283,10 +286,10 @@ class RegistrantController {
 
                         $mail = new PHPMailer\PHPMailer\PHPMailer(true);
                         $mail->isSMTP();
-                        $mail->Host       = 'smtp.gmail.com';
+                        $mail->Host       = SMTP_HOST;
                         $mail->SMTPAuth   = true;
-                        $mail->Username   = 'yeahlow24@gmail.com';
-                        $mail->Password   = 'jqtv dlyp etum ojut';
+                        $mail->Username   = SMTP_USER;
+                        $mail->Password   = SMTP_PASS;
                         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                         $mail->Port       = 587;
                         $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
