@@ -76,7 +76,9 @@ switch ($module) {
         }
         
         if ($action === 'scanner') {
-            // FIX: Load the actual HTML5 webcam viewer workspace
+            $eventId = intval($_GET['event_id'] ?? 0);
+            // Grab any existing attendees who checked in earlier before loading view
+            $attendees = $controller->getAttendeesList($eventId);
             require_once __DIR__ . '/modules/Attendance/Views/scanner.php';
             exit;
         }
