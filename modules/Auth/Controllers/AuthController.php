@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../core/Database.php';
+require_once __DIR__ . '/../Models/AuthModel.php';
 
 class AuthController {
     
@@ -16,11 +17,10 @@ class AuthController {
             $dbInstance = new Database();
             $db = $dbInstance->getConnection();
 
-            $stmt = $db->prepare("SELECT * FROM `walania_managers` WHERE `email` = :email LIMIT 1");
-            $stmt->execute(['email' => $email]);
-            $manager = $stmt->fetch(PDO::FETCH_ASSOC);
+            $authModel = new AuthModel($db);
+            $manager = $authModel->loginAccount($email, $password);
 
-            if ($manager && password_verify($password, $manager['password_hash'])) {
+            if ($manager) {
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
@@ -35,32 +35,13 @@ class AuthController {
                 return [
                     'status' => 'success',
                     'message' => 'Access granted.',
-                    'role'    => $manager['role'] // Pass it back to the router context
+                    'role'    => $manager['role']
                 ];
-            }
-
-            // --- TEMPORARY DEBUG CHECK ---
-            echo "<h1>Auth Debugger</h1>";
-            if (!$manager) {
-                echo "❌ Error: No user row was found in the database matching the email: <strong>" . htmlspecialchars($email) . "</strong><br>";
             } else {
-                echo "✅ Success: Found a matching database row for this email!<br>";
-                echo "ℹ️ Database Role String: <strong>" . htmlspecialchars($manager['role']) . "</strong><br>";
-                echo "ℹ️ Password Typed Length: <strong>" . strlen($password) . " characters</strong><br>";
-                echo "ℹ️ Database Password Hash String: <code style='background:#eee;padding:2px;'>" . htmlspecialchars($manager['password_hash']) . "</code><br>";
-                
-                // Let's do a hardcoded check right here to see if it verifies
-                $test_verify = password_verify($password, $manager['password_hash']) ? 'TRUE' : 'FALSE';
-                echo "❌ Verification Result: password_verify() returned <strong>" . $test_verify . "</strong><br>";
+                return ['status' => 'error', 'message' => 'Access Denied. Invalid administrative credentials.'];
             }
-            exit; // Freeze execution so we can inspect the data
-            // ------------------------------
-
-            return ['status' => 'error', 'message' => 'Access Denied. Invalid administrative credentials.'];
-
         } catch (PDOException $e) {
             return ['status' => 'error', 'message' => 'Authentication core fault: ' . $e->getMessage()];
-            echo "ERROR BABABA";
         }
     }
 }
