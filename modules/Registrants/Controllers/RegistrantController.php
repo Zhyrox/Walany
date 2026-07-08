@@ -101,7 +101,7 @@ class RegistrantController {
                 $timeLeft = ceil((strtotime($latestOtpLog['locked_until']) - strtotime($currentTime)) / 60);
                 return ['status' => 'error', 'message' => "Too many verification failures. Locked for {$timeLeft} minutes."];
             }
-            if (intval($latestOtpLog['resend_count_hourly']) >= 6) {
+            if (intval($latestOtpLog['resend_count_hourly']) >= 10) {
                 return ['status' => 'error', 'message' => 'Hourly security request threshold reached. Please wait an hour.'];
             }
         }
