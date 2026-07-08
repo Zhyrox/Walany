@@ -170,8 +170,10 @@ if (backToTopBtn) {
     });
 }
 
-if (eventSearch && eventSearchBtn && noEventsMessage) {
-    eventSearchBtn.addEventListener("click", filterEvents);
+if (eventSearch && eventCards.length) {
+    if (eventSearchBtn) {
+        eventSearchBtn.addEventListener("click", filterEvents);
+    }
 
     eventSearch.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -180,11 +182,7 @@ if (eventSearch && eventSearchBtn && noEventsMessage) {
         }
     });
 
-    eventSearch.addEventListener("input", () => {
-        if (eventSearch.value.trim() === "") {
-            filterEvents();
-        }
-    });
+    eventSearch.addEventListener("input", filterEvents);
 }
 
 function filterEvents() {
@@ -192,8 +190,8 @@ function filterEvents() {
     let visibleCount = 0;
 
     eventCards.forEach((card) => {
-        const eventText = card.textContent.toLowerCase();
-        const isMatch = searchTerm === "" || eventText.includes(searchTerm);
+        const eventTitle = card.dataset.eventTitle || card.querySelector("h3")?.textContent.toLowerCase() || "";
+        const isMatch = searchTerm === "" || eventTitle.startsWith(searchTerm);
 
         card.classList.toggle("is-hidden", !isMatch);
 
@@ -202,7 +200,9 @@ function filterEvents() {
         }
     });
 
-    noEventsMessage.classList.toggle("is-visible", visibleCount === 0);
+    if (noEventsMessage) {
+        noEventsMessage.classList.toggle("is-visible", visibleCount === 0);
+    }
 }
 
 function updateThemeButton(theme) {

@@ -311,6 +311,18 @@ button {
     justify-content: center;
 }
 
+.home-events-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--secondary) 24%, transparent) 0 12%, transparent 30%),
+        linear-gradient(180deg, color-mix(in srgb, var(--background) 96%, var(--secondary)) 0%, var(--background) 100%);
+}
+
+.home-events-page .events-container {
+    padding: 132px 0 72px;
+    justify-content: flex-start;
+}
+
 .events-container > h2 {
     margin: 0 0 16px;
     color: transparent;
@@ -321,10 +333,61 @@ button {
     font-family: 'ArchivoCondensedExtraBold';
 }
 
+.events-search-panel {
+    width: min(100%, 720px);
+    margin: 0 0 28px;
+}
+
+.events-search-panel label {
+    display: block;
+    margin: 0 0 8px 2px;
+    color: var(--muted);
+    font-family: 'ArchivoBold', Arial, Helvetica, sans-serif;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+}
+
+.events-search-control {
+    padding: 8px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    box-shadow: 0 18px 42px rgba(31, 77, 76, 0.10);
+}
+
+.events-search-control input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 12px;
+    outline: none;
+    color: var(--text);
+    background: color-mix(in srgb, var(--background) 82%, var(--surface));
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+}
+
+.events-search-control input::placeholder {
+    color: var(--muted);
+}
+
+.events-search-control input:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
 .events-empty {
     margin: 0 0 24px;
     color: var(--muted);
     font-family: 'ArchivoLight';
+}
+
+.events-no-results {
+    display: none;
+}
+
+.events-no-results.is-visible {
+    display: block;
 }
 
 .events-grid {
@@ -352,6 +415,10 @@ button {
     justify-content: flex-start;
 }
 
+.event-card.is-hidden {
+    display: none;
+}
+
 .event-card::before {
     content: "";
     position: absolute;
@@ -366,6 +433,22 @@ button {
 .event-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 22px 48px rgba(31, 77, 76, 0.16);
+}
+
+.event-card-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 18px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--secondary) 28%, var(--surface));
+}
+
+.event-card-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .event-card-badge {
@@ -457,13 +540,73 @@ button {
     border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
 }
 
+:root[data-theme="dark"] .home-events-page {
+    background:
+        radial-gradient(circle at 8% 10%, color-mix(in srgb, var(--secondary) 34%, transparent) 0 14%, transparent 34%),
+        radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--primary) 18%, transparent) 0 12%, transparent 32%),
+        linear-gradient(180deg, #030707 0%, var(--background) 100%);
+}
+
+:root[data-theme="dark"] .home-events-page .events-container > h2 {
+    background: linear-gradient(135deg, #d6eeee 0%, #8bcaca 45%, #6ca7a6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+:root[data-theme="dark"] .home-events-page .events-search-control,
+:root[data-theme="dark"] .home-events-page .event-card {
+    border-color: color-mix(in srgb, var(--secondary) 22%, transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 86%, #132020) 0%, color-mix(in srgb, var(--background) 76%, #132020) 100%);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+:root[data-theme="dark"] .home-events-page .events-search-control input {
+    color: #f4f8f8;
+    background: color-mix(in srgb, var(--background) 78%, #172222);
+    color-scheme: dark;
+}
+
+:root[data-theme="dark"] .home-events-page .event-card h3,
+:root[data-theme="dark"] .home-events-page .event-card p,
+:root[data-theme="dark"] .home-events-page .event-card strong {
+    color: #f4f8f8;
+}
+
+:root[data-theme="dark"] .home-events-page .event-card .card-description,
+:root[data-theme="dark"] .home-events-page .events-empty,
+:root[data-theme="dark"] .home-events-page .events-search-panel label {
+    color: #c6d6d6;
+}
+
+:root[data-theme="dark"] .home-events-page .event-card-badge {
+    color: #9fcfce;
+}
+
+:root[data-theme="dark"] .home-events-page .btn-secondary {
+    color: #e8f5f5;
+    background: color-mix(in srgb, var(--secondary) 34%, var(--surface));
+}
+
 @media (max-width: 640px) {
     .events-container {
         padding: 120px 0 56px;
     }
 
+    .home-events-page .events-container {
+        padding: 112px 0 56px;
+    }
+
+    .events-search-panel {
+        margin-bottom: 22px;
+    }
+
     .actions {
         flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions .btn {
+        width: 100%;
     }
 }
 

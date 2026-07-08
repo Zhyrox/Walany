@@ -1,31 +1,69 @@
-<link rel="stylesheet" href="assets/style.css">
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Campus Events - Walania</title>
+    <link rel="icon" type="image/x-icon" href="/PHP_Project/Walany/assets/images/Walania.svg">
+    <link rel="stylesheet" href="/PHP_Project/Walany/assets/style.css">
+</head>
+<body class="home-events-page">
+    <header class="site-header login-header headbar">
+        <a href="/PHP_Project/Walany/index.php?module=Home" class="logo-placeholder" aria-label="Walania home">
+            <img src="/PHP_Project/Walany/assets/images/Walania.svg" alt="Walania logo">
+        </a>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+            <img class="theme-toggle-icon" data-theme-icon src="/PHP_Project/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+        </button>
+    </header>
 
-<div class="events-container">
-    <h2>Available Campus Events</h2>
+    <main class="events-container">
+        <section class="events-search-panel" aria-label="Search campus events">
+            <label for="eventSearch">Search events</label>
+            <div class="events-search-control">
+                <input type="search" id="eventSearch" placeholder="Search by event title..." autocomplete="off">
+            </div>
+        </section>
 
-    <?php if (empty($events)): ?>
-        <p class="events-empty">No active events scheduled at this time. Check back later!</p>
-    <?php else: ?>
-        <div class="events-grid">
-            <?php foreach ($events as $event): ?>
-                <div class="event-card">
-                    <div class="event-card-badge">Upcoming</div>
-                    <h3><?= htmlspecialchars($event['name']) ?></h3>
-                    <p class="card-date"><strong>📅 Date:</strong> <?= htmlspecialchars($event['event_date']) ?></p>
-                    <p class="card-location"><strong>📍 Location:</strong> <?= htmlspecialchars($event['location']) ?></p>
-                    <p class="card-description"><?= htmlspecialchars($event['description']) ?></p>
+        <h2>Available Campus Events</h2>
 
-                    <div class="actions">
-                        <a href="/PHP_Project/Walany/modules/Registrants/Views/registration-form.php?event_id=<?= $event['id'] ?>" class="btn btn-primary">
-                            Register Now
-                        </a>
+        <?php if (empty($events)): ?>
+            <p class="events-empty">No active events scheduled at this time. Check back later!</p>
+        <?php else: ?>
+            <p id="noEventsMessage" class="events-empty events-no-results">No events match your search.</p>
+            <div class="events-grid">
+                <?php foreach ($events as $event): ?>
+                    <?php
+                        $eventName = $event['name'] ?? 'Campus Event';
+                        $eventImage = !empty($event['image'])
+                            ? '/PHP_Project/Walany/assets/images/' . rawurlencode($event['image'])
+                            : '/PHP_Project/Walany/assets/images/Event_Image%20(1).jpg';
+                    ?>
+                    <article class="event-card" data-event-title="<?= htmlspecialchars(strtolower($eventName)) ?>">
+                        <div class="event-card-image">
+                            <img src="<?= htmlspecialchars($eventImage) ?>" alt="<?= htmlspecialchars($eventName) ?> event image">
+                        </div>
+                        <div class="event-card-badge">Upcoming</div>
+                        <h3><?= htmlspecialchars($eventName) ?></h3>
+                        <p class="card-date"><strong>Date:</strong> <?= htmlspecialchars($event['event_date'] ?? '') ?></p>
+                        <p class="card-location"><strong>Location:</strong> <?= htmlspecialchars($event['location'] ?? '') ?></p>
+                        <p class="card-description"><?= htmlspecialchars($event['description'] ?? '') ?></p>
 
-                        <a href="/PHP_Project/Walany/modules/Events/Views/evaluate.php?event_id=<?= $event['id'] ?>" class="btn btn-secondary">
-                            Give Feedback
-                        </a>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-</div>
+                        <div class="actions">
+                            <a href="/PHP_Project/Walany/modules/Registrants/Views/registration-form.php?event_id=<?= htmlspecialchars((string) ($event['id'] ?? 0)) ?>" class="btn btn-primary">
+                                Register Now
+                            </a>
+
+                            <a href="/PHP_Project/Walany/modules/Events/Views/evaluate.php?event_id=<?= htmlspecialchars((string) ($event['id'] ?? 0)) ?>" class="btn btn-secondary">
+                                Give Feedback
+                            </a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </main>
+
+    <script src="/PHP_Project/Walany/assets/script.js"></script>
+</body>
+</html>
