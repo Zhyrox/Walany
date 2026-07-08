@@ -1029,6 +1029,141 @@ button {
     transform: none;
 }
 
+.otp-verification-page .registration-section {
+    padding-inline: 16px;
+}
+
+.otp-shell {
+    width: min(100% - 24px, 460px);
+    margin: 0 auto;
+}
+
+.otp-container {
+    display: grid;
+    gap: 22px;
+    width: 100%;
+    padding: 30px 28px;
+    border: 1px solid #d2d6da;
+    border-radius: 10px;
+    color: #17202a;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(17, 24, 39, 0.08);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.otp-heading {
+    display: grid;
+    gap: 8px;
+    text-align: center;
+}
+
+.otp-heading h3 {
+    margin: 0;
+    color: #17202a;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.45rem;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.otp-heading p,
+.otp-resend p {
+    margin: 0;
+    color: #4b5563;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.otp-alert {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.otp-alert.is-hidden {
+    display: none;
+}
+
+.otp-verification-page #otpForm {
+    display: grid;
+    gap: 22px;
+}
+
+.otp-inputs {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.otp-input {
+    width: 100%;
+    aspect-ratio: 1;
+    min-width: 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #111827;
+    background: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+.otp-input:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.18);
+    outline: none;
+}
+
+.otp-verification-page .submit-button {
+    width: 100%;
+    min-height: 42px;
+    margin: 0;
+    padding: 10px 16px;
+    border-radius: 6px;
+    color: #ffffff;
+    background: #1a73e8;
+    box-shadow: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.otp-verification-page .submit-button:hover {
+    background: #1669d8;
+    transform: none;
+}
+
+.otp-resend {
+    display: grid;
+    gap: 4px;
+    justify-items: center;
+    text-align: center;
+}
+
+.otp-resend .text-button {
+    border: 0;
+    padding: 4px 6px;
+    color: #1a73e8;
+    background: transparent;
+    font: 700 0.9rem Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+
+.otp-resend .text-button:hover {
+    color: #1669d8;
+    text-decoration: underline;
+}
+
+.otp-resend .text-button:disabled {
+    color: #64748b;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
 @media (max-width: 520px) {
     .event-registration-page .registration-section {
         padding: 96px 12px 16px;
@@ -1044,6 +1179,22 @@ button {
 
     .event-registration-page .form-grid {
         grid-template-columns: 1fr;
+    }
+
+    .otp-shell {
+        width: 100%;
+    }
+
+    .otp-container {
+        padding: 24px 18px;
+    }
+
+    .otp-inputs {
+        gap: 6px;
+    }
+
+    .otp-input {
+        font-size: 1.1rem;
     }
 }
 

@@ -1,64 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verification - Walania Events</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .otp-container { max-width: 450px; margin-top: 80px; }
-        .otp-input {
-            width: 50px;
-            height: 55px;
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 5px;
-            border: 2px solid #ced4da;
-            border-radius: 8px;
-        }
-        .otp-input:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-            outline: none;
-        }
-    </style>
+    <link rel="icon" type="image/x-icon" href="/PHP_Project/Walany/assets/images/Walania.svg">
+    <link rel="stylesheet" href="/PHP_Project/Walany/assets/style.css">
 </head>
-<body>
+<body class="registration-page event-registration-page otp-verification-page">
+<header class="site-header login-header">
+    <a href="/PHP_Project/Walany/index.php?module=Home" class="logo-placeholder" aria-label="Walania home">
+        <img src="/PHP_Project/Walany/assets/images/Walania.svg" alt="Walania logo">
+    </a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+        <img class="theme-toggle-icon" data-theme-icon src="/PHP_Project/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+    </button>
+</header>
 
-<div class="container d-flex justify-content-center">
-    <div class="card p-4 shadow-sm otp-container bg-white rounded-4">
-        <div class="text-center mb-4">
-            <h3 class="fw-bold text-dark">Security Verification</h3>
-            <p class="text-muted small">We sent a 6-digit verification code to your email address. Please input the passphrase tokens below.</p>
-        </div>
-
-        <!-- System Alerts Box (For errors or resend status) -->
-        <div id="alertBox" class="alert d-none" role="alert"></div>
-
-        <!-- Main Submission Form -->
-        <form id="otpForm" method="POST">
-            <div class="d-flex justify-content-center mb-4">
-                <!-- Grouped array elements naming structure matches $POST['otp'] controller expectation -->
-                <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off">
-                <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off">
-                <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off">
-                <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off">
-                <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off">
-                <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off">
+<main class="registration-section">
+    <div class="otp-shell">
+        <div class="otp-container">
+            <div class="otp-heading">
+                <h3>Security Verification</h3>
+                <p>We sent a 6-digit verification code to your email address. Please input the passphrase tokens below.</p>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 py-2.5 mb-3 fw-semibold rounded-3">Verify & Claim Ticket</button>
-        </form>
+            <!-- System Alerts Box (For errors or resend status) -->
+            <div id="alertBox" class="otp-alert is-hidden" role="alert"></div>
 
-        <div class="text-center">
-            <p class="text-muted small mb-0">Didn't receive the email token?</p>
-            <button type="button" id="resendBtn" class="btn btn-link">Resend Code</button>
+            <!-- Main Submission Form -->
+            <form id="otpForm" method="POST">
+                <div class="otp-inputs" aria-label="Verification code">
+                    <!-- Grouped array elements naming structure matches $POST['otp'] controller expectation -->
+                    <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 1">
+                    <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 2">
+                    <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 3">
+                    <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 4">
+                    <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 5">
+                    <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 6">
+                </div>
+
+                <button type="submit" class="primary-button submit-button">Verify & Claim Ticket</button>
+            </form>
+
+            <div class="otp-resend">
+                <p>Didn't receive the email token?</p>
+                <button type="button" id="resendBtn" class="text-button">Resend Code</button>
+            </div>
         </div>
     </div>
-</div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Walania. All rights reserved.</p>
+</footer>
 
 <!-- JavaScript Controls for UX Focus & Ajax Handlers -->
 <script>
@@ -168,5 +163,6 @@ if (resendBtn) {
     });
 }
 </script>
+<script src="/PHP_Project/Walany/assets/script.js"></script>
 </body>
 </html>
