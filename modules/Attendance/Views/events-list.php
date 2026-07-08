@@ -16,11 +16,19 @@
 </head>
 <body>
 
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$managerName = $_SESSION['manager_name'] ?? 'Guest';
+?>
+
 <div class="dashboard-container">
     <div class="header">
         <div>
             <h2>Registrar Operation Center</h2>
-            <p>Logged in as: <strong><?php echo htmlspecialchars($_SESSION['manager_name']); ?></strong></p>
+            <p>Logged in as: <strong><?php echo htmlspecialchars($managerName); ?></strong></p>
         </div>
         <a href="?module=Auth&action=logout" class="logout-btn">Log Out</a>
     </div>
