@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Attendance Scan Terminal</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <link rel="stylesheet" href="../../../assets/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/style.css">
 </head>
 <body class="scanner-page">
 

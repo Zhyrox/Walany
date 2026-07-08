@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/core/config.php';
-
+if (!defined('BASE_URL')) {
+    define('BASE_URL', dirname($_SERVER['SCRIPT_NAME']) === '/' ? '/' : dirname($_SERVER['SCRIPT_NAME']) . '/');
+}
 // 1. Capture the requested module and action from the URL query strings
 $module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Auth';
 $action = isset($_GET['action']) ? strtolower($_GET['action']) : 'login';
