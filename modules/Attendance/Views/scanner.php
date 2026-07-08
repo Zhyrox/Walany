@@ -4,44 +4,11 @@
     <meta charset="UTF-8">
     <title>Attendance Scan Terminal</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; padding: 20px; margin: 0; }
-        .back-btn { display: inline-block; margin-bottom: 15px; color: #007bff; text-decoration: none; font-weight: bold; }
-        
-        /* Master Layout Split Screen Splitter */
-        .workspace-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; max-width: 1300px; margin: 0 auto; }
-        
-        /* General Panel Cards styling */
-        .panel-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h3 { margin-top: 0; border-bottom: 2px solid #eaeaea; padding-bottom: 8px; color: #333; }
-        
-        /* Left Column UI items */
-        #reader { width: 100%; background: #000; border-radius: 6px; overflow: hidden; }
-        .manual-input-group { display: flex; gap: 10px; margin-top: 15px; }
-        .manual-input-group input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; }
-        .manual-input-group button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .manual-input-group button:hover { background: #218838; }
-        
-        /* Banner Alerts notifications */
-        .status-box { margin-top: 15px; padding: 12px; border-radius: 4px; font-weight: bold; display: none; text-align: center; }
-        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        
-        /* Right Column Metadata Details Lists elements */
-        .details-display p { font-size: 16px; margin: 10px 0; color: #444; }
-        .details-display span { font-weight: bold; color: #111; }
-        
-        /* Live Attendees History Table layout structure */
-        .table-container { overflow-y: auto; max-height: 400px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; }
-        th { background-color: #f8f9fa; color: #555; position: sticky; top: 0; }
-        tr:hover { background-color: #fdfdfd; }
-    </style>
+    <link rel="stylesheet" href="../../../assets/style.css">
 </head>
-<body>
+<body class="scanner-page">
 
-<div style="max-width: 1300px; margin: 0 auto;">
+<div class="scanner-page-header">
     <a href="?module=Attendance&action=view_events" class="back-btn">← Back to Events List</a>
     <h2>Registrar Entry Control Terminal (Event ID Context: <?php echo htmlspecialchars($_GET['event_id'] ?? '0'); ?>)</h2>
 </div>
@@ -58,7 +25,7 @@
         
         <div class="panel-card">
             <h3>Manual Reference Overrides</h3>
-            <p style="font-size: 14px; color: #666; margin-top: 0;">If ticket camera reading fails, manually search student parameters below:</p>
+            <p class="scanner-help-text">If ticket camera reading fails, manually search student parameters below:</p>
             <div class="manual-input-group">
                 <input type="text" id="manual_ref" placeholder="Type Reference ID (e.g. REF-10023)..." autocomplete="off">
                 <button type="button" onclick="submitManualInput()">Verify System ID</button>
@@ -93,7 +60,7 @@
                     </thead>
                     <tbody id="attendees-rows">
                         <?php if (empty($attendees)): ?>
-                            <tr id="no-data-row"><td colspan="3" style="text-align: center; color: #999;">No entry record sequences logged yet today.</td></tr>
+                            <tr id="no-data-row"><td colspan="3" class="scanner-empty-state">No entry record sequences logged yet today.</td></tr>
                         <?php else: ?>
                             <?php foreach ($attendees as $person): ?>
                                 <tr>
@@ -181,7 +148,7 @@ function sendAttendancePayload(referenceString) {
 function rebuildAttendeesTable(list) {
     const tbody = document.getElementById('attendees-rows');
     if(!list || list.length === 0) {
-        tbody.innerHTML = `<tr id="no-data-row"><td colspan="3" style="text-align: center; color: #999;">No entry record sequences logged yet today.</td></tr>`;
+        tbody.innerHTML = `<tr id="no-data-row"><td colspan="3" class="scanner-empty-state">No entry record sequences logged yet today.</td></tr>`;
         return;
     }
     
