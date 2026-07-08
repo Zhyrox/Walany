@@ -862,8 +862,8 @@ button {
 }
 
 .event-registration-page {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
     background:
         radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--secondary) 28%, transparent) 0 14%, transparent 34%),
         radial-gradient(circle at 88% 72%, color-mix(in srgb, var(--primary) 16%, transparent) 0 12%, transparent 30%),
@@ -875,14 +875,13 @@ button {
 }
 
 .event-registration-page .registration-section {
-    height: 100vh;
-    min-height: 0;
-    padding: 104px 16px 20px;
+    min-height: 100vh;
+    padding: 124px 20px 48px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     background: transparent;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .event-registration-page .registration-section::before {
@@ -891,63 +890,89 @@ button {
 
 .event-registration-page .registration-layout {
     display: grid;
-    grid-template-columns: minmax(0, 530px) minmax(360px, 450px);
-    gap: 22px;
-    align-items: start;
-    width: min(100% - 32px, 1030px);
-    max-height: calc(100vh - 124px);
+    grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
+    gap: clamp(20px, 4vw, 44px);
+    align-items: stretch;
+    width: min(100%, 1160px);
     margin: 0 auto;
     padding: 0;
 }
 
 .event-registration-showcase {
-    display: grid;
-    gap: 12px;
-    padding: 14px;
-    border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
-    border-radius: 24px;
-    background: color-mix(in srgb, var(--surface) 72%, var(--secondary));
-    box-shadow: 0 18px 48px rgba(31, 77, 76, 0.10);
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.event-slideshow-card {
+    position: relative;
+    min-width: 0;
+    padding: clamp(10px, 2vw, 16px);
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 18px 42px rgba(17, 24, 39, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    overflow: hidden;
 }
 
 .event-registration-showcase .login-slideshow {
-    min-height: clamp(300px, calc(100vh - 220px), 428px);
-    border-radius: 14px;
-}
-
-.event-registration-showcase .slide-caption {
-    max-width: 330px;
-}
-
-.event-registration-showcase .slide-caption h2 {
-    font-size: clamp(2.25rem, 5vw, 3.4rem);
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
 }
 
 .event-registration-showcase .slide-dots {
-    position: static;
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
     transform: none;
-    margin: -6px auto 0;
+    transform: translateX(-50%);
+    margin: 0;
 }
 
-.event-showcase-text {
-    max-width: 430px;
-    margin: 0 auto;
-    color: var(--muted);
-    text-align: center;
+.event-showcase-details {
+    min-width: 0;
+    padding: 0 2px;
+}
+
+.event-showcase-details h1 {
+    margin: 0 0 4px;
+    color: var(--text);
     font-family: 'ArchivoBold', Arial, Helvetica, sans-serif;
-    font-size: 0.88rem;
+    font-size: clamp(1.7rem, 4vw, 2.55rem);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+}
+
+.event-showcase-details p {
+    max-width: 680px;
+    margin: 0;
+    color: #17202a;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(0.94rem, 1.7vw, 1.05rem);
     line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.event-showcase-details .event-showcase-date {
+    margin-bottom: 4px;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    font-weight: 800;
 }
 
 .event-registration-page .registration-form {
     width: 100%;
+    min-width: 0;
     justify-self: center;
-    padding: 24px 28px 28px;
-    border: 1px solid #d2d6da;
-    border-radius: 10px;
+    align-self: stretch;
+    padding: clamp(22px, 3vw, 32px);
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
+    border-radius: 8px;
     color: #17202a;
     background: #ffffff;
-    box-shadow: 0 2px 4px rgba(17, 24, 39, 0.08);
+    box-shadow: 0 18px 42px rgba(17, 24, 39, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.45);
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -1164,22 +1189,23 @@ button {
     text-decoration: none;
 }
 
-@media (max-width: 520px) {
-    .event-registration-page .registration-section {
-        padding: 96px 12px 16px;
-    }
+:root[data-theme="dark"] .event-registration-page .event-slideshow-card,
+:root[data-theme="dark"] .event-registration-page .registration-form {
+    border-color: color-mix(in srgb, var(--secondary) 22%, transparent);
+    background: color-mix(in srgb, var(--surface) 78%, #101a1a);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
 
-    .event-registration-page .registration-layout {
-        width: min(100%, 390px);
-    }
+:root[data-theme="dark"] .event-registration-page .event-showcase-details h1,
+:root[data-theme="dark"] .event-registration-page .event-showcase-details p,
+:root[data-theme="dark"] .event-registration-page .event-registration-form h3,
+:root[data-theme="dark"] .event-registration-page .form-group label {
+    color: #f5f8f8;
+}
 
-    .event-registration-page .registration-form {
-        padding: 22px 18px 24px;
-    }
-
-    .event-registration-page .form-grid {
-        grid-template-columns: 1fr;
-    }
+:root[data-theme="dark"] .event-registration-page .event-showcase-details .event-showcase-date,
+:root[data-theme="dark"] .event-registration-page .event-registration-note {
+    color: #c6d6d6;
 
     .otp-shell {
         width: 100%;
@@ -1198,24 +1224,27 @@ button {
     }
 }
 
+:root[data-theme="dark"] .event-registration-page .registration-form input {
+    border-color: color-mix(in srgb, var(--secondary) 36%, transparent);
+    color: #f5f8f8;
+    background: color-mix(in srgb, var(--background) 78%, #172222);
+    color-scheme: dark;
+}
+
+:root[data-theme="dark"] .event-registration-page .registration-form input::placeholder {
+    color: #9fb5b5;
+}
+
+:root[data-theme="dark"] .event-registration-page .registration-form input:focus {
+    border-color: #7eb9b9;
+    box-shadow: 0 0 0 3px rgba(126, 185, 185, 0.18);
+}
+
 @media (max-width: 920px) {
-    .event-registration-page {
-        height: auto;
-        min-height: 100vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-
-    .event-registration-page .registration-section {
-        height: auto;
-        min-height: 100vh;
-        overflow: visible;
-    }
-
     .event-registration-page .registration-layout {
         grid-template-columns: 1fr;
-        width: min(100% - 24px, 560px);
-        max-height: none;
+        width: min(100%, 640px);
+        gap: 24px;
     }
 
     .event-registration-showcase {
@@ -1227,28 +1256,39 @@ button {
     }
 
     .event-registration-showcase .login-slideshow {
-        min-height: 360px;
+        aspect-ratio: 16 / 10;
     }
 }
 
 @media (max-width: 520px) {
-    .event-registration-showcase {
-        padding: 10px;
-        border-radius: 18px;
+    .event-registration-page .registration-section {
+        padding: 104px 12px 32px;
+    }
+
+    .event-registration-page .registration-layout {
+        width: min(100%, 390px);
+        gap: 18px;
+    }
+
+    .event-slideshow-card {
+        padding: 8px;
+        border-radius: 6px;
     }
 
     .event-registration-showcase .login-slideshow {
-        min-height: 300px;
+        aspect-ratio: 4 / 3;
     }
 
-    .event-registration-showcase .slide-caption {
-        left: 18px;
-        bottom: 18px;
-        max-width: 240px;
+    .event-registration-showcase .slide-dots {
+        bottom: 16px;
     }
 
-    .event-registration-showcase .slide-caption h2 {
-        font-size: 2rem;
+    .event-registration-page .registration-form {
+        padding: 22px 18px 24px;
+    }
+
+    .event-registration-page .form-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -3735,5 +3775,16 @@ section.admin-panel {
         padding: 16px 12px;
         font-size: 0.8rem;
         line-height: 1.4;
+    }
+
+    .event-registration-page .registration-form .submit-button {
+        display: flex;
+        width: 100%;
+        margin: 8px 0 0;
+    }
+
+    .event-registration-page .event-registration-showcase .login-slideshow {
+        min-height: 0;
+        aspect-ratio: 4 / 3;
     }
 }

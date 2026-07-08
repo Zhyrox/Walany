@@ -1,3 +1,30 @@
+<?php
+$eventId = isset($_GET['event_id']) ? max(1, (int) $_GET['event_id']) : 1;
+$eventDetails = [
+    'name' => 'Event Registration',
+    'event_date' => 'Date to be announced',
+    'description' => 'Complete the registration form to reserve your slot for this Walania event.'
+];
+
+try {
+    require_once __DIR__ . '/../../../core/Database.php';
+
+    $database = new Database();
+    $db = $database->getConnection();
+    $stmt = $db->prepare('SELECT name, event_date, description FROM walania_event WHERE id = ? LIMIT 1');
+    $stmt->execute([$eventId]);
+    $eventRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($eventRow) {
+        $eventDetails = array_merge($eventDetails, $eventRow);
+        if (!empty($eventRow['event_date'])) {
+            $eventDetails['event_date'] = date('F j, Y', strtotime($eventRow['event_date']));
+        }
+    }
+} catch (Throwable $e) {
+    // Keep the registration page usable even if event details are unavailable.
+}
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -8,7 +35,7 @@
     <link rel="stylesheet" href="/PHP_Project/Walany/assets/style.css">
 </head>
 <body class="registration-page event-registration-page">
-    <header class="site-header login-header">
+    <header class="site-header login-header headbar">
         <a href="/PHP_Project/Walany/index.php?module=Home" class="logo-placeholder" aria-label="Walania home">
             <img src="/PHP_Project/Walany/assets/images/Walania.svg" alt="Walania logo">
         </a>
@@ -20,23 +47,30 @@
     <main class="registration-section">
         <div class="registration-layout">
             <section class="event-registration-showcase" aria-label="Walania event highlights">
-                <div class="login-slideshow">
-                    <div class="login-slide is-active">
-                        <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (1).jpg" alt="Crowd enjoying a live campus event">
+                <div class="event-slideshow-card">
+                    <div class="login-slideshow">
+                        <div class="login-slide is-active">
+                            <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (1).jpg" alt="Crowd enjoying a live campus event">
+                        </div>
+                        <div class="login-slide">
+                            <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (2).jpg" alt="Campus event audience scene">
+                        </div>
+                        <div class="login-slide">
+                            <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (3).jpg" alt="Guests gathered at an event">
+                        </div>
                     </div>
-                    <div class="login-slide">
-                        <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (2).jpg" alt="Campus event audience scene">
-                    </div>
-                    <div class="login-slide">
-                        <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (3).jpg" alt="Guests gathered at an event">
+                    <div class="slide-dots" aria-hidden="true">
+                        <span class="is-active"></span>
+                        <span></span>
+                        <span></span>
                     </div>
                 </div>
-                <div class="slide-dots" aria-hidden="true">
-                    <span class="is-active"></span>
-                    <span></span>
-                    <span></span>
+
+                <div class="event-showcase-details">
+                    <h1><?php echo htmlspecialchars($eventDetails['name']); ?></h1>
+                    <p class="event-showcase-date"><?php echo htmlspecialchars($eventDetails['event_date']); ?></p>
+                    <p><?php echo htmlspecialchars($eventDetails['description']); ?></p>
                 </div>
-                <p class="event-showcase-text">register na kayo mga ya.</p>
             </section>
 
             <!-- The form submits to the Registrants module action processor -->
@@ -45,7 +79,7 @@
                 <p class="event-registration-note">Please fill out your details to reserve your slot and receive your reference ID token.</p>
 
                 <!-- Crucial: Capture the incoming event_id from the landing page click -->
-                <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($_GET['event_id'] ?? '1'); ?>">
+                <input type="hidden" name="event_id" value="<?php echo htmlspecialchars((string) $eventId); ?>">
 
                 <div class="form-grid">
                     <div class="form-group">
