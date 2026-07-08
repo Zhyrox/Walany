@@ -1,4 +1,38 @@
 <?php
+require_once __DIR__ . '/../../../core/Database.php';
+
+// 1. Capture the incoming event ID from the URL string
+$eventId = isset($_GET['event_id']) ? (int)$_GET['event_id'] : 0;
+$eventData = null;
+
+if ($eventId > 0) {
+    try {
+        $dbInstance = new Database();
+        $db = $dbInstance->getConnection();
+        
+        // 2. Query only the single event matching our ID
+        $stmt = $db->prepare("SELECT * FROM `walania_event` WHERE `id` = :id LIMIT 1");
+        $stmt->execute([':id' => $eventId]);
+        $eventData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        // Gracefully fail behind the scenes if database connectivity drops
+        $eventData = null;
+    }
+}
+
+// 3. Process the thumbnail string exactly like you did on the homepage loop
+$eventName = $eventData['name'] ?? 'Campus Event';
+$thumbnailValue = isset($eventData['thumbnail']) ? trim($eventData['thumbnail']) : '';
+
+if (!empty($thumbnailValue) && $thumbnailValue !== 'uploads/events/default-banner.png') {
+    $registrationImage = $thumbnailValue;
+} else {
+    // Clean fallback routing starting directly from your project root folder context
+    $registrationImage = '/Walany/assets/images/Event_Image%20(1).jpg';
+}
+?>
+<?php
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);

@@ -33,14 +33,20 @@
             <p id="noEventsMessage" class="events-empty events-no-results">No events match your search.</p>
             <div class="events-grid">
                 <?php foreach ($events as $event): ?>
+
                     <?php
                         $eventName = $event['name'] ?? 'Campus Event';
-                        $eventImage = !empty($event['image'])
-                            ? '/PHP_Project/Walany/assets/images/' . rawurlencode($event['image'])
+                        
+                        // If the database has a path, use it directly. Otherwise, use a default fallback path string.
+                        $eventImage = !empty($event['thumbnail'])
+                            ? $event['thumbnail']
                             : '/PHP_Project/Walany/assets/images/Event_Image%20(1).jpg';
                     ?>
+
                     <article class="event-card" data-event-title="<?= htmlspecialchars(strtolower($eventName)) ?>">
+                        <!-- This block now processes your new database column value cleanly -->
                         <div class="event-card-image">
+                            <!-- PHP just outputs the exact string it fetched from the database table -->
                             <img src="<?= htmlspecialchars($eventImage) ?>" alt="<?= htmlspecialchars($eventName) ?> event image">
                         </div>
                         <div class="event-card-badge">Upcoming</div>

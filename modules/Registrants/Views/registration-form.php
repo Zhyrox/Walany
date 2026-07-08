@@ -1,4 +1,38 @@
 <?php
+// 1. Check if core Database wrapper is required, if not already included
+if (!class_exists('Database')) {
+    require_once __DIR__ . '/../../../core/Database.php';
+}
+
+// 2. Fetch the specific event ID from the URL parameter
+$eventId = isset($_GET['event_id']) ? (int)$_GET['event_id'] : 0;
+$eventName = 'Campus Event'; // Safe default string
+$registrationImage = '/Walany/assets/images/Event_Image%20(1).jpg'; // Safe default path
+
+if ($eventId > 0) {
+    try {
+        $dbInstance = new Database();
+        $db = $dbInstance->getConnection();
+        
+        $stmt = $db->prepare("SELECT * FROM `walania_event` WHERE `id` = :id LIMIT 1");
+        $stmt->execute([':id' => $eventId]);
+        $eventData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($eventData) {
+            $eventName = $eventData['name'] ?? 'Campus Event';
+            $thumbnailValue = isset($eventData['thumbnail']) ? trim($eventData['thumbnail']) : '';
+            
+            if (!empty($thumbnailValue) && $thumbnailValue !== 'uploads/events/default-banner.png') {
+                $registrationImage = $thumbnailValue;
+            }
+        }
+    } catch (PDOException $e) {
+        // Fallback defaults remain if database query encounters an issue
+    }
+}
+?>
+
+<?php
 $eventId = isset($_GET['event_id']) ? max(1, (int) $_GET['event_id']) : 1;
 $eventDetails = [
     'name' => 'Event Registration',
@@ -49,15 +83,10 @@ try {
             <section class="event-registration-showcase" aria-label="Walania event highlights">
                 <div class="event-slideshow-card">
                     <div class="login-slideshow">
-                        <div class="login-slide is-active">
-                            <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (1).jpg" alt="Crowd enjoying a live campus event">
-                        </div>
-                        <div class="login-slide">
-                            <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (2).jpg" alt="Campus event audience scene">
-                        </div>
-                        <div class="login-slide">
-                            <img class="login-slide-image" src="/PHP_Project/Walany/assets/images/Event_Image (3).jpg" alt="Guests gathered at an event">
-                        </div>
+<div class="login-slide is-active">
+    <!-- Pulls the dynamic thumbnail string directly from the database query mapping above -->
+    <img class="login-slide-image" src="<?= htmlspecialchars($registrationImage) ?>" alt="<?= htmlspecialchars($eventName) ?> registration showcase image">
+</div>
                     </div>
                     <div class="slide-dots" aria-hidden="true">
                         <span class="is-active"></span>
