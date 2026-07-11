@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Campus Events - Walania</title>
+    <title>Available Events - Walania</title>
     <link rel="icon" type="image/x-icon" href="/PHP_Project/Walany/assets/images/Walania.svg">
     <link rel="stylesheet" href="/PHP_Project/Walany/assets/style.css">
 </head>

@@ -10,7 +10,7 @@
 
 <div class="scanner-page-header">
     <a href="?module=Attendance&action=view_events" class="back-btn">← Back to Events List</a>
-    <h2>Registrar Entry Control Terminal (Event ID Context: <?php echo htmlspecialchars($_GET['event_id'] ?? '0'); ?>)</h2>
+    <h2>Registrar Entry Control Terminal (Event ID: <?php echo htmlspecialchars($_GET['name'] ?? '0'); ?>)</h2>
 </div>
 
 <div class="workspace-grid">

@@ -36,5 +36,7 @@ define('DB_PASS',   getenv('DB_PASS')   ?: '');
 
 define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
 define('SMTP_USER', getenv('SMTP_USER') ?: 'walaniaevents@gmail.com');
-define('SMTP_PASS', getenv('SMTP_PASS') ?: 'cjjf xxvl wwcn jacj');
+define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
+
+define('GEMINI_CHATBOT_KEY', getenv('GEMINI_CHATBOT_KEY') ?: '');
 ?>
