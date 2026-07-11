@@ -21,9 +21,19 @@ class ChatController {
 
         $session = $this->chatModel->getOrCreateSession($_SESSION['chat_token']);
         $history = $this->chatModel->getChatHistory($session['id']);
+        $suggestions = $this->getSuggestionPrompts();
         
         // Render target layout file securely
         require_once __DIR__ . '/../Views/chat-window.php';
+    }
+
+    public function getSuggestionPrompts() {
+        return [
+            ['label' => 'Available events', 'message' => 'Tell me about the available campus events'],
+            ['label' => 'Register', 'message' => 'How do I register for an event?'],
+            ['label' => 'Feedback help', 'message' => 'Give me help with feedback or complaints'],
+            ['label' => 'Talk to agent', 'message' => 'Talk to a human agent']
+        ];
     }
 
     public function sendMessage() {
@@ -66,6 +76,18 @@ class ChatController {
         $this->chatModel->saveMessage($session['id'], 'bot', $botReply);
         
         echo json_encode(['status' => 'success', 'reply' => $botReply, 'mode' => 'bot']);
+        exit;
+    }
+
+    public function clearChat() {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+
+        // Generate a brand new independent session token row context
+        $_SESSION['chat_token'] = bin2hex(random_bytes(16));
+        $this->chatModel->getOrCreateSession($_SESSION['chat_token']);
+
+        echo json_encode(['status' => 'success', 'message' => 'Chat context successfully reset']);
         exit;
     }
 
@@ -113,7 +135,7 @@ class ChatController {
 
     private function fetchGeminiResponse($currentPrompt, $sessionId) {
         // FIXED: Swapped to an active model string and added the missing '?key=' operator
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=" . $this->apiKey;
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=" . $this->apiKey;
         
         $dbHistory = $this->chatModel->getChatHistory($sessionId);
         $contentsArray = [];
@@ -139,7 +161,7 @@ class ChatController {
             "contents" => $contentsArray,
             "systemInstruction" => [
                 "parts" => [
-                    ["text" => "You are the automated assistant for Walany, a campus event system. Keep responses helpful, precise, and under 3 sentences."]
+                    ["text" => "You are the automated assistant for Walania, a campus event system. Keep responses helpful, precise, and under 3 sentences."]
                 ]
             ]
         ];

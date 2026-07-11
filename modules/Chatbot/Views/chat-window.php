@@ -1,65 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Walania AI Assistant Canvas</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; margin: 0; padding: 40px 20px; }
-        .chat-container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; height: 600px; }
-        .chat-header { background: #006064; color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header h2 { margin: 0; font-size: 18px; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 75%; padding: 10px 14px; border-radius: 8px; font-size: 14px; line-height: 1.4; }
-        .msg.user { background: #006064; color: #fff; align-self: flex-end; border-bottom-right-radius: 0; }
-        .msg.bot, .msg.agent { background: #e0f7fa; color: #006064; align-self: flex-start; border-bottom-left-radius: 0; }
-        .msg.agent { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
-        .chat-input-area { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; outline: none; font-size: 14px; }
-        .chat-input-area button { background: #006064; color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .chat-input-area button:hover { background: #004d40; }
-        .status-badge { font-size: 11px; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 20px; }
-    </style>
-</head>
-<body>
+<!-- C:\xampp\htdocs\Walany\modules\Chatbot\Views\chat-window.php -->
 
-<div class="chat-container">
-    <div class="chat-header">
-        <h2>Walany Assistant</h2>
-        <span class="status-badge" id="chatMode"><?= isset($session) && $session['status'] === 'human' ? 'Live Agent Mode' : 'AI Bot Mode' ?></span>
+<style>
+    /* 1. Floating Action Toggle Button */
+    .chat-launcher-btn {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background: #006064;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0, 96, 100, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-size: 24px;
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .chat-launcher-btn:hover {
+        transform: scale(1.05);
+        background: #004d40;
+    }
+
+    /* 2. Chat Floating Container Component Overlay */
+    .chat-widget-wrapper {
+        position: fixed;
+        bottom: 95px;
+        right: 25px;
+        width: 380px;
+        height: 520px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        z-index: 9999;
+        
+        /* Animation State States Defaults */
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        pointer-events: none;
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+
+    /* Activated Widget View State CSS Toggle */
+    .chat-widget-wrapper.is-active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    /* 3. Streamlined Internal Structural Layout Overrides */
+    .chat-widget-header { 
+        background: #006064; 
+        color: #fff; 
+        padding: 15px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+    }
+    .chat-widget-header h2 { margin: 0; font-size: 16px; font-weight: 600; }
+    
+    .chat-widget-actions { display: flex; align-items: center; gap: 8px; }
+    .chat-widget-clear-btn { 
+        background: rgba(255,255,255,0.15); 
+        color: white; 
+        border: none; 
+        padding: 4px 8px; 
+        font-size: 11px; 
+        font-weight: 500; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        transition: background 0.2s; 
+    }
+    .chat-widget-clear-btn:hover { background: #c62828; }
+    
+    .chat-widget-messages { 
+        flex: 1; 
+        padding: 15px; 
+        overflow-y: auto; 
+        background: #fafafa; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 10px; 
+    }
+    
+    .chat-widget-msg { 
+        max-width: 80%; 
+        padding: 10px 12px; 
+        border-radius: 8px; 
+        font-size: 13px; 
+        line-height: 1.4; 
+        word-wrap: break-word;
+    }
+    .chat-widget-msg.user { background: #006064; color: #fff; align-self: flex-end; border-bottom-right-radius: 0; }
+    .chat-widget-msg.bot, .chat-widget-msg.agent { background: #e0f7fa; color: #006064; align-self: flex-start; border-bottom-left-radius: 0; }
+    .chat-widget-msg.agent { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+    
+    .chat-widget-input-area { padding: 12px; background: #fff; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
+    .chat-widget-chips { display: flex; flex-wrap: wrap; gap: 6px; max-height: 65px; overflow-y: auto; }
+    
+    .chat-widget-chip { 
+        border: 1px solid #b2dfdb; 
+        background: #f1fbfb; 
+        color: #006064; 
+        padding: 5px 10px; 
+        border-radius: 999px; 
+        cursor: pointer; 
+        font-size: 11px; 
+        white-space: nowrap;
+        transition: all 0.2s ease; 
+    }
+    .chat-widget-chip:hover { background: #006064; color: white; border-color: #006064; }
+    
+    .chat-widget-input-row { display: flex; gap: 8px; }
+    .chat-widget-input-row input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; outline: none; font-size: 13px; }
+    .chat-widget-input-row button { background: #006064; color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .chat-widget-input-row button:hover { background: #004d40; }
+    
+    .chat-widget-status-badge { font-size: 10px; background: rgba(255,255,255,0.2); padding: 3px 6px; border-radius: 20px; }
+</style>
+
+<!-- Floating Action Button Launcher Context Element Component -->
+<button class="chat-launcher-btn" id="chatLauncher" onclick="toggleChatWidget()" aria-label="Open chat assistant">
+</button>
+
+<!-- Main Container Element Box Wrapper Frame -->
+<div class="chat-widget-wrapper" id="chatWidgetContainer">
+    <div class="chat-widget-header">
+        <h2>Walania Assistant</h2>
+        <div class="chat-widget-actions">
+            <button class="chat-widget-clear-btn" onclick="clearWidgetHistory()">Clear</button>
+            <span class="chat-widget-status-badge" id="chatModeWidget"><?= isset($session) && $session['status'] === 'human' ? 'Live Agent Mode' : 'AI Bot Mode' ?></span>
+        </div>
     </div>
     
-    <div class="chat-messages" id="chatBox">
-        <?php foreach ($history as $msg): ?>
-            <div class="msg <?= htmlspecialchars($msg['sender']) ?>">
+    <div class="chat-widget-messages" id="chatWidgetBox">
+        <?php foreach (($history ?? []) as $msg): ?>
+            <div class="chat-widget-msg <?= htmlspecialchars($msg['sender']) ?>">
                 <?= htmlspecialchars($msg['message']) ?>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <div class="chat-input-area">
-        <input type="text" id="userInput" placeholder="Ask a question or type 'talk to agent'..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
-        <button onclick="sendChatMessage()">Send</button>
+    <div class="chat-widget-input-area">
+        <div class="chat-widget-chips" aria-label="Suggested prompt options">
+            <?php foreach (($suggestions ?? []) as $suggestion): ?>
+                <button type="button" class="chat-widget-chip" data-message="<?= htmlspecialchars($suggestion['message'], ENT_QUOTES) ?>">
+                    <?= htmlspecialchars($suggestion['label']) ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+        <div class="chat-widget-input-row">
+            <input type="text" id="widgetUserInput" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendWidgetChatMessage()">
+            <button onclick="sendWidgetChatMessage()">Send</button>
+        </div>
     </div>
 </div>
 
 <script>
-// Keep the scroll height stuck to the floor on initial template render load
-window.onload = function() {
-    const box = document.getElementById('chatBox');
-    box.scrollTop = box.scrollHeight;
+document.addEventListener("DOMContentLoaded", function() {
+    const box = document.getElementById('chatWidgetBox');
+    if(box) box.scrollTop = box.scrollHeight;
     
-    // Set color if loaded on human state mode
-    if (document.getElementById('chatMode').innerText === "Live Agent Mode") {
-        document.getElementById('chatMode').style.background = "#e65100";
+    const modeBadge = document.getElementById('chatModeWidget');
+    if (modeBadge && modeBadge.innerText === "Live Agent Mode") {
+        modeBadge.style.background = "#e65100";
     }
-};
 
-function sendChatMessage() {
-    const inputEl = document.getElementById('userInput');
+    document.querySelectorAll('.chat-widget-chip').forEach(button => {
+        button.addEventListener('click', () => {
+            const inputEl = document.getElementById('widgetUserInput');
+            inputEl.value = button.getAttribute('data-message') || '';
+            sendWidgetChatMessage();
+        });
+    });
+});
+
+function toggleChatWidget() {
+    const container = document.getElementById('chatWidgetContainer');
+    const launcher = document.getElementById('chatLauncher');
+    
+    container.classList.toggle('is-active');
+    
+    if(container.classList.contains('is-active')) {
+        launcher.innerText = '';
+        document.getElementById('widgetUserInput').focus();
+        const box = document.getElementById('chatWidgetBox');
+        box.scrollTop = box.scrollHeight;
+    } else {
+        launcher.innerText = '';
+    }
+}
+
+function sendWidgetChatMessage() {
+    const inputEl = document.getElementById('widgetUserInput');
     const msgText = inputEl.value.trim();
     if(!msgText) return;
 
-    appendMessage('user', msgText);
+    appendWidgetMessage('user', msgText);
     inputEl.value = '';
 
     fetch('chat.php?action=send', {
@@ -70,24 +214,37 @@ function sendChatMessage() {
     .then(res => res.json())
     .then(data => {
         if(data.status === 'success') {
-            appendMessage(data.mode, data.reply);
+            appendWidgetMessage(data.mode, data.reply);
             if(data.mode === 'human') {
-                document.getElementById('chatMode').innerText = "Live Agent Mode";
-                document.getElementById('chatMode').style.background = "#e65100";
+                const modeBadge = document.getElementById('chatModeWidget');
+                modeBadge.innerText = "Live Agent Mode";
+                modeBadge.style.background = "#e65100";
             }
         }
     });
 }
 
-function appendMessage(sender, text) {
-    const box = document.getElementById('chatBox');
+function clearWidgetHistory() {
+    if (!confirm("Clear your chat conversation history context?")) return;
+
+    fetch('chat.php?action=clear', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === 'success') {
+            document.getElementById('chatWidgetBox').innerHTML = '';
+            const modeBadge = document.getElementById('chatModeWidget');
+            modeBadge.innerText = "AI Bot Mode";
+            modeBadge.style.background = "rgba(255,255,255,0.2)";
+        }
+    });
+}
+
+function appendWidgetMessage(sender, text) {
+    const box = document.getElementById('chatWidgetBox');
     const msgDiv = document.createElement('div');
-    msgDiv.className = `msg ${sender}`;
+    msgDiv.className = `chat-widget-msg ${sender}`;
     msgDiv.innerText = text;
     box.appendChild(msgDiv);
     box.scrollTop = box.scrollHeight;
 }
 </script>
-
-</body>
-</html>

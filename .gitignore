@@ -11,8 +11,6 @@
 # Prevent testing uploads (like generated QR codes or tickets) from cluttering the repo
 modules/Registrants/uploads/
 uploads/qrcodes/
-*.png
-*.jpg
 *.pdf
 
 # ==========================================
