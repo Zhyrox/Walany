@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="<?php echo BASE_URL; ?>">
     <title>Attendance Scan Terminal</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/style.css">
 </head>
 <body class="scanner-page">
+    <header class="site-header login-header">
+        <a href="?module=Attendance&action=view_events" class="logo-placeholder" aria-label="Refresh page">
+            <img src="<?php echo BASE_URL; ?>assets/images/Walania.svg" alt="Walania logo">
+        </a>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+            <img class="theme-toggle-icon" data-theme-icon src="<?php echo BASE_URL; ?>assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+        </button>
+    </header>
 
-<div class="scanner-page-header">
-    <a href="?module=Attendance&action=view_events" class="back-btn">← Back to Events List</a>
-    <h2>Registrar Entry Control Terminal (Event ID: <?php echo htmlspecialchars($_GET['name'] ?? '0'); ?>)</h2>
-</div>
+    <div class="scanner-page-header">
 
-<div class="workspace-grid">
+        <h2>Registrar Entry Control Terminal (Event ID: <?php echo htmlspecialchars($_GET['name'] ?? '0'); ?>)</h2>
+    </div>
+
+    <div class="workspace-grid">
     
     <!-- LEFT SIDE: CONTROLS & INTERCEPTORS -->
     <div class="column-left">
@@ -28,7 +38,7 @@
             <p class="scanner-help-text">If ticket camera reading fails, manually search student parameters below:</p>
             <div class="manual-input-group">
                 <input type="text" id="manual_ref" placeholder="Type Reference ID (e.g. REF-10023)..." autocomplete="off">
-                <button type="button" onclick="submitManualInput()">Verify System ID</button>
+                <button type="button" class="primary-button submit-button" onclick="submitManualInput()">Verify System ID</button>
             </div>
         </div>
     </div>
@@ -171,4 +181,5 @@ function escapeHtml(str) {
 </script>
 
 </body>
+    <script src="<?php echo BASE_URL; ?>assets/script.js"></script>
 </html>

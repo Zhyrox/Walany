@@ -31,6 +31,7 @@
     --accent: #7eb9b9;
     --surface: #ffffff;
     --muted: #597171;
+    --scanner-text: #1f3737;
     --border: rgba(11, 15, 15, 0.12);
     --shadow: 0 24px 70px rgba(31, 77, 76, 0.12);
 }
@@ -43,6 +44,7 @@
     --accent: #468181;
     --surface: #0d1515;
     --muted: #b7cccc;
+    --scanner-text: #d7f1f1;
     --border: rgba(240, 244, 244, 0.16);
     --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
 }
@@ -123,11 +125,13 @@ body {
         radial-gradient(circle at 10% 18%, color-mix(in srgb, var(--secondary) 27%, transparent) 0 12%, transparent 14%),
         linear-gradient(180deg, color-mix(in srgb, var(--background) 92%, var(--secondary)) 0%, var(--background) 100%);
     font-family: 'ArchivoLight', Arial, sans-serif;
+    min-height: 100vh;
 }
 
 .scanner-page .scanner-page-header {
     max-width: 1300px;
-    margin: 0 auto;
+    margin: 24px auto 0;
+    padding-top: 100px;
 }
 
 .scanner-page .scanner-page-header h2 {
@@ -197,17 +201,20 @@ body {
 }
 
 .scanner-page .manual-input-group button {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: bold;
+    background: var(--secondary);
+    color: #6ca7a6;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 24px;
+    font-weight: 800;
+    font-family: 'ArchivoCondensedExtraBold';
+    box-shadow: 0 14px 32px rgba(108, 167, 166, 0.28);
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .scanner-page .manual-input-group button:hover {
-    background: #218838;
+    transform: translateY(-2px);
 }
 
 .scanner-page .status-box {
@@ -233,19 +240,28 @@ body {
 
 .scanner-page .scanner-help-text {
     font-size: 14px;
-    color: #666;
+    color: var(--scanner-text);
     margin-top: 0;
 }
 
 .scanner-page .details-display p {
     font-size: 16px;
     margin: 10px 0;
-    color: #444;
+    color: var(--scanner-text);
 }
 
 .scanner-page .details-display span {
     font-weight: bold;
-    color: #111;
+    color: var(--scanner-text);
+}
+
+.scanner-page html5-qrcode-element {
+    color: var(--scanner-text);
+}
+
+.scanner-page .scanner-empty-state {
+    text-align: center;
+    color: var(--scanner-text);
 }
 
 .scanner-page .table-container {
