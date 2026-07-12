@@ -39,4 +39,5 @@ define('SMTP_USER', getenv('SMTP_USER') ?: 'walaniaevents@gmail.com');
 define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
 
 define('GEMINI_CHATBOT_KEY', getenv('GEMINI_CHATBOT_KEY') ?: '');
+define('PAYMONGO_SECRET_KEY', getenv('PAYMONGO_SECRET_KEY') ?: '');
 ?>

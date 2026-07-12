@@ -1,25 +1,4 @@
-<?php
-require_once __DIR__ . '/modules/Chatbot/Controllers/ChatController.php';
 
-$widgetController = new ChatController();
-
-// 1. Initialize session tokens or state values
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-if (!isset($_SESSION['chat_token'])) {
-    $_SESSION['chat_token'] = bin2hex(random_bytes(16));
-}
-
-// 2. Fetch required variables that the chat view template expects to find
-$dbInstance = new Database();
-$chatSessionModel = new ChatSession($dbInstance->getConnection());
-$activeSession = $chatSessionModel->getOrCreateSession($_SESSION['chat_token']);
-
-$history = $chatSessionModel->getChatHistory($activeSession['id']);
-$suggestions = $widgetController->getSuggestionPrompts();
-
-// 3. Render out the HTML markup cleanly onto the page layer canvas frame
-require_once __DIR__ . '/modules/Chatbot/Views/chat-window.php';
-?>
 <?php
 require_once __DIR__ . '/core/config.php';
 if (!defined('BASE_URL')) {
@@ -128,10 +107,29 @@ switch ($module) {
         
         if ($action === 'register') {
             require_once __DIR__ . '/modules/Registrants/Views/register.php';
+            exit;
         }
-        elseif ($action === 'submit_registration') {
+        
+        if ($action === 'submit_registration') {
             $result = $controller->handleRegistration();
             echo json_encode($result);
+            exit;
+        }
+        
+        if ($action === 'verify_otp') {
+            $result = $controller->verifyOTP();
+            echo json_encode($result); // Correctly spits out the JSON for JS to read
+            exit;
+        }
+
+        if ($action === 'process_payment') {
+            $controller->redirectToPayMongoCheckout();
+            exit;
+        }
+
+        if ($action === 'payment_callback') {
+            require_once __DIR__ . '/modules/Registrants/Views/payment-callback.php';
+            exit;
         }
         break;
 

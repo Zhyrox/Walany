@@ -1,63 +1,39 @@
 <?php
-require_once __DIR__ . '/../../../core/Database.php';
-
-// 1. Capture the incoming event ID from the URL string
-$eventId = isset($_GET['event_id']) ? (int)$_GET['event_id'] : 0;
-$eventData = null;
-
-if ($eventId > 0) {
-    try {
-        $dbInstance = new Database();
-        $db = $dbInstance->getConnection();
-        
-        // 2. Query only the single event matching our ID
-        $stmt = $db->prepare("SELECT * FROM `walania_event` WHERE `id` = :id LIMIT 1");
-        $stmt->execute([':id' => $eventId]);
-        $eventData = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-    } catch (PDOException $e) {
-        // Gracefully fail behind the scenes if database connectivity drops
-        $eventData = null;
-    }
-}
-
-// 3. Process the thumbnail string exactly like you did on the homepage loop
-$eventName = $eventData['name'] ?? 'Campus Event';
-$thumbnailValue = isset($eventData['thumbnail']) ? trim($eventData['thumbnail']) : '';
-
-if (!empty($thumbnailValue) && $thumbnailValue !== 'uploads/events/default-banner.png') {
-    $registrationImage = $thumbnailValue;
-} else {
-    // Clean fallback routing starting directly from your project root folder context
-    $registrationImage = '/Walany/assets/images/Event_Image%20(1).jpg';
-}
-?>
-<?php
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../../core/Config.php';
+require_once __DIR__ . '/../../../core/Database.php';
 require_once __DIR__ . '/../Models/RegistrantModel.php';
+require_once __DIR__ . '/../../../libs/PHPMailer/src/Exception.php';
+require_once __DIR__ . '/../../../libs/PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/../../../libs/PHPMailer/src/SMTP.php';
 
 class RegistrantController {
-    private $db;
+    private $model;
 
     public function __construct() {
-        require_once __DIR__ . '/../../../core/Database.php';
-        
         $database = new Database();
-        $this->db = $database->getConnection();
+        $db = $database->getConnection();
+        $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+        $this->model = new RegistrantModel($db);
+    }
+
+    public function loadEventContext(int $eventId): array {
+        $eventData = ($eventId > 0) ? $this->model->getEventData($eventId) : null;
+        $thumbnailValue = isset($eventData['thumbnail']) ? trim($eventData['thumbnail']) : '';
+        
+        return [
+            'eventData' => $eventData,
+            'eventName' => $eventData['name'] ?? 'Campus Event',
+            'registrationImage' => (!empty($thumbnailValue) && $thumbnailValue !== 'uploads/events/default-banner.png') ? $thumbnailValue : '/Walany/assets/images/Event_Image%20(1).jpg'
+        ];
     }
     
     public function handleRegistration() {
         date_default_timezone_set('Asia/Manila');
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return ['status' => 'error', 'message' => 'Invalid request method.'];
-        }
-
-        //fetches data
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return ['status' => 'error', 'message' => 'Invalid request method.'];
 
         $registrantDetails = (object) [
             'event_id'       => isset($_POST['event_id']) ? intval($_POST['event_id']) : 0,
@@ -67,80 +43,25 @@ class RegistrantController {
             'email'          => trim(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)),
             'phone'          => trim(filter_input(INPUT_POST, 'contact_number', FILTER_DEFAULT)),
             'birthdateInput' => isset($_POST['birthdate']) ? trim($_POST['birthdate']) : ''
-
         ];
 
-        $db = new Database();
-        $dbConnection = $db->getConnection();
-        $reg = new RegistrantModel($dbConnection);
-
-        $errors = [];
-
-        // 1. Validate Name Formatting
-        $nameErrors = $reg->nameValidation($registrantDetails);
-        if (is_array($nameErrors)) { $errors = array_merge($errors, $nameErrors); }
-
-        // 2. Validate Basic Contact Info
-        $contactErrors = $reg->contactInfoValidation($registrantDetails);
-        if (is_array($contactErrors)) { $errors = array_merge($errors, $contactErrors); }
-
-        // 3. Validate Email Domains (Run only if email structure was valid)
-        if (empty($contactErrors)) {
-            $domainErrors = $reg->emailDomainValidation($registrantDetails);
-            if (is_array($domainErrors)) { $errors = array_merge($errors, $domainErrors); }
+        if (!$this->model->validateRegistration($registrantDetails)) {
+            return ['status' => 'error', 'errors' => $this->model->getErrors()];
         }
 
-        // 4. Validate Event Age Requirements
-        $ageErrors = $reg->ageRequirementValidation($registrantDetails);
-        if (is_array($ageErrors)) { $errors = array_merge($errors, $ageErrors); }
+        $lockCheck = $this->model->checkOtpLockoutState($registrantDetails->email);
+        if ($lockCheck['status'] === 'error') return $lockCheck;
 
-
-        // --- Evaluation ---
-        if (!empty($errors)) {
-            return ['status' => 'error', 'errors' => $errors];
-        }
-
-        // --- 1. Check Security & Rate Limits First (Before Saving Data) ---
-        $lockCheck = $reg->checkOtpLockout($registrantDetails->email);
-        if ($lockCheck['status'] === 'error') {
-            return $lockCheck; // Stop execution and return the rate limit message
-        }
-        $latestOtpLog = $lockCheck['latest_log'];
-
-
-        // --- 2. Save Registrant Record Using Data Object Properties ---
-        $referenceId = $reg->save([
-            'event_id'       => $registrantDetails->event_id,
-            'first_name'     => $registrantDetails->firstName,
-            'middle_name'    => $registrantDetails->middleName,
-            'last_name'      => $registrantDetails->lastName,
-            'birthdate'      => !empty($registrantDetails->birthdateInput) ? $registrantDetails->birthdateInput : null,
-            'email'          => $registrantDetails->email,
-            'contact_number' => $registrantDetails->phone,
-            'is_verified'    => 0
+        $referenceId = $this->model->save([
+            'event_id' => $registrantDetails->event_id, 'first_name' => $registrantDetails->firstName, 'middle_name' => $registrantDetails->middleName, 'last_name' => $registrantDetails->lastName, 'birthdate' => !empty($registrantDetails->birthdateInput) ? $registrantDetails->birthdateInput : null, 'email' => $registrantDetails->email, 'contact_number' => $registrantDetails->phone, 'is_verified' => 0
         ]);
+        if (!$referenceId) return ['status' => 'error', 'message' => 'Critical storage transaction breakdown inside the model layer.'];
 
-        if (!$referenceId) {
-            return ['status' => 'error', 'message' => 'Critical storage transaction breakdown inside the model layer.'];
-        }
-
-
-        // --- 3. Process Security Token and Email Dispatching ---
-        $emailDispatched = $reg->sendVerificationOtp(
-            $registrantDetails->email,
-            $registrantDetails->firstName,
-            $registrantDetails->lastName,
-            $latestOtpLog
-        );
-
-        if (!$emailDispatched) {
+        if (!$this->sendVerificationOtpWorkflow($registrantDetails->email, $registrantDetails->firstName, $registrantDetails->lastName, $lockCheck['latest_log'])) {
             return ['status' => 'error', 'message' => 'Communication failure triggering mailer handling.'];
         }
 
-
-        // --- 4. Establish Application State Sessions & Redirect ---
         if (session_status() === PHP_SESSION_NONE) { session_start(); }
-
         $_SESSION['pending_verification_email'] = $registrantDetails->email;
         $_SESSION['pending_reference_id']       = $referenceId;
         $_SESSION['last_otp_request_time']      = time();
@@ -152,169 +73,204 @@ class RegistrantController {
 
     public function verifyOTP() {
         date_default_timezone_set('Asia/Manila');
-        
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-        require_once __DIR__ . '/../../../libs/PHPMailer/src/Exception.php';
-        require_once __DIR__ . '/../../../libs/PHPMailer/src/PHPMailer.php';
-        require_once __DIR__ . '/../../../libs/PHPMailer/src/SMTP.php';
-
-        // 1. Structural Check: Ensure session didn't drop during the request transfer
         if (!isset($_SESSION['pending_verification_email']) || !isset($_SESSION['pending_reference_id'])) {
             return ['status' => 'error', 'message' => 'Active registration session expired or not found. Please re-register.'];
         }
 
         $email = $_SESSION['pending_verification_email'];
-        $referenceId = $_SESSION['pending_reference_id']; 
-        $currentTime = date('Y-m-d H:i:s');
+        $referenceId = $_SESSION['pending_reference_id'];
 
-        // 2. Handle Resend Dispatch Logic
         if (isset($_POST['action']) && $_POST['action'] === 'resend') {
-            $timeSinceLastRequest = time() - (isset($_SESSION['last_otp_request_time']) ? $_SESSION['last_otp_request_time'] : 0);
-            $currentCooldown = isset($_SESSION['current_backoff_cooldown']) ? $_SESSION['current_backoff_cooldown'] : 30;
-
-            if ($timeSinceLastRequest < $currentCooldown) {
-                return ['status' => 'error', 'message' => 'Please wait ' . ($currentCooldown - $timeSinceLastRequest) . ' seconds.'];
-            }
-
-            $_SESSION['current_backoff_cooldown'] = ($currentCooldown == 30) ? 60 : 300;
-            $newPin = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-            $newExpiration = date('Y-m-d H:i:s', strtotime('+5 minutes'));
-
-            $logStmt = $this->db->prepare("SELECT resend_count_hourly FROM walania_otp_logs WHERE email = ? ORDER BY id DESC LIMIT 1");
-            $logStmt->execute([$email]);
-            $latestLog = $logStmt->fetch(PDO::FETCH_ASSOC);
-            $hourlyResends = $latestLog ? intval($latestLog['resend_count_hourly']) + 1 : 1;
-
-            $insertStmt = $this->db->prepare("INSERT INTO walania_otp_logs (email, otp_code, attempts, resend_count_hourly, expires_at) VALUES (?, ?, 0, ?, ?)");
-            $insertStmt->execute([$email, $newPin, $hourlyResends, $newExpiration]);
-
-            try {
-                $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-                $mail->isSMTP();
-                $mail->Host       = SMTP_HOST;
-                $mail->SMTPAuth   = true;
-                $mail->Username   = SMTP_USER;
-                $mail->Password   = SMTP_PASS;
-                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = 587;
-                $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
-                $mail->addAddress($email);
-                $mail->isHTML(true);
-                $mail->Subject = 'Your New Registration Code: ' . $newPin;
-                $mail->Body    = "Your code is: <strong>{$newPin}</strong>";
-                $mail->send();
-
-                $_SESSION['last_otp_request_time'] = time();
-                return ['status' => 'success', 'message' => 'A fresh code has been dispatched.'];
-            } catch (Exception $e) {
-                return ['status' => 'error', 'message' => 'Failed to dispatch code.'];
-            }
+            $timeSinceLastRequest = time() - ($_SESSION['last_otp_request_time'] ?? 0);
+            $resendResult = $this->model->processOtpResendBackoff($email, $timeSinceLastRequest, $_SESSION['current_backoff_cooldown'] ?? 30);
+            
+            if ($resendResult['status'] === 'error') return $resendResult;
+            
+            $_SESSION['current_backoff_cooldown'] = $resendResult['new_cooldown'];
+            $this->dispatchMail($email, 'Your New Registration Code: ' . $resendResult['new_pin'], "Your code is: <strong>{$resendResult['new_pin']}</strong>");
+            $_SESSION['last_otp_request_time'] = time();
+            return ['status' => 'success', 'message' => 'A fresh code has been dispatched.'];
         }
 
-        // 3. Handle Code Verification Logic
         $submittedOtp = isset($_POST['otp']) ? (is_array($_POST['otp']) ? trim(implode('', $_POST['otp'])) : trim($_POST['otp'])) : '';
+        if (empty($submittedOtp)) return ['status' => 'error', 'message' => 'Verification token empty or missing.'];
 
-        if (empty($submittedOtp)) {
-            return ['status' => 'error', 'message' => 'Verification token empty or missing.'];
+        $activeOtpRecord = $this->model->getLatestOtpLog($email);
+        if (!$activeOtpRecord) return ['status' => 'error', 'message' => 'Transaction context corrupted. Please re-register.'];
+
+        $currentTime = date('Y-m-d H:i:s');
+        if ($activeOtpRecord['locked_until'] && strtotime($activeOtpRecord['locked_until']) > strtotime($currentTime)) {
+            $timeLeft = ceil((strtotime($activeOtpRecord['locked_until']) - strtotime($currentTime)) / 60);
+            return ['status' => 'error', 'message' => "Account locked out. Try again in {$timeLeft} minutes."];
+        }
+        if (strtotime($currentTime) > strtotime($activeOtpRecord['expires_at'])) return ['status' => 'error', 'message' => 'The verification code has expired.'];
+
+        if ($submittedOtp === $activeOtpRecord['otp_code']) {
+            $this->model->verifyRegistrant($referenceId);
+            $this->dispatchSuccessTicketWithQr($email, $referenceId, $this->model->getRegistrantByRef($referenceId));
+
+            // 1. Ensure you have the event ID (pull from request parameters or current session context)
+            $eventId = isset($_POST['event_id']) ? (int)$_POST['event_id'] : (isset($_SESSION['pending_event_id']) ? (int)$_SESSION['pending_event_id'] : 1);
+
+            // 2. Fetch the clean data payload through your existing controller architecture
+            $context = $this->loadEventContext($eventId);
+            $eventDetails = $context['eventData'] ?? [];
+
+            // 3. Populate the success session array safely
+            $_SESSION['pending_reference_number'] = $referenceId;
+            $_SESSION['success_timestamp'] = date('F d, Y h:i A');
+
+            $_SESSION['registered_event_data'] = [
+                'name'        => $eventDetails['name'],
+                'event_date'  => $eventDetails['event_date'],
+                'description' => $eventDetails['description'],
+                'location'    => $eventDetails['location'] ?? 'Walania Designated Venue'
+            ];
+
+            return ['status' => 'success', 'redirect' => 'process-payment'];
         }
 
-        $checkLockStmt = $this->db->prepare("SELECT id, otp_code, attempts, expires_at, locked_until FROM walania_otp_logs WHERE email = ? ORDER BY id DESC LIMIT 1");
-        $checkLockStmt->execute([$email]);
-        $activeOtpRecord = $checkLockStmt->fetch(PDO::FETCH_ASSOC);
+        return $this->model->incrementOtpAttempts($activeOtpRecord);
+    }
 
-        if ($activeOtpRecord) {
-            if ($activeOtpRecord['locked_until'] && strtotime($activeOtpRecord['locked_until']) > strtotime($currentTime)) {
-                $timeLeft = ceil((strtotime($activeOtpRecord['locked_until']) - strtotime($currentTime)) / 60);
-                return ['status' => 'error', 'message' => "Account locked out. Try again in {$timeLeft} minutes."];
-            }
+    public function redirectToPayMongoCheckout() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-            if (strtotime($currentTime) > strtotime($activeOtpRecord['expires_at'])) {
-                return ['status' => 'error', 'message' => 'The verification code has expired.'];
-            }
+        // 1. Fetch your clean evaluation ID context from the session
+        $evalReferenceId = $_SESSION['pending_reference_id'] ?? null;
+        
+        if (!$evalReferenceId) {
+            header("Location: /PHP_Project/Walany/index.php?module=Home&error=session_loss");
+            exit();
+        }
 
-            if ($submittedOtp === $activeOtpRecord['otp_code']) {
-                $updateUser = $this->db->prepare("UPDATE walania_registrant SET is_verified = 1 WHERE reference_id = ?");
-                $updateUser->execute([$referenceId]);
+        // 2. Generate an independent, unique merchant track token for PayMongo
+        $paymentTrackingRef = "PAY-" . $evalReferenceId . "-" . time();
+        $amountInCents = 25000; // ₱250.00 (PayMongo counts in cents, e.g., 25000 = PHP 250.00)
 
-                $userStmt = $this->db->prepare("SELECT first_name, last_name FROM walania_registrant WHERE reference_id = ? LIMIT 1");
-                $userStmt->execute([$referenceId]);
-                $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+        $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . "/PHP_Project/Walany";
 
-                // Safe path validation checking for phpqrcode library inclusion
-                $qrLibPath = __DIR__ . '/../../../libs/phpqrcode/qrlib.php';
-                if (file_exists($qrLibPath)) {
-                    try {
-                        require_once $qrLibPath;
-                        $qrDir = __DIR__ . '/../../../uploads/qrcodes/';
-                        if (!file_exists($qrDir)) { mkdir($qrDir, 0777, true); }
-                        $qrFilePath = $qrDir . $referenceId . '.png';
-                        QRcode::png($referenceId, $qrFilePath, QR_ECLEVEL_H, 6);
+        // 3. Prepare the strict JSON format structured request payload
+        $payload = json_encode([
+            'data' => [
+                'attributes' => [
+                    'send_email_receipt' => true,
+                    'show_description'   => true,
+                    'show_line_items'    => true,
+                    'line_items' => [
+                        [
+                            'amount'      => $amountInCents,
+                            'currency'    => 'PHP',
+                            'name'        => 'Event Registration Fee',
+                            'quantity'    => 1
+                        ]
+                    ],
+                    'payment_method_types' => ['gcash', 'paymaya', 'card'],
+                    'reference_number'     => $paymentTrackingRef,
+                    'description'          => 'Payment integration pipeline verification.',
+                    // Pass the true evaluation ID back via query parameter string on success
+                    'success_url'          => $baseUrl . "/modules/Registrants/Views/payment-callback.php?status=success&ref=" . urlencode($evalReferenceId),
+                    'cancel_url'           => $baseUrl . "/modules/Registrants/Views/payment-callback.php?status=cancelled"
+                ]
+            ]
+        ]);
 
-                        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-                        $mail->isSMTP();
-                        $mail->Host       = SMTP_HOST;
-                        $mail->SMTPAuth   = true;
-                        $mail->Username   = SMTP_USER;
-                        $mail->Password   = SMTP_PASS;
-                        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                        $mail->Port       = 587;
-                        $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
-                        $mail->addAddress($email);
-                        $mail->addEmbeddedImage($qrFilePath, 'qr_code_embed');
-                        $mail->isHTML(true);
-                        $mail->Subject = 'Your Event Entry Ticket Pass: ' . $referenceId;
-                        $mail->Body    = "
-                            <div style='font-family: Arial; padding: 20px;'>
-                                <h2>Verification Successful! 🎉</h2>
-                                <p>Hi <strong>{$user['first_name']}</strong>,</p>
-                                <img src='cid:qr_code_embed' alt='Your QR Ticket'><br>
-                                <strong>Reference ID: {$referenceId}</strong>
-                            </div>";
-                        $mail->send();
-                        if (file_exists($qrFilePath)) { unlink($qrFilePath); }
-                    } catch (Exception $e) {
-                        error_log("Ticket Dispatch Fault: " . $e->getMessage());
-                    }
-                }
+        // 4. Send the payload to PayMongo Checkout Sessions API endpoint via cURL
+        $ch = curl_init('https://api.paymongo.com/v1/checkout_sessions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Basic ' . base64_encode(PAYMONGO_SECRET_KEY . ':')
+        ]);
 
-                $_SESSION['pending_reference_number'] = $referenceId;
-                $_SESSION['success_timestamp'] = date('F d, Y h:i A');
-                return ['status' => 'success', 'redirect' => 'registration-success'];
-            } else {
-                $newAttemptsCount = intval($activeOtpRecord['attempts']) + 1;
-                
-                if ($newAttemptsCount >= 3) {
-                    $lockoutUntilTime = date('Y-m-d H:i:s', strtotime('+15 minutes'));
-                    $updateLog = $this->db->prepare("UPDATE walania_otp_logs SET attempts = ?, locked_until = ? WHERE id = ?");
-                    $updateLog->execute([$newAttemptsCount, $lockoutUntilTime, $activeOtpRecord['id']]);
-                    return ['status' => 'error', 'message' => 'Too many failed entries. Try again in 15 minutes.'];
-                } else {
-                    $updateLog = $this->db->prepare("UPDATE walania_otp_logs SET attempts = ? WHERE id = ?");
-                    $updateLog->execute([$newAttemptsCount, $activeOtpRecord['id']]);
-                    $triesRemaining = 3 - $newAttemptsCount;
-                    return ['status' => 'error', 'message' => "Incorrect code. {$triesRemaining} attempts remaining."];
-                }
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && $response) {
+            $result = json_decode($response, true);
+            $checkoutUrl = $result['data']['attributes']['checkout_url'] ?? null;
+
+            if ($checkoutUrl) {
+                // Hand off control window loop to PayMongo's secure merchant page
+                header("Location: " . $checkoutUrl);
+                exit();
             }
         }
-        return ['status' => 'error', 'message' => 'Transaction context corrupted. Please re-register.'];
+
+        // Debugging backup output in case configuration keys are wrong
+        die("PayMongo API Handshake Failed. HTTP Server Response Code: " . $httpCode);
+    }
+
+    private function sendVerificationOtpWorkflow(string $email, string $firstName, string $lastName, ?array $latestOtpLog): bool {
+        $sixDigitPin = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $this->model->createOtpLog($email, $sixDigitPin, $latestOtpLog ? (int)$latestOtpLog['resend_count_hourly'] + 1 : 1, date('Y-m-d H:i:s', strtotime('+5 minutes')));
+        
+        $body = "<div style='font-family: Arial; padding: 25px; max-width: 480px; margin: auto;'>
+                    <h2>Email Verification Code</h2>
+                    <p>Hello <strong>{$firstName}</strong>,</p>
+                    <div style='text-align: center; margin: 30px 0;'><span style='font-family: monospace; font-size: 34px; font-weight: bold; padding: 12px 24px; background-color: #f1f3f5; border-radius: 8px; color: #0d6efd;'>{$sixDigitPin}</span></div>
+                 </div>";
+        return $this->dispatchMail($email, 'Verify Your Registration Identity Code: ' . $sixDigitPin, $body);
+    }
+
+    private function dispatchMail(string $to, string $subject, string $body): bool {
+        try {
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP(); $mail->Host = SMTP_HOST; $mail->SMTPAuth = true;
+            $mail->Username = SMTP_USER; $mail->Password = SMTP_PASS;
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS; $mail->Port = 587;
+            $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
+            $mail->addAddress($to); $mail->isHTML(true);
+            $mail->Subject = $subject; $mail->Body = $body;
+            return $mail->send();
+        } catch (Exception $e) { error_log("Mailer Exception: " . $e->getMessage()); return false; }
+    }
+
+    private function dispatchSuccessTicketWithQr(string $email, string $referenceId, ?array $user) {
+        $qrLibPath = __DIR__ . '/../../../libs/phpqrcode/qrlib.php';
+        if (!file_exists($qrLibPath)) return;
+        try {
+            require_once $qrLibPath;
+            $qrDir = __DIR__ . '/../../../uploads/qrcodes/';
+            if (!file_exists($qrDir)) mkdir($qrDir, 0777, true);
+            $qrFilePath = $qrDir . $referenceId . '.png';
+            QRcode::png($referenceId, $qrFilePath, QR_ECLEVEL_H, 6);
+
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP(); $mail->Host = SMTP_HOST; $mail->SMTPAuth = true;
+            $mail->Username = SMTP_USER; $mail->Password = SMTP_PASS;
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS; $mail->Port = 587;
+            $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
+            $mail->addAddress($email); $mail->addEmbeddedImage($qrFilePath, 'qr_code_embed');
+            $mail->isHTML(true); $mail->Subject = 'Your Event Entry Ticket Pass: ' . $referenceId;
+            $mail->Body = "<div style='font-family: Arial; padding: 20px;'>
+                               <h2>Verification Successful! 🎉</h2>
+                               <p>Hi <strong>" . ($user['first_name'] ?? 'Registrant') . "</strong>,</p>
+                               <img src='cid:qr_code_embed' alt='Your QR Ticket'><br>
+                               <strong>Reference ID: {$referenceId}</strong>
+                           </div>";
+            $mail->send();
+            if (file_exists($qrFilePath)) unlink($qrFilePath);
+        } catch (Exception $e) { error_log("Ticket Dispatch Fault: " . $e->getMessage()); }
     }
 }
 
-// --- SECURE EXECUTION HOOK AT THE VERY BOTTOM OF THE FILE ---
-    if (basename($_SERVER['SCRIPT_FILENAME']) === 'RegistrantController.php') {
-        header('Content-Type: application/json');
-        try {
-            $instance = new RegistrantController();
-            echo json_encode($instance->verifyOTP());
-        } catch (Throwable $e) {
-            echo json_encode([
-                'status' => 'error', 
-                'message' => 'Execution Environment Crash: ' . $e->getMessage()
-            ]);
-        }
-        exit();
+// --- SECURE EXECUTION INTERFACE HOOK ---
+if (basename($_SERVER['SCRIPT_FILENAME']) === 'RegistrantController.php') {
+    header('Content-Type: application/json');
+    try {
+        $instance = new RegistrantController();
+        echo json_encode($instance->verifyOTP());
+    } catch (Throwable $e) {
+        echo json_encode(['status' => 'error', 'message' => 'Execution Environment Crash: ' . $e->getMessage()]);
     }
-?>
+    exit();
+}

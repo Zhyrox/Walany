@@ -6,6 +6,12 @@
     <title>Email Verification - Walania Events</title>
     <link rel="icon" type="image/x-icon" href="/PHP_Project/Walany/assets/images/Walania.svg">
     <link rel="stylesheet" href="/PHP_Project/Walany/assets/style.css">
+    <style>
+        .otp-alert { padding: 12px; margin-bottom: 20px; border-radius: 6px; font-size: 14px; text-align: left; }
+        .otp-alert.error { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+        .otp-alert.success { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+        .is-hidden { display: none !important; }
+    </style>
 </head>
 <body class="registration-page event-registration-page otp-verification-page">
 <header class="site-header login-header">
@@ -25,13 +31,11 @@
                 <p>We sent a 6-digit verification code to your email address. Please input the passphrase tokens below.</p>
             </div>
 
-            <!-- System Alerts Box (For errors or resend status) -->
+            <!-- Enhanced System Alerts Box -->
             <div id="alertBox" class="otp-alert is-hidden" role="alert"></div>
 
-            <!-- Main Submission Form -->
             <form id="otpForm" method="POST">
                 <div class="otp-inputs" aria-label="Verification code">
-                    <!-- Grouped array elements naming structure matches $POST['otp'] controller expectation -->
                     <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 1">
                     <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 2">
                     <input type="text" name="otp[]" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="off" aria-label="Digit 3">
@@ -55,21 +59,27 @@
     <p>&copy; 2026 Walania. All rights reserved.</p>
 </footer>
 
-<!-- JavaScript Controls for UX Focus & Ajax Handlers -->
 <script>
-// --- 1. SMOOTH AUTO-ADVANCE INPUT FIELD LOGIC ---
-// Look for any input elements inside a container with the class .otp-field or .otp-inputs
-const inputs = document.querySelectorAll('.otp-field input, .otp-inputs input, input[name="otp[]"]');
+const inputs = document.querySelectorAll('.otp-inputs input, input[name="otp[]"]');
+const alertBox = document.getElementById('alertBox');
 
+const endpoint = '/PHP_Project/Walany/index.php?module=Registrants&action=verify_otp';
+const resendEndpoint = '/PHP_Project/Walany/index.php?module=Registrants&action=resend_otp'; // Adjust action string as per backend setup
+
+function displayAlert(type, message) {
+    alertBox.className = `otp-alert ${type}`;
+    alertBox.textContent = message;
+    alertBox.classList.remove('is-hidden');
+}
+
+// --- 1. FIELD AUTO-ADVANCE FOCUS SYSTEM ---
 inputs.forEach((input, index) => {
-    // Automatically move focus to the next input cell once a number is typed
     input.addEventListener('input', (e) => {
         if (e.target.value.length === 1 && index < inputs.length - 1) {
             inputs[index + 1].focus();
         }
     });
 
-    // Move backward to the previous cell if Backspace is pressed on an empty field
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
             inputs[index - 1].focus();
@@ -77,52 +87,49 @@ inputs.forEach((input, index) => {
     });
 });
 
-
-// --- 2. VERIFY BUTTON SUBMISSION HANDLER ---
+// --- 2. VERIFY TOKEN HANDLER ---
 const form = document.getElementById('otpForm');
-
 form.addEventListener('submit', function(e) {
-    e.preventDefault(); // Stop standard page reloads
-    
+    e.preventDefault();
     const formData = new FormData(form);
     
-    fetch('/PHP_Project/Walany/modules/Registrants/Controllers/RegistrantController.php', {
+    fetch(endpoint, {
         method: 'POST',
         body: formData
     })
     .then(res => res.json())
     .then(data => {
         if (data.status === 'success') {
-            // Smoothly send the user to the verified success dashboard view layout
-            window.location.href = '/PHP_Project/Walany/modules/Registrants/Views/registration-success.php'; 
+            // 🛠️ FIX 2: Check if payload specifies the PayMongo workflow intercept
+            if (data.redirect === 'process-payment') {
+                window.location.href = '/PHP_Project/Walany/index.php?module=Registrants&action=process_payment';
+            } else {
+                // Fallback destination page view
+                window.location.href = '/PHP_Project/Walany/index.php?module=Registrants&action=registration_success';
+            }
         } else {
-            // Display any error alerts (like expired or wrong code)
-            alert(data.message);
+            displayAlert('error', data.message || 'Verification calculation failed.');
         }
     })
     .catch((error) => {
         console.error("Verification Submission Error:", error);
-        alert('System context processing failure during verification submission.');
+        displayAlert('error', 'System handling fault processing OTP entry token.');
     });
 });
 
-
-// --- 3. RESEND ACTION COUNTDOWN LOCKOUT TIMER ---
+// --- 3. COOLDOWN BACKOFF CLOCK TIMER ---
 let cooldownSeconds = 30;
 const resendBtn = document.getElementById('resendBtn');
 
 function startResendCountdown() {
     if (!resendBtn) return;
-    
     resendBtn.disabled = true;
     let currentSeconds = cooldownSeconds;
-    
     resendBtn.textContent = `Resend Code (${currentSeconds}s)`;
     
     const countdownInterval = setInterval(() => {
         currentSeconds--;
         resendBtn.textContent = `Resend Code (${currentSeconds}s)`;
-        
         if (currentSeconds <= 0) {
             clearInterval(countdownInterval);
             resendBtn.textContent = "Resend Code";
@@ -131,34 +138,30 @@ function startResendCountdown() {
     }, 1000);
 }
 
-// Automatically start the 30-second lockout on structural page compilation load
 document.addEventListener("DOMContentLoaded", startResendCountdown);
 
-
-// --- 4. AJAX RESEND BUTTON ACTION HANDLER ---
+// --- 4. AJAX RESEND ACTIONS DISPATCHER ---
 if (resendBtn) {
     resendBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        
         const formData = new FormData();
-        formData.append('action', 'resend');
         
-        fetch('/PHP_Project/Walany/modules/Registrants/Controllers/RegistrantController.php', {
+        fetch(resendEndpoint, {
             method: 'POST',
             body: formData
         })
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                alert('A fresh verification code has been dispatched to your email.');
-                startResendCountdown(); // Reset the 30s timer cleanly without a page reload
+                displayAlert('success', 'A fresh validation pass key has been routed to your mailbox.');
+                startResendCountdown();
             } else {
-                alert(data.message || 'Resend threshold limited.');
+                displayAlert('error', data.message || 'Security limit threshold hit.');
             }
         })
         .catch((error) => {
             console.error("Resend Technical Error:", error);
-            alert('Error processing fallback transmission.');
+            displayAlert('error', 'Transmission transport broken while requesting code.');
         });
     });
 }
