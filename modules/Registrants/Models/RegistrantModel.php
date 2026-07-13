@@ -134,8 +134,11 @@ class RegistrantModel {
             ]);
             return $referenceId;
         } catch (PDOException $e) {
-            error_log("Database Save Failure: " . $e->getMessage());
-            return null;
+            // 1. Log it locally to identify which model query failed
+            error_log("MODEL ENGINE FAILURE: " . $e->getMessage());
+            
+            // 2. Re-throw it so the Controller's catch block can catch it and redirect the user
+            throw $e;
         }
     }
 

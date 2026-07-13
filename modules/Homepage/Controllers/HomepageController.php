@@ -13,9 +13,12 @@ class HomepageController {
             $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
         } catch (PDOException $e) {
-            // Log or gracefully display database failures
-            echo "<div style='color:red; background:#fff3f3; padding:15px; border-radius:5px; margin:20px auto; max-width:1200px;'><strong>Database Query Error:</strong> " . htmlspecialchars($e->getMessage()) . "</div>";
-            $events = [];
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
         }
 
         // Load the view layout file safely now that $events is populated with the new thumbnail column

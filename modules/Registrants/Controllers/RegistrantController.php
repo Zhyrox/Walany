@@ -231,7 +231,14 @@ class RegistrantController {
             $mail->addAddress($to); $mail->isHTML(true);
             $mail->Subject = $subject; $mail->Body = $body;
             return $mail->send();
-        } catch (Exception $e) { error_log("Mailer Exception: " . $e->getMessage()); return false; }
+        } catch (PDOException $e) {
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
+        }
     }
 
     private function dispatchSuccessTicketWithQr(string $email, string $referenceId, ?array $user) {
@@ -259,7 +266,14 @@ class RegistrantController {
                            </div>";
             $mail->send();
             if (file_exists($qrFilePath)) unlink($qrFilePath);
-        } catch (Exception $e) { error_log("Ticket Dispatch Fault: " . $e->getMessage()); }
+        } catch (PDOException $e) {
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
+        }
     }
 }
 
@@ -269,8 +283,13 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === 'RegistrantController.php') {
     try {
         $instance = new RegistrantController();
         echo json_encode($instance->verifyOTP());
-    } catch (Throwable $e) {
-        echo json_encode(['status' => 'error', 'message' => 'Execution Environment Crash: ' . $e->getMessage()]);
+    } catch (PDOException $e) {
+        // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+        error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+        // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+        exit;
     }
     exit();
 }

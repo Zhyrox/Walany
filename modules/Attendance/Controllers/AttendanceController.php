@@ -21,7 +21,12 @@ class AttendanceController {
             $stmt->execute();
             return ['status' => 'success', 'events' => $stmt->fetchAll(PDO::FETCH_ASSOC)];
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => 'Failed to initialize events roster: ' . $e->getMessage()];
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
         }
     }
 
@@ -33,7 +38,12 @@ class AttendanceController {
             $stmt->execute(['event_id' => $eventId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            return [];
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
         }
     }
 
@@ -97,7 +107,12 @@ class AttendanceController {
             ];
 
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => 'Database failure: ' . $e->getMessage()];
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
         }
     }
 }

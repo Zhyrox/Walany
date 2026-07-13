@@ -32,6 +32,21 @@ class AuthController {
                 // Capture the actual database role string ('admin', 'planner', or 'registrar')
                 $_SESSION['role']         = $manager['role'];
 
+                // CLEANUP TRIGGER: If they logged in with an unhashed temp password visible, clear it out now
+                if (!empty($manager['temp_password'])) {
+                    try {
+                        $cleanupStmt = $db->prepare("UPDATE `walania_managers` SET `temp_password` = NULL WHERE `id` = :id");
+                        $cleanupStmt->execute(['id' => $manager['id']]);
+                    } catch (PDOException $e) {
+                        // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+                        error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+                        // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+                        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+                        exit;
+                    }
+                }
+
                 return [
                     'status' => 'success',
                     'message' => 'Access granted.',
@@ -41,7 +56,12 @@ class AuthController {
                 return ['status' => 'error', 'message' => 'Access Denied. Invalid administrative credentials.'];
             }
         } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => 'Authentication core fault: ' . $e->getMessage()];
+            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
+            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            exit;
         }
     }
 }
