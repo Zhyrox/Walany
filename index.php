@@ -77,7 +77,7 @@ switch ($module) {
     }
 
     if ($action === 'system_error') {
-        require_once __DIR__ . '/modules/Admin/Views/error_landing.php';
+        require_once __DIR__ . '/modules/Admin/Views/error-landing.php';
         exit;
     }
     break;
