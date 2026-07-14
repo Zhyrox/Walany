@@ -118,6 +118,153 @@ body {
     scrollbar-width: none;    /* Firefox */
 }
 
+/* =========================
+   REGISTRAR EVENTS PAGE
+========================= */
+.registrar-events-page {
+    font-family: 'ArchivoLight', Arial, sans-serif;
+    min-height: 100vh;
+    padding: 30px;
+    background:
+        radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--secondary) 24%, transparent) 0 12%, transparent 30%),
+        linear-gradient(180deg, color-mix(in srgb, var(--background) 96%, var(--secondary)) 0%, var(--background) 100%);
+}
+
+.registrar-events-page .dashboard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 0%, var(--surface) 100%);
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 16px 40px rgba(31, 77, 76, 0.12);
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
+}
+
+.registrar-events-page .content-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.registrar-events-page .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid #6ca7a6;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 8px;
+    gap: 16px;
+    background: color-mix(in srgb, var(--surface) 94%, var(--secondary));
+    box-shadow: inset 0 -2px 0 #6ca7a6;
+}
+
+.registrar-events-page .header h2 {
+    margin: 0;
+    color: transparent;
+    background: linear-gradient(135deg, #9fcfce 0%, #6ca7a6 48%, #468181 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-family: 'ArchivoCondensedExtraBold';
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.registrar-events-page .header p,
+.registrar-events-page .intro-panel p,
+.registrar-events-page .event-card p,
+.registrar-events-page .event-card h4 {
+    font-family: 'ArchivoLight', Arial, sans-serif;
+    color: var(--muted);
+}
+
+.registrar-events-page .event-card h4 {
+    margin: 0 0 4px;
+    color: var(--text);
+    font-family: 'ArchivoBold';
+    font-size: 1.05rem;
+}
+
+.registrar-events-page .header-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+.registrar-events-page .intro-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.registrar-events-page .events-roster {
+    display: flex;
+    flex-direction: column;
+}
+
+.registrar-events-page .logout-btn {
+    background: linear-gradient(135deg, #9fcfce 0%, #6ca7a6 48%, #468181 100%);
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'ArchivoBold';
+}
+
+.registrar-events-page .event-card {
+    position: relative;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 0%, var(--surface) 100%);
+    padding: 16px 18px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    min-height: 92px;
+    box-shadow: 0 6px 16px rgba(31, 77, 76, 0.08);
+    overflow: hidden;
+    transition: none;
+    flex-wrap: nowrap;
+}
+
+.registrar-events-page .event-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6ca7a6, #468181);
+    border-radius: 14px 14px 0 0;
+}
+
+.registrar-events-page .event-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.registrar-events-page .btn-action {
+    background: linear-gradient(135deg, #9fcfce 0%, #6ca7a6 48%, #468181 100%);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: 700;
+    display: inline-block;
+    font-family: 'ArchivoBold';
+}
+
+.registrar-events-page .btn-action:hover {
+    filter: brightness(0.95);
+}
+
+/* =========================
+   SCANNER PAGE
+========================= */
 .scanner-page {
     padding: 20px;
     margin: 0;
@@ -297,6 +444,9 @@ body {
     color: #999;
 }
 
+/* =========================
+   HOME / EVENTS CATALOG PAGE
+========================= */
 .dashboard-page {
     background:
         radial-gradient(circle at 9% 18%, color-mix(in srgb, var(--secondary) 34%, transparent) 0 14%, transparent 15%),
@@ -413,29 +563,31 @@ button {
     align-items: stretch;
 }
 
-.event-card {
+.registrar-events-page .events-roster .event-card {
     position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 0;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
     width: 100%;
     min-width: 0;
-    padding: 24px;
+    padding: 16px 18px;
     border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
-    border-radius: 22px;
+    border-radius: 10px;
     background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, var(--secondary)) 0%, var(--surface) 100%);
-    box-shadow: 0 16px 40px rgba(31, 77, 76, 0.12);
-    overflow: visible;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    min-height: 100%;
-    justify-content: flex-start;
+    box-shadow: 0 6px 16px rgba(31, 77, 76, 0.08);
+    overflow: hidden;
+    transition: none;
+    min-height: 92px;
+    flex-wrap: nowrap;
 }
 
-.event-card.is-hidden {
+.registrar-events-page .events-roster .event-card.is-hidden {
     display: none;
 }
 
-.event-card::before {
+.registrar-events-page .events-roster .event-card::before {
     content: "";
     position: absolute;
     top: 0;
@@ -443,12 +595,12 @@ button {
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, #6ca7a6, #468181);
-    border-radius: 22px 22px 0 0;
+    border-radius: 10px 10px 0 0;
 }
 
-.event-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 22px 48px rgba(31, 77, 76, 0.16);
+.registrar-events-page .events-roster .event-card:hover {
+    transform: none;
+    box-shadow: 0 6px 16px rgba(31, 77, 76, 0.08);
 }
 
 .event-card-image {
