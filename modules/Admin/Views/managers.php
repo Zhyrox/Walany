@@ -45,7 +45,7 @@ try {
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2>System Environment Administration Matrix</h2>
         <!-- NAVIGATION TO SELF-SERVICE SETTINGS -->
-        <a href="/Walany/index.php?module=Admin&action=profile-settings" style="background: #6c757d; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
+        <a href="/Walany/index.php?module=Admin&action=profile_settings" style="background: #6c757d; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
             My Profile Settings
         </a>
         <a href="/Walany/index.php?module=Auth&action=login" 

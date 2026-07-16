@@ -1,34 +1,57 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: /Walany/index.php?module=Auth&action=login");
+if (session_status() === PHP_SESSION_NONE) { 
+    session_start(); 
+}
+
+// SECURITY CHANGE: Allow any authenticated system user (Admin, Planner, Registrar)
+if (!isset($_SESSION['manager_id']) || !isset($_SESSION['role'])) {
+    header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login");
     exit;
 }
 
-$currentAdminId = intval($_SESSION['manager_id'] ?? 0);
+// Resolve the correct dashboard landing page based on the active session role
+$roleDashboardUrl = "/PHP_Project/Walany/index.php?module=Auth&action=login"; // Safe fallback
+
+if (isset($_SESSION['role'])) {
+    switch ($_SESSION['role']) {
+        case 'admin':
+            $roleDashboardUrl = "/Walany/index.php?module=Admin&action=view_managers";
+            break;
+        case 'registrar':
+            $roleDashboardUrl = "/Walany/index.php?module=Admin&action=registrar_dashboard";
+            break;
+        case 'planner':
+            $roleDashboardUrl = "/Walany/index.php?module=Admin&action=planner_dashboard";
+            break;
+    }
+}
+
+$managerId = intval($_SESSION['manager_id']);
+$role = $_SESSION['role'];
 
 require_once __DIR__ . '/../../../core/Database.php';
 
 try {
     $db = (new Database())->getConnection();
     
-    // Extract the strict matching record properties for the active operator singleton
-    $stmt = $db->prepare("SELECT id, first_name, last_name, email FROM `walania_managers` WHERE `id` = :id LIMIT 1");
-    $stmt->execute(['id' => $currentAdminId]);
+    // Select the manager data matching the active session ID
+    $stmt = $db->prepare("SELECT * FROM `walania_managers` WHERE `id` = :id LIMIT 1");
+    $stmt->execute(['id' => $managerId]);
     $adminData = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$adminData) {
-        die("Critical Profiling Parameter Access Error.");
+        die("Critical Profiling Parameter Access Error: Profile not found.");
     }
 } catch (PDOException $e) {
-    // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
     error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
-
-    // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-    header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+    header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
     exit;
 }
 ?>
+
+
+
+<!-- Rest of your HTML/CSS form content remains exactly the same! -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,8 +67,8 @@ try {
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2>Personal Admin Profile Configurations</h2>
-        <a href="/Walany/index.php?module=Admin&action=view_managers" style="background: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
-            Return to Main Dashboard
+        <a href="<?= $roleDashboardUrl ?>" class="btn btn-secondary" style="padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-block;">
+            Return to Dashboard
         </a>
         <a href="/Walany/index.php?module=Auth&action=login" 
    onclick="return confirm('Are you sure you want to log out of the system?');" 

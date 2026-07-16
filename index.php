@@ -5,8 +5,8 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', dirname($_SERVER['SCRIPT_NAME']) === '/' ? '/' : dirname($_SERVER['SCRIPT_NAME']) . '/');
 }
 // 1. Capture the requested module and action from the URL query strings
-$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Home';
-$action = isset($_GET['action']) ? strtolower($_GET['action']) : '';
+$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Auth';
+$action = isset($_GET['action']) ? strtolower($_GET['action']) : 'login';
 
 // 2. Map routing requests to their clean modular directories
 switch ($module) {
@@ -25,11 +25,12 @@ switch ($module) {
                     if ($_SESSION['role'] === 'admin') {
                         header("Location: /Walany/index.php?module=Admin&action=view_managers");
                     } elseif ($_SESSION['role'] === 'registrar') {
-                        header("Location: /Walany/index.php?module=Attendance&action=view_events");
+                        header("Location: /Walany/index.php?module=Admin&action=registrar_dashboard");
                     } elseif ($_SESSION['role'] === 'planner') {
-                        header("Location: /Walany/index.php?module=Events&action=dashboard"); // Modify if you use a different default action
+                        // Point this directly to your admin module routing to avoid directory splitting
+                        header("Location: /Walany/index.php?module=Admin&action=planner_dashboard");
                     } else {
-                        // Fallback fallback if an unknown role exists
+                        // Safe fallback if an unknown role is registered
                         header("Location: /Walany/index.php?module=Home");
                     }
                 } else {
@@ -58,27 +59,34 @@ switch ($module) {
         exit;
     }
 
-    if ($action === 'profile-settings') {
-        require_once __DIR__ . '/modules/Admin/Views/profile-settings.php';
+    if ($action === 'profile_settings') {
+        require_once __DIR__ . '/modules/Admin/Views/profile_settings.php';
         exit;
     }
 
     if ($action === 'update_manager') {
         $res = $controller->updateManager();
-        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=profile-settings&status=" . $res['status'] . "&message=" . urlencode($res['message']));
+        header("Location: /Walany/index.php?module=Admin&action=profile_settings&status=" . $res['status'] . "&message=" . urlencode($res['message']));
         exit;
     }
 
     if ($action === 'regenerate_key') {
         $managerId = intval($_GET['id'] ?? 0);
         $res = $controller->regenerateTempPassword($managerId);
-        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers&status=" . $res['status'] . "&message=" . urlencode($res['message']));
+        header("Location: /Walany/index.php?module=Admin&action=view_managers&status=" . $res['status'] . "&message=" . urlencode($res['message']));
         exit;
     }
 
     if ($action === 'system_error') {
         require_once __DIR__ . '/modules/Admin/Views/error-landing.php';
         exit;
+    }
+
+    if ($action === 'registrar_dashboard') {
+        require_once 'modules/Admin/Controllers/RegistrarController.php';
+        $controller = new RegistrarController();
+        $controller->registrarDashboard();
+        exit();
     }
     break;
         

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../core/Database.php';
+require_once __DIR__ . '/../Models/ManagerModel.php';
 
 class ManagerController {
 
@@ -106,61 +107,65 @@ class ManagerController {
     }
 
     public function updateManager() {
-        if (!$this->verifyAdminAccess()) {
-            return ['status' => 'error', 'message' => 'Unauthorized access checkpoint.'];
+        if (session_status() === PHP_SESSION_NONE) { 
+            session_start(); 
+        }
+
+        // 1. Ensure the user is logged in
+        if (!isset($_SESSION['manager_id'])) {
+            return ['status' => 'error', 'message' => 'Unauthorized access. Please log in.'];
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // FIX: Trust the secure session variable over what came from the raw form post
-            $managerId = intval($_SESSION['manager_id'] ?? 0);
-
-            if ($managerId === 0) {
-                return ['status' => 'error', 'message' => 'Access Denied: Invalid session context parameter.'];
-            }
-
+            $managerId = intval($_SESSION['manager_id']);
+            
             $firstName = trim($_POST['first_name'] ?? '');
             $lastName  = trim($_POST['last_name'] ?? '');
             $email     = trim($_POST['email'] ?? '');
             $password  = $_POST['password'] ?? ''; 
 
-            if (empty($firstName) || empty($lastName) || empty($email)) {
-                return ['status' => 'error', 'message' => 'All structural profile fields are required.'];
+            // FIX: If 'role' isn't submitted in the form (like for Registrars), 
+            // fall back to their current session role so the database query doesn't fail.
+            $role = trim($_POST['role'] ?? $_SESSION['role'] ?? '');
+
+            if (empty($firstName) || empty($lastName) || empty($email) || empty($role)) {
+                return ['status' => 'error', 'message' => 'All profile fields are required.'];
             }
 
             try {
-                $db = (new Database())->getConnection();
+                // Initialize your model
+                $managerModel = new ManagerModel();
 
-                if (!empty($password)) {
-                    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-                    $stmt = $db->prepare("UPDATE `walania_managers` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email, `password_hash` = :password_hash, `temp_password` = NULL WHERE `id` = :id");
-                    $stmt->execute([
-                        'first_name' => $firstName, 
-                        'last_name' => $lastName, 
-                        'email' => $email,
-                        'password_hash' => $passwordHash, 
-                        'id' => $managerId
-                    ]);
-                } else {
-                    $stmt = $db->prepare("UPDATE `walania_managers` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email WHERE `id` = :id");
-                    $stmt->execute([
-                        'first_name' => $firstName,
-                        'last_name' => $lastName,
-                        'email' => $email,
-                        'id' => $managerId
-                    ]);
+                // Check for email conflicts
+                if ($managerModel->emailExists($email, $managerId)) {
+                    return ['status' => 'error', 'message' => 'Conflict: This email is already registered to another account.'];
                 }
 
-                // Keep session variables in sync with updates
-                $_SESSION['manager_name'] = $firstName . ' ' . $lastName;
+                // Process password hashing if they want to change it
+                $passwordHash = null;
+                if (!empty($password)) {
+                    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+                }
 
-                $this->logEvent($db, "Admin updated their own credentials matrix parameters (ID: $managerId)");
-                return ['status' => 'success', 'message' => 'Your administrator profile was updated successfully.'];
+                // Execute update via your Model
+                $success = $managerModel->update($managerId, $firstName, $lastName, $email, $role, $passwordHash);
+
+                if ($success) {
+                    // Update the active session name in case they renamed themselves
+                    $_SESSION['manager_name'] = $firstName . ' ' . $lastName;
+                    
+                    // Log the activity
+                    $managerModel->logSystemActivity($managerId, "User updated their own profile credentials.");
+                    
+                    return ['status' => 'success', 'message' => 'Your profile was updated successfully.'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Failed to write updates to the system.'];
+                }
+
             } catch (PDOException $e) {
-                // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
+                // Log and gracefully redirect using our universal error fallback
                 error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
-
-                // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-                header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+                header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
                 exit;
             }
         }

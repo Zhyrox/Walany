@@ -29,11 +29,19 @@ $errorMessage = htmlspecialchars($_GET['message'] ?? 'An unexpected environmenta
         </div>
 
         <?php if (isset($_SESSION['role'])): ?>
-            <a href="/Walany/index.php?module=Admin&action=view_managers" style="background: #007bff; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.95em; display: inline-block;">
+            <?php
+            $fallbackUrl = "/PHP_Project/Walany/index.php?module=Admin&action=view_managers";
+            if ($_SESSION['role'] === 'registrar') {
+                $fallbackUrl = "/PHP_Project/Walany/index.php?module=Admin&action=registrar_dashboard";
+            } elseif ($_SESSION['role'] === 'planner') {
+                $fallbackUrl = "/PHP_Project/Walany/index.php?module=Admin&action=planner_dashboard";
+            }
+            ?>
+            <a href="<?= $fallbackUrl ?>" style="background: #007bff; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.95em; display: inline-block;">
                 Return to Workspace
             </a>
         <?php else: ?>
-            <a href="/Walany/index.php?module=Auth&action=login" style="background: #6c757d; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.95em; display: inline-block;">
+            <a href="/PHP_Project/Walany/index.php?module=Auth&action=login" style="background: #6c757d; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.95em; display: inline-block;">
                 Go to Login Gate
             </a>
         <?php endif; ?>
