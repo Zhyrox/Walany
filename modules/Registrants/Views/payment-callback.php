@@ -32,9 +32,9 @@ if ($status === 'success' && $referenceNumber) {
     ]);
 
     $_SESSION['success_timestamp'] = date('F d, Y h:i A');
-    header("Location: /PHP_Project/Walany/modules/Registrants/Views/registration-success.php");
+    header("Location: /Walany/modules/Registrants/Views/registration-success.php");
     exit();
 } else {
-    header("Location: /PHP_Project/Walany/index.php?module=Home&error=payment_cancelled");
+    header("Location: /Walany/index.php?module=Home&error=payment_cancelled");
     exit();
 }

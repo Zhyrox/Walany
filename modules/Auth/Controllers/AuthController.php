@@ -42,7 +42,7 @@ class AuthController {
                         error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
                         // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-                        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+                        header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
                         exit;
                     }
                 }
@@ -60,7 +60,7 @@ class AuthController {
             error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
             // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
             exit;
         }
     }

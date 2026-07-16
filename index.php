@@ -5,8 +5,8 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', dirname($_SERVER['SCRIPT_NAME']) === '/' ? '/' : dirname($_SERVER['SCRIPT_NAME']) . '/');
 }
 // 1. Capture the requested module and action from the URL query strings
-$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Auth';
-$action = isset($_GET['action']) ? strtolower($_GET['action']) : 'login';
+$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Home';
+$action = isset($_GET['action']) ? strtolower($_GET['action']) : '';
 
 // 2. Map routing requests to their clean modular directories
 switch ($module) {
@@ -23,17 +23,17 @@ switch ($module) {
 
                     // Check the session role and distribute users to their right views
                     if ($_SESSION['role'] === 'admin') {
-                        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers");
+                        header("Location: /Walany/index.php?module=Admin&action=view_managers");
                     } elseif ($_SESSION['role'] === 'registrar') {
-                        header("Location: /PHP_Project/Walany/index.php?module=Attendance&action=view_events");
+                        header("Location: /Walany/index.php?module=Attendance&action=view_events");
                     } elseif ($_SESSION['role'] === 'planner') {
-                        header("Location: /PHP_Project/Walany/index.php?module=Events&action=dashboard"); // Modify if you use a different default action
+                        header("Location: /Walany/index.php?module=Events&action=dashboard"); // Modify if you use a different default action
                     } else {
                         // Fallback fallback if an unknown role exists
-                        header("Location: /PHP_Project/Walany/index.php?module=Home");
+                        header("Location: /Walany/index.php?module=Home");
                     }
                 } else {
-                    header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login&login_error=" . urlencode($response['message']));
+                    header("Location: /Walany/index.php?module=Auth&action=login&login_error=" . urlencode($response['message']));
                 }
                 exit;
             } else {

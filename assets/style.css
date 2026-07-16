@@ -1,3 +1,8 @@
+/* Styling Warning if css file is not connected properly */
+.connection-warning {
+  display: none !important;
+}
+
 @font-face{
     font-family: 'ArchivoCondensedExtraBold';
     src:url('fonts/Archivo_Condensed-ExtraBold.woff2') format('woff2');

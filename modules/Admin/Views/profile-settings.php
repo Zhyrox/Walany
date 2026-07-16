@@ -1,7 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login");
+    header("Location: /Walany/index.php?module=Auth&action=login");
     exit;
 }
 
@@ -25,7 +25,7 @@ try {
     error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
     // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-    header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+    header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
     exit;
 }
 ?>
@@ -37,12 +37,17 @@ try {
 </head>
 <body style="font-family: Arial, sans-serif; background: #f4f6f9; padding: 30px;">
 
+    <!-- Fix the address of the style.css -->
+    <div class="connection-warning" style="background-color: #ffcccc; color: #cc0000; border: 2px solid #cc0000; padding: 20px; font-size: 24px; font-family: sans-serif; font-weight: bold; text-align: center; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    If you are seeing this, paki ayos nung href nung scripts, assets, and stylesheet files. For easy fix move your project folder inside the htdocs
+    </div>
+
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2>Personal Admin Profile Configurations</h2>
-        <a href="/PHP_Project/Walany/index.php?module=Admin&action=view_managers" style="background: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
+        <a href="/Walany/index.php?module=Admin&action=view_managers" style="background: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
             Return to Main Dashboard
         </a>
-        <a href="/PHP_Project/Walany/index.php?module=Auth&action=login" 
+        <a href="/Walany/index.php?module=Auth&action=login" 
    onclick="return confirm('Are you sure you want to log out of the system?');" 
    style="background: #dc3545; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em; display: inline-block;">
             Logout
@@ -56,7 +61,7 @@ try {
             Modify your administrative attributes data or reset your personal login security password directly.
         </p>
 
-        <form action="/PHP_Project/Walany/index.php?module=Admin&action=update_manager" method="POST">
+        <form action="/Walany/index.php?module=Admin&action=update_manager" method="POST">
             <!-- Strict structural assignment mapping context anchor id -->
             <input type="hidden" name="manager_id" value="<?= $adminData['id'] ?>">
             

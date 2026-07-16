@@ -219,7 +219,7 @@ function updateThemeButton(theme) {
 
     if (themeIcon.tagName === "IMG") {
         const iconName = isDark ? "DarkModeIcon.svg" : "LightModeIcon.svg";
-        themeIcon.src = `/PHP_Project/Walany/assets/images/${iconName}`;
+        themeIcon.src = `/Walany/assets/images/${iconName}`;
         return;
     }
 

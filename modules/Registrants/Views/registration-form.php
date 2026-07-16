@@ -46,16 +46,21 @@ if (!empty($eventDetails['event_date'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Registration - Walania</title>
-    <link rel="icon" type="image/x-icon" href="/PHP_Project/Walany/assets/images/Walania.svg">
-    <link rel="stylesheet" href="/PHP_Project/Walany/assets/style.css">
+    <link rel="icon" type="image/x-icon" href="/Walany/assets/images/Walania.svg">
+    <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
 <body class="registration-page event-registration-page">
+    <!-- Fix the address of the style.css -->
+    <div class="connection-warning" style="background-color: #ffcccc; color: #cc0000; border: 2px solid #cc0000; padding: 20px; font-size: 24px; font-family: sans-serif; font-weight: bold; text-align: center; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    If you are seeing this, paki ayos nung href nung scripts, assets, and stylesheet files. For easy fix move your project folder inside the htdocs
+    </div>
+
     <header class="site-header login-header headbar">
-        <a href="/PHP_Project/Walany/index.php?module=Home" class="logo-placeholder" aria-label="Walania home">
-            <img src="/PHP_Project/Walany/assets/images/Walania.svg" alt="Walania logo">
+        <a href="/Walany/index.php?module=Home" class="logo-placeholder" aria-label="Walania home">
+            <img src="/Walany/assets/images/Walania.svg" alt="Walania logo">
         </a>
         <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
-            <img class="theme-toggle-icon" data-theme-icon src="/PHP_Project/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+            <img class="theme-toggle-icon" data-theme-icon src="/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
         </button>
     </header>
 
@@ -89,7 +94,7 @@ if (!empty($eventDetails['event_date'])) {
                 <p style="color: #6c757d; font-size: 14px; margin-bottom: 24px;">
                     Registration for <strong><?= htmlspecialchars($eventDetails['name']) ?></strong> is officially closed. All available ticket inventory slots have been claimed.
                 </p>
-                <a href="/PHP_Project/Walany/index.php?module=Home" class="primary-button" style="text-decoration: none; display: inline-block; width: 100%; box-sizing: border-box; background: #6c757d;">Return to Home</a>
+                <a href="/Walany/index.php?module=Home" class="primary-button" style="text-decoration: none; display: inline-block; width: 100%; box-sizing: border-box; background: #6c757d;">Return to Home</a>
             </div>
             <?php elseif ($trafficStatus === 'waiting'): ?>
                 <div class="registration-form event-registration-form" style="text-align: center; padding: 45px 25px; border-top: 4px solid #0d6efd;">
@@ -111,7 +116,7 @@ if (!empty($eventDetails['event_date'])) {
                 </div>
             <?php else: ?>
             <!-- Dispatches request parameters securely into module action handler -->
-            <form class="registration-form event-registration-form" action="/PHP_Project/Walany/index.php?module=Registrants&action=submit_registration" method="POST">
+            <form class="registration-form event-registration-form" action="/Walany/index.php?module=Registrants&action=submit_registration" method="POST">
                 <h3>Registrant Details</h3>
                 <p class="event-registration-note">Please fill out your details to reserve your slot and receive your reference ID token.</p>
 
@@ -156,6 +161,6 @@ if (!empty($eventDetails['event_date'])) {
         <p>&copy; 2026 Walania. All rights reserved.</p>
     </footer>
 
-    <script src="/PHP_Project/Walany/assets/script.js"></script>
+    <script src="/Walany/assets/script.js"></script>
 </body>
 </html>

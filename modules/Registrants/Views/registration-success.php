@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Redirect back home immediately if someone tries to access this page directly without an active transaction
 if (!isset($_SESSION['pending_reference_number'])) {
-    header("Location: /PHP_Project/Walany/index.php?module=Home");
+    header("Location: /Walany/index.php?module=Home");
     exit();
 }
 
@@ -61,6 +61,12 @@ unset($_SESSION['current_backoff_cooldown']);
 </head>
 <body>
 
+
+<!-- Fix the address of the style.css -->
+<div class="connection-warning" style="background-color: #ffcccc; color: #cc0000; border: 2px solid #cc0000; padding: 20px; font-size: 24px; font-family: sans-serif; font-weight: bold; text-align: center; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+If you are seeing this, paki ayos nung href nung scripts, assets, and stylesheet files. For easy fix move your project folder inside the htdocs
+</div>
+
 <div class="success-card">
     <div class="success-icon">✓</div>
     <h1>Transaction Complete!</h1>
@@ -84,11 +90,11 @@ unset($_SESSION['current_backoff_cooldown']);
     <!-- Interface Button Management Cluster -->
     <div class="action-buttons-group">
         <a href="<?= $googleCalendarUrl ?>" target="_blank" rel="noopener noreferrer" class="btn-calendar">
-            <img src="/PHP_Project/Walany/assets/images/GoogleCalendarIcon.svg" alt="" aria-hidden="true" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg'">
+            <img src="/Walany/assets/images/GoogleCalendarIcon.svg" alt="" aria-hidden="true" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg'">
             Add to Google Calendar
         </a>
         
-        <a href="/PHP_Project/Walany/index.php?module=Home" class="btn-home">Return to Home Screen</a>
+        <a href="/Walany/index.php?module=Home" class="btn-home">Return to Home Screen</a>
     </div>
     
     <div class="timer-text">
@@ -99,7 +105,7 @@ unset($_SESSION['current_backoff_cooldown']);
 <script>
     let secondsLeft = 60;
     const countdownElement = document.getElementById('countdown');
-    const fallbackHome = '/PHP_Project/Walany/index.php?module=Home';
+    const fallbackHome = '/Walany/index.php?module=Home';
 
     const timerInterval = setInterval(() => {
         secondsLeft--;

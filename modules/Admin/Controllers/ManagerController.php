@@ -26,7 +26,7 @@ class ManagerController {
             error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
             // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
             exit;
         }
     }
@@ -42,7 +42,7 @@ class ManagerController {
     
     public function createManager() {
         if (!$this->verifyAdminAccess()) {
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Unauthorized administrative access checkpoint.'));
+            header("Location: /Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Unauthorized administrative access checkpoint.'));
             exit;
         }
 
@@ -53,7 +53,7 @@ class ManagerController {
             $role      = trim($_POST['role'] ?? 'planner'); 
 
             if (empty($firstName) || empty($lastName) || empty($email)) {
-                header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Account creation failed: All fields are required.'));
+                header("Location: /Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Account creation failed: All fields are required.'));
                 exit;
             }
 
@@ -64,7 +64,7 @@ class ManagerController {
                 $check = $db->prepare("SELECT id FROM `walania_managers` WHERE `email` = :email LIMIT 1");
                 $check->execute(['email' => $email]);
                 if ($check->fetch()) {
-                    header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Conflict: A user with this email already exists.'));
+                    header("Location: /Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Conflict: A user with this email already exists.'));
                     exit;
                 }
 
@@ -88,7 +88,7 @@ class ManagerController {
                 // Write to the updated audit log table
                 $this->logEvent($db, "Provisioned new system user: $email with environment role matrix: [$role]");
 
-                header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers&status=success&message=" . urlencode('New account provisioned successfully!'));
+                header("Location: /Walany/index.php?module=Admin&action=view_managers&status=success&message=" . urlencode('New account provisioned successfully!'));
                 exit;
 
             } catch (PDOException $e) {
@@ -96,12 +96,12 @@ class ManagerController {
                 error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
                 // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-                header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+                header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
                 exit;
             }
         }
         
-        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Invalid request method.'));
+        header("Location: /Walany/index.php?module=Admin&action=view_managers&status=error&message=" . urlencode('Invalid request method.'));
         exit;
     }
 
@@ -160,7 +160,7 @@ class ManagerController {
                 error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
                 // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-                header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+                header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
                 exit;
             }
         }
@@ -201,7 +201,7 @@ class ManagerController {
             error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
             // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
             exit;
         }
     }

@@ -46,6 +46,11 @@ if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="login-page">
+
+    <!-- Fix the address of the style.css -->
+    <div class="connection-warning" style="background-color: #ffcccc; color: #cc0000; border: 2px solid #cc0000; padding: 20px; font-size: 24px; font-family: sans-serif; font-weight: bold; text-align: center; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    If you are seeing this, paki ayos nung href nung scripts, assets, and stylesheet files. For easy fix move your project folder inside the htdocs
+    </div>
     
     <header class="site-header login-header">
         <a href="" class="logo-placeholder" aria-label="Refresh page">
@@ -102,7 +107,7 @@ if ($show_patch_notes && file_exists('assets/patch_notes.xml')) {
                 <?php endif; ?>
 
                 <!-- Form action targets the unified application entry router -->
-                <form action="/PHP_Project/Walany/index.php?module=Auth&action=login" method="POST" novalidate>
+                <form action="/Walany/index.php?module=Auth&action=login" method="POST" novalidate>
                     <div class="form-group">
                         <label for="login-email">Administrative Email</label>
                         <!-- Changed from type="text" username to type="email" name="email" -->

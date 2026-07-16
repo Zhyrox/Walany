@@ -67,7 +67,7 @@ class RegistrantController {
         $_SESSION['last_otp_request_time']      = time();
         $_SESSION['current_backoff_cooldown']   = 30;
 
-        header("Location: /PHP_Project/Walany/modules/Registrants/Views/otp-verification.php");
+        header("Location: /Walany/modules/Registrants/Views/otp-verification.php");
         exit();
     }
 
@@ -144,7 +144,7 @@ class RegistrantController {
         $evalReferenceId = $_SESSION['pending_reference_id'] ?? null;
         
         if (!$evalReferenceId) {
-            header("Location: /PHP_Project/Walany/index.php?module=Home&error=session_loss");
+            header("Location: /Walany/index.php?module=Home&error=session_loss");
             exit();
         }
 
@@ -153,7 +153,7 @@ class RegistrantController {
         $amountInCents = 25000; // ₱250.00 (PayMongo counts in cents, e.g., 25000 = PHP 250.00)
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-        $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . "/PHP_Project/Walany";
+        $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . "/Walany";
 
         // 3. Prepare the strict JSON format structured request payload
         $payload = json_encode([
@@ -236,7 +236,7 @@ class RegistrantController {
             error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
             // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
             exit;
         }
     }
@@ -271,7 +271,7 @@ class RegistrantController {
             error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
             // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
             exit;
         }
     }
@@ -288,7 +288,7 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === 'RegistrantController.php') {
         error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
         // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-        header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+        header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
         exit;
     }
     exit();
