@@ -77,5 +77,18 @@
     </main>
 
     <script src="/Walany/assets/script.js"></script>
+
+    <script>
+    document.addEventListener('keydown', function(event) {
+        // Key combination: Ctrl + Alt + L (change 'l' to any letter you prefer)
+        if (event.ctrlKey && event.altKey && event.key.toLowerCase() === 'l') {
+            // Prevent default browser behavior if any exists
+            event.preventDefault();
+            
+            // Redirect instantly to the Auth module login page
+            window.location.href = '/Walany/index.php?module=Auth&action=login';
+        }
+    });
+    </script>
 </body>
 </html>

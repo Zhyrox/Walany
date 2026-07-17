@@ -1,12 +1,14 @@
 
 <?php
 require_once __DIR__ . '/core/config.php';
+date_default_timezone_set('Asia/Manila');
+
 if (!defined('BASE_URL')) {
     define('BASE_URL', dirname($_SERVER['SCRIPT_NAME']) === '/' ? '/' : dirname($_SERVER['SCRIPT_NAME']) . '/');
 }
 // 1. Capture the requested module and action from the URL query strings
-$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Auth';
-$action = isset($_GET['action']) ? strtolower($_GET['action']) : 'login';
+$module = isset($_GET['module']) ? ucfirst(strtolower($_GET['module'])) : 'Home';
+$action = isset($_GET['action']) ? strtolower($_GET['action']) : '';
 
 // 2. Map routing requests to their clean modular directories
 switch ($module) {
@@ -86,6 +88,49 @@ switch ($module) {
         require_once 'modules/Admin/Controllers/RegistrarController.php';
         $controller = new RegistrarController();
         $controller->registrarDashboard();
+        exit();
+    }
+
+    if ($action === 'planner_dashboard') {
+        require_once 'modules/Admin/Controllers/PlannerController.php';
+        $controller = new PlannerController();
+        $controller->plannerDashboard();
+        exit();
+    }
+
+    // EVENT CRUD ACTIONS FOR PLANNER CONTROLLER
+    if ($action === 'createevent') {
+        require_once 'modules/Admin/Controllers/PlannerController.php';
+        $controller = new PlannerController();
+        $controller->createEvent();
+        exit();
+    }
+
+    if ($action === 'editevent') {
+        require_once 'modules/Admin/Controllers/PlannerController.php';
+        $controller = new PlannerController();
+        $controller->editEvent();
+        exit();
+    }
+
+    if ($action === 'deleteevent') {
+        require_once 'modules/Admin/Controllers/PlannerController.php';
+        $controller = new PlannerController();
+        $controller->deleteEvent();
+        exit();
+    }
+
+    if ($action === 'getlivelogsapi') {
+        require_once 'modules/Admin/Controllers/PlannerController.php';
+        $controller = new PlannerController();
+        $controller->getLiveLogsApi();
+        exit();
+    }
+
+    if ($action === 'exportguestlist') {
+        require_once 'modules/Admin/Controllers/PlannerController.php';
+        $controller = new PlannerController();
+        $controller->exportGuestList();
         exit();
     }
     break;
@@ -171,7 +216,7 @@ switch ($module) {
         break;
         
     default:
-        require_once __DIR__ . '/modules/Home/Views/landing.php';
+        require_once __DIR__ . '/modules/Homepage/Views/homepage.php';
         break;
 }
 ?>

@@ -35,8 +35,8 @@ define('DB_USER',   getenv('DB_USER')   ?: 'root');
 define('DB_PASS',   getenv('DB_PASS')   ?: '');
 
 define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
-define('SMTP_USER', getenv('SMTP_USER') ?: 'walaniaevents@gmail.com');
-define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
+define('SMTP_USER', getenv('SMTP_USER') ?: 'yeahlow24@gmail.com');
+define('SMTP_PASS', getenv('SMTP_PASS') ?: 'xtih nocc rbgg lrif');
 
 define('GEMINI_CHATBOT_KEY', getenv('GEMINI_CHATBOT_KEY') ?: '');
 define('PAYMONGO_SECRET_KEY', getenv('PAYMONGO_SECRET_KEY') ?: '');
