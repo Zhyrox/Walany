@@ -1,43 +1,64 @@
 <?php
 // DYNAMIC BASE URL ENGINE
-// Automatically calculates the folder path from htdocs, no matter how deeply nested it is!
 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 $baseDir = preg_replace('#/modules/.*|/core.*#', '', $scriptDir);
 $baseUrl = rtrim($baseDir, '/') . '/';
+define('BASE_URL', $baseUrl);
 
-$envPath = __DIR__ . '/../.env';
+// Container for our parsed .env values to bypass broken system global arrays
+$ENV_DATA = [];
+$envPath = 'C:\xampp\htdocs\Walany\.env';
 
 if (file_exists($envPath)) {
     $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
+        $line = trim($line);
+        
         // Skip comment lines
-        if (strpos(trim($line), '#') === 0) continue;
+        if (empty($line) || strpos($line, '#') === 0 || strpos($line, '//') === 0) {
+            continue;
+        }
         
-        // Split by the first '=' character found
-        list($name, $value) = explode('=', $line, 2);
-        $name = trim($name);
-        $value = trim($value);
-        
-        if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
-            putenv(sprintf('%s=%s', $name, $value));
-            $_ENV[$name] = $value;
+        if (strpos($line, '=') !== false) {
+            list($name, $value) = explode('=', $line, 2);
+            $name = trim($name);
+            $value = trim($value);
+            
+            // Handle inline comments
+            if (($hashPos = strpos($value, '#')) !== false) {
+                $value = substr($value, 0, $hashPos);
+            }
+            if (($slashPos = strpos($value, '//')) !== false) {
+                $value = substr($value, 0, $slashPos);
+            }
+            
+            // Sanitize quotes and Windows carriage returns (\r)
+            $value = trim(trim($value), '"\'');
+            $value = str_replace(["\r", "\n"], '', $value);
+            
+            // Store directly in our own reliable custom array
+            $ENV_DATA[$name] = $value;
         }
     }
+} else {
+    error_log("CRITICAL: .env file missing at: " . $envPath);
 }
 
-define('BASE_URL', $baseUrl);
+// UNIFIED CONSTANT ASSIGNMENTS (Pulls directly from $ENV_DATA)
 
-define('DB_HOST',   getenv('DB_HOST')   ?: '127.0.0.1');
-define('DB_NAME',   getenv('DB_NAME')   ?: 'walania');
-define('DB_PORT',   getenv('DB_PORT')   ?: '3306');
-define('DB_CHAR',   getenv('DB_CHAR')   ?: 'utf8mb4');
-define('DB_USER',   getenv('DB_USER')   ?: 'root');
-define('DB_PASS',   getenv('DB_PASS')   ?: '');
+define('DB_HOST',   ($ENV_DATA['DB_HOST']   ?? ''));
+define('DB_NAME',   ($ENV_DATA['DB_NAME']   ?? ''));
+define('DB_PORT',   ($ENV_DATA['DB_PORT']   ?? ''));
+define('DB_CHAR',   ($ENV_DATA['DB_CHAR']   ?? ''));
+define('DB_USER',   ($ENV_DATA['DB_USER']   ?? ''));
+define('DB_PASS',   ($ENV_DATA['DB_PASS']   ?? ''));
 
-define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
-define('SMTP_USER', getenv('SMTP_USER') ?: 'yeahlow24@gmail.com');
-define('SMTP_PASS', getenv('SMTP_PASS') ?: 'xtih nocc rbgg lrif');
+// API Keys - Falls back to blank string if missing from your file
+define('PAYMONGO_SECRET_KEY', ($ENV_DATA['PAYMONGO_SECRET_KEY'] ?? ''));
+define('GEMINI_CHATBOT_KEY',  ($ENV_DATA['GEMINI_CHATBOT_KEY']  ?? ''));
 
-define('GEMINI_CHATBOT_KEY', getenv('GEMINI_CHATBOT_KEY') ?: '');
-define('PAYMONGO_SECRET_KEY', getenv('PAYMONGO_SECRET_KEY') ?: '');
+// SMTP Settings - Falls back to standard defaults if missing
+define('SMTP_HOST', ($ENV_DATA['SMTP_HOST'] ?? ''));
+define('SMTP_USER', ($ENV_DATA['SMTP_USER'] ?? ''));
+define('SMTP_PASS', ($ENV_DATA['SMTP_PASS'] ?? ''));
 ?>
