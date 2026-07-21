@@ -13,6 +13,7 @@ $action = isset($_GET['action']) ? strtolower($_GET['action']) : '';
 // 2. Map routing requests to their clean modular directories
 switch ($module) {
     case 'Auth':
+        include_once __DIR__ . '/modules/Chatbot/Views/render-widget.php';
         require_once __DIR__ . '/modules/Auth/Controllers/AuthController.php';
         $controller = new AuthController();
         
@@ -219,4 +220,21 @@ switch ($module) {
         require_once __DIR__ . '/modules/Homepage/Views/homepage.php';
         break;
 }
+
+
+if ($action === 'admin_reply') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    // Notice sender name becomes 'agent' so customer view changes layout borders to distinguish real human help
+    $chatSessionModel->saveMessage($input['session_id'], 'agent', $input['message']);
+    echo json_encode(['status' => 'success']);
+    exit;
+}
+
+if ($action === 'resolve_session') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $chatSessionModel->updateSessionStatus($input['session_id'], 'bot');
+    echo json_encode(['status' => 'success']);
+    exit;
+}
 ?>
+    <?php include_once __DIR__ . '/modules/Chatbot/Views/render-widget.php'; ?>

@@ -54,11 +54,23 @@ class ChatController {
 
         // 1. Human Takeover Escalation Logic (Persistent Check)
         if ($session['status'] === 'human' || stripos($userMsg, 'talk to human') !== false || stripos($userMsg, 'agent') !== false) {
-            if ($session['status'] !== 'human') {
-                $this->chatModel->requestHumanTakeover($session['id']);
+            
+            // Scenario A: The session was ALREADY handed off to a human admin
+            if ($session['status'] === 'human') {
+                // Just acknowledge receipt of data. Let the UI wait for the admin's live database poll response.
+                echo json_encode([
+                    'status' => 'success', 
+                    'reply' => null, // DO NOT return text; UI handles empty tracking states or loading indicators
+                    'mode' => 'human'
+                ]);
+                exit;
             }
+            
+            // Scenario B: First-time transfer request triggered by user keywords
+            $this->chatModel->requestHumanTakeover($session['id']);
             $reply = "I am transferring your session to a live campus coordinator. They will review this conversation thread shortly.";
             $this->chatModel->saveMessage($session['id'], 'agent', $reply);
+            
             echo json_encode(['status' => 'success', 'reply' => $reply, 'mode' => 'human']);
             exit;
         }
@@ -73,12 +85,37 @@ class ChatController {
 
         // 3. Contextual Multi-Turn Call down to Gemini Model Core
         $botReply = $this->fetchGeminiResponse($userMsg, $session['id']);
-        $this->chatModel->saveMessage($session['id'], 'bot', $botReply);
+
+        $confusedPhrases = [
+            "i do not know", "i'm not sure", "i cannot answer", 
+            "sorry, as an ai", "i don't have information"
+        ];
         
+        $isConfused = false;
+        foreach ($confusedPhrases as $phrase) {
+            if (stripos($botReply, $phrase) !== false) {
+                $isConfused = true;
+                break;
+            }
+        }
+
+        if ($isConfused) {
+            // Trigger automatic background human takeover
+            $this->chatModel->requestHumanTakeover($session['id']);
+            
+            $escalationReply = "I am transferring your session to a live campus coordinator. They will review this conversation thread shortly.";
+            $this->chatModel->saveMessage($session['id'], 'agent', $escalationReply);
+            
+            echo json_encode(['status' => 'success', 'reply' => $escalationReply, 'mode' => 'human']);
+            exit;
+        }
+
+        // Standard AI Response Loop Path
+        $this->chatModel->saveMessage($session['id'], 'bot', $botReply);
         echo json_encode(['status' => 'success', 'reply' => $botReply, 'mode' => 'bot']);
         exit;
     }
-
+    
     public function clearChat() {
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) { session_start(); }

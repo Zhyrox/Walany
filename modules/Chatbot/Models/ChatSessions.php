@@ -20,8 +20,8 @@ class ChatSession {
     }
 
     public function saveMessage($sessionId, $sender, $message) {
-        $stmt = $this->db->prepare("INSERT INTO `walania_chat_messages` (`session_id`, `sender`, `message`) VALUES (:sid, :sender, :msg)");
-        return $stmt->execute([':sid' => $sessionId, ':sender' => $sender, ':msg' => trim($message)]);
+        $stmt = $this->db->prepare("INSERT INTO chat_messages (session_id, sender, message, created_at) VALUES (?, ?, ?, NOW())");
+        return $stmt->execute([$sessionId, $sender, $message]);
     }
 
     public function getChatHistory($sessionId) {
@@ -33,5 +33,10 @@ class ChatSession {
     public function requestHumanTakeover($sessionId) {
         $stmt = $this->db->prepare("UPDATE `walania_chat_sessions` SET `status` = 'human' WHERE `id` = :sid");
         return $stmt->execute([':sid' => $sessionId]);
+    }
+
+    public function updateSessionStatus($sessionId, $status) {
+        $stmt = $this->db->prepare("UPDATE chat_sessions SET status = ?, updated_at = NOW() WHERE id = ?");
+        return $stmt->execute([$status, $sessionId]);
     }
 }
