@@ -165,7 +165,7 @@ class ManagerController {
             } catch (PDOException $e) {
                 // Log and gracefully redirect using our universal error fallback
                 error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
-                header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+                header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
                 exit;
             }
         }

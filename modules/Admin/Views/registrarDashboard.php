@@ -21,7 +21,7 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
                 <p style="color: #7f8c8d; margin: 5px 0 0 0; font-size: 0.95em;">Monitor student cohorts, event registration queues, and registration operations.</p>
             </div>
             
-            <a href="/PHP_Project/Walany/index.php?module=Auth&action=logout" onclick="return confirm('Are you sure you want to log out of the system?');" style="background: #dc3545; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
+            <a href="/Walany/index.php?module=Auth&action=logout" onclick="return confirm('Are you sure you want to log out of the system?');" style="background: #dc3545; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
                 Logout
             </a>
         </header>

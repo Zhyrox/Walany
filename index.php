@@ -1,5 +1,5 @@
-
 <?php
+ob_start();
 require_once __DIR__ . '/core/config.php';
 date_default_timezone_set('Asia/Manila');
 
@@ -238,3 +238,4 @@ if ($action === 'resolve_session') {
 }
 ?>
     <?php include_once __DIR__ . '/modules/Chatbot/Views/render-widget.php'; ?>
+<?php ob_end_flush(); ?>

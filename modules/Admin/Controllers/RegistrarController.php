@@ -17,7 +17,7 @@ class RegistrarController {
 
         // Security check
         if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'registrar') {
-            header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login");
+            header("Location: /Walany/index.php?module=Auth&action=login");
             exit;
         }
 
@@ -28,7 +28,7 @@ class RegistrarController {
         try {
             $registrarEmail = $this->model->getRegistrarEmail($_SESSION['manager_id']);
         } catch (Exception $e) {
-            header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database operational error."));
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database operational error."));
             exit;
         }
 

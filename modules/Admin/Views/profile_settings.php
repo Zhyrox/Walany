@@ -5,12 +5,12 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // SECURITY CHANGE: Allow any authenticated system user (Admin, Planner, Registrar)
 if (!isset($_SESSION['manager_id']) || !isset($_SESSION['role'])) {
-    header("Location: /PHP_Project/Walany/index.php?module=Auth&action=login");
+    header("Location: /Walany/index.php?module=Auth&action=login");
     exit;
 }
 
 // Resolve the correct dashboard landing page based on the active session role
-$roleDashboardUrl = "/PHP_Project/Walany/index.php?module=Auth&action=login"; // Safe fallback
+$roleDashboardUrl = "/Walany/index.php?module=Auth&action=login"; // Safe fallback
 
 if (isset($_SESSION['role'])) {
     switch ($_SESSION['role']) {
@@ -44,7 +44,7 @@ try {
     }
 } catch (PDOException $e) {
     error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
-    header("Location: /PHP_Project/Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+    header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
     exit;
 }
 ?>
