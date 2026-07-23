@@ -4,72 +4,74 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Workspace Dashboard</title>
+    <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 20px;">
+<body class="home-events-page registrar-dashboard-page">
+
+    <header class="site-header login-header headbar">
+        <a href="" class="logo-placeholder" aria-label="Walania home">
+            <img src="/Walany/assets/images/Walania.svg" alt="Walania logo">
+        </a>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+            <img class="theme-toggle-icon" data-theme-icon src="/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+        </button>
+    </header>
 
     <!-- Main Workspace Container -->
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="registrar-dashboard-container">
         
-        <header style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <header class="registrar-dashboard-header">
             <div>
-                <h1 style="color: #2c3e50; margin: 0; font-size: 1.85em;">Registrar Control Center</h1>
-                <p style="color: #7f8c8d; margin: 5px 0 0 0; font-size: 0.95em;">Monitor student cohorts, event registration queues, and registration operations.</p>
+                <h1 class="registrar-dashboard-title">Registrar Control Center</h1>
+                <p class="registrar-dashboard-subtitle">Monitor student cohorts, event registration queues, and registration operations.</p>
             </div>
-            
-            <a href="/Walany/index.php?module=Auth&action=logout" onclick="return confirm('Are you sure you want to log out of the system?');" style="background: #dc3545; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
+
+            <a href="/Walany/index.php?module=Auth&action=logout" onclick="return confirm('Are you sure you want to log out of the system?');" class="registrar-dashboard-logout-btn">
                 Logout
             </a>
         </header>
 
         <!-- Profile Card -->
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; max-width: 500px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-            <div style="display: flex; align-items: center; gap: 15px; overflow: hidden;">
-                <div style="background: #e0f2fe; color: #0284c7; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: bold; flex-shrink: 0;">
-                    <?= strtoupper(substr($currentRegistrarName, 0, 1)) ?>
-                </div>
-                <div style="display: flex; flex-direction: column; overflow: hidden;">
-                    <span style="font-size: 1.05em; font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= $currentRegistrarName ?>">
-                        <?= $currentRegistrarName ?>
-                    </span>
-                    <span style="font-size: 0.85em; color: #64748b; margin: 2px 0 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= $registrarEmail ?>">
-                        <?= $registrarEmail ?>
-                    </span>
+        <div class="registrar-dashboard-user-card">
+            <div class="user-card-inner">
+                <div class="avatar"> <?= strtoupper(substr($currentRegistrarName, 0, 1)) ?> </div>
+                <div class="meta">
+                    <span class="name" title="<?= $currentRegistrarName ?>"><?= $currentRegistrarName ?></span>
+                    <span class="email" title="<?= $registrarEmail ?>"><?= $registrarEmail ?></span>
                     <div>
-                        <span style="background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-size: 0.75em; font-weight: bold; padding: 2px 8px; border-radius: 12px; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em;">
-                            <?= $currentRegistrarRole ?>
-                        </span>
+                        <span class="role-chip"><?= $currentRegistrarRole ?></span>
                     </div>
                 </div>
             </div>
 
-            <div style="flex-shrink: 0;">
-                <a href="/Walany/index.php?module=Admin&action=profile_settings" style="background: #0f172a; color: #ffffff; padding: 10px 14px; border-radius: 6px; text-decoration: none; font-size: 0.88em; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; border: 1px solid #1e293b;" onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0f172a'">
-                    Settings
-                </a>
+            <div class="registrar-dashboard-actions">
+                <a href="/Walany/index.php?module=Admin&action=profile_settings" class="btn">Settings</a>
             </div>
         </div>
 
         <!-- Calendar Workspace Row -->
-        <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start;">
+        <div class="calendar-workspace-container">
+        <div class="calendar-grid-row" style="margin-top: 30px; display: grid; grid-template-columns: 1fr 350px; gap: 20px; align-items: start;">
             
             <!-- 1. Interactive Calendar Grid -->
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div class="interactive-calendar-container">
+            <div class="registrar-dashboard-panel">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                     <div>
-                        <h2 style="margin: 0; color: #1e293b; font-size: 1.3em; font-weight: 700;"><?= $monthName . " " . $year ?></h2>
+                        <h2><?= $monthName . " " . $year ?></h2>
                     </div>
                     
-                    <form method="GET" action="/Walany/index.php" style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                    <form method="GET" action="/Walany/index.php" class="calendar-controls" style="display: flex; align-items: center; gap: 8px; margin: 0;">
                         <input type="hidden" name="module" value="Admin">
                         <input type="hidden" name="action" value="registrar_dashboard">
 
                         <!-- Month Selector -->
-                        <select name="c_month" onchange="this.form.submit()" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; font-size: 0.9em; font-weight: 600; cursor: pointer; outline: none;">
+                        <select name="c_month" onchange="this.form.submit()">
                             <?php
                             for ($m = 1; $m <= 12; $m++) {
                                 $selected = ($m === $month) ? 'selected' : '';
@@ -80,7 +82,7 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
                         </select>
 
                         <!-- Year Selector -->
-                        <select name="c_year" onchange="this.form.submit()" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; font-size: 0.9em; font-weight: 600; cursor: pointer; outline: none;">
+                        <select name="c_year" onchange="this.form.submit()">
                             <?php
                             $startYear = date('Y') - 3;
                             $endYear   = date('Y') + 3;
@@ -93,41 +95,41 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
 
                         <!-- Navigation -->
                         <div style="display: flex; gap: 4px; margin-left: 8px;">
-                            <a href="/Walany/index.php?module=Admin&action=registrar_dashboard&c_month=<?= $prevMonth ?>&c_year=<?= $prevYear ?>" style="text-decoration: none; padding: 6px 10px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; color: #334155; font-size: 0.9em; font-weight: 600;">&larr;</a>
-                            <a href="/Walany/index.php?module=Admin&action=registrar_dashboard&c_month=<?= date('m') ?>&c_year=<?= date('Y') ?>" style="text-decoration: none; padding: 6px 10px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; color: #334155; font-size: 0.9em; font-weight: 600;">Today</a>
-                            <a href="/Walany/index.php?module=Admin&action=registrar_dashboard&c_month=<?= $nextMonth ?>&c_year=<?= $nextYear ?>" style="text-decoration: none; padding: 6px 10px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; color: #334155; font-size: 0.9em; font-weight: 600;">&rarr;</a>
+                            <a href="/Walany/index.php?module=Admin&action=registrar_dashboard&c_month=<?= $prevMonth ?>&c_year=<?= $prevYear ?>">&larr;</a>
+                            <a href="/Walany/index.php?module=Admin&action=registrar_dashboard&c_month=<?= date('m') ?>&c_year=<?= date('Y') ?>">Today</a>
+                            <a href="/Walany/index.php?module=Admin&action=registrar_dashboard&c_month=<?= $nextMonth ?>&c_year=<?= $nextYear ?>">&rarr;</a>
                         </div>
                     </form>
                 </div>
 
                 <!-- Week Bar -->
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 10px; font-weight: bold; color: #64748b; font-size: 0.85em;">
+                <div class="calendar-weekbar">
                     <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
                 </div>
 
                 <!-- Days Matrix -->
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                <div class="calendar-grid">
                     <?php
                     for ($i = 0; $i < $dayOfWeek; $i++) {
-                        echo '<div style="aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; color: #cbd5e1;"></div>';
+                        echo '<div class="calendar-day empty"></div>';
                     }
 
                     for ($day = 1; $day <= $daysInMonth; $day++) {
                         $currentDateKey = sprintf("%04d-%02d-%02d", $year, $month, $day);
                         $hasEvents = isset($eventsByDate[$currentDateKey]);
-                        $todayClass = ($currentDateKey === date('Y-m-d')) ? 'border: 2px solid #3b82f6;' : 'border: 1px solid #e2e8f0;';
+                        $classes = 'calendar-day';
+                        if ($currentDateKey === date('Y-m-d')) { $classes .= ' today'; }
 
                         if ($hasEvents) {
-                            $bgStyle = 'background: #e0f2fe; color: #0369a1; font-weight: 700; cursor: pointer;';
-                            $indicator = '<span style="width: 6px; height: 6px; background: #0284c7; border-radius: 50%; margin-top: 4px; display: block;"></span>';
+                            $classes .= ' has-events';
+                            $indicator = '<span class="event-indicator"></span>';
                             $jsClick = "onclick='showEventDetails(\"" . $currentDateKey . "\", " . json_encode($eventsByDate[$currentDateKey]) . ")'";
                         } else {
-                            $bgStyle = 'background: #ffffff; color: #334155;';
-                            $indicator = '<span style="width: 6px; height: 6px; visibility: hidden; margin-top: 4px; display: block;"></span>';
+                            $indicator = '<span class="event-indicator hidden"></span>';
                             $jsClick = "";
                         }
                         ?>
-                        <div <?= $jsClick ?> class="calendar-day" style="aspect-ratio: 1/1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.95em; transition: all 0.15s ease-in-out; <?= $todayClass . ' ' . $bgStyle ?>" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <div <?= $jsClick ?> class="<?= $classes ?>">
                             <span><?= $day ?></span>
                             <?= $indicator ?>
                         </div>
@@ -136,76 +138,65 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
                     ?>
                 </div>
             </div>
-
+            </div>
+ 
             <!-- 2. Dynamic Details Sideboard Panel -->
-            <div id="event-sideboard" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px;">
+            <div class="details-panel-container">
+            <div id="event-sideboard" class="registrar-dashboard-sideboard">
                 <div>
-                    <h3 id="panel-date" style="margin-top: 0; margin-bottom: 15px; color: #0f172a; font-size: 1.15em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-                        Selected Date
-                    </h3>
-                    <div id="events-list-container" style="display: flex; flex-direction: column; gap: 12px;">
-                        <p style="color: #64748b; font-size: 0.9em; font-style: italic; text-align: center; margin-top: 30px;">
-                            Click a highlighted blue calendar date to view scheduled events.
-                        </p>
+                    <h3 id="panel-date">Selected Date</h3>
+                    <div id="events-list-container">
+                        <p>Click a highlighted blue calendar date to view scheduled events.</p>
                     </div>
                 </div>
                 
-                <div style="border-top: 1px solid #f1f5f9; padding-top: 15px; display: flex; flex-direction: column; gap: 10px;">
-                    <a href="/Walany/index.php?module=Attendance&action=view_events" style="background: #0284c7; color: #ffffff; padding: 10px 14px; border-radius: 6px; text-decoration: none; font-size: 0.88em; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;" onmouseover="this.style.background='#0369a1'" onmouseout="this.style.background='#0284c7'">
-                        View All Events &amp; Scanners
-                    </a>
+                <div style="border-top: 1px solid var(--border); padding-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                    <a href="/Walany/index.php?module=Attendance&action=view_events" class="side-action">View All Events &amp; Scanners</a>
                     <div style="text-align: right;">
-                        <span style="font-size: 0.75em; color: #94a3b8; font-weight: 500;">Walany Cohort Registrar Scheduler</span>
+                        <span>Walany Cohort Registrar Scheduler</span>
                     </div>
                 </div>
             </div>
+            </div>
+        </div>
         </div>
 
         <!-- Live Attendance Logs Grid -->
-        <div style="margin-top: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <div class="attendance-grid-container">
+        <div class="registrar-dashboard-logs-panel">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
                 <div>
-                    <h3 style="margin: 0; color: #0f172a; font-size: 1.2em; font-weight: 700;">Live Attendance Logs</h3>
-                    <p style="color: #64748b; margin: 3px 0 0 0; font-size: 0.85em;">Real-time stream of the latest event check-ins.</p>
+                    <h3>Live Attendance Logs</h3>
+                    <p>Real-time stream of the latest event check-ins.</p>
                 </div>
-                <input type="text" id="registrantSearch" onkeyup="filterRegistrantTable()" placeholder="Search logs..." style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.88em; width: 260px; outline: none; transition: border-color 0.15s;" onfocus="this.style.borderColor='#0284c7'" onblur="this.style.borderColor='#cbd5e1'">
+                <input type="text" id="registrantSearch" class="registrant-search" onkeyup="filterRegistrantTable()" placeholder="Search logs...">
             </div>
 
             <div style="overflow-x: auto;">
-                <table id="registrantsTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9em;">
+                <table id="registrantsTable" class="registrar-table">
                     <thead>
-                        <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 12px 16px; color: #475569; font-weight: 600;">Reference ID</th>
-                            <th style="padding: 12px 16px; color: #475569; font-weight: 600;">Full Name</th>
-                            <th style="padding: 12px 16px; color: #475569; font-weight: 600;">Event</th>
-                            <th style="padding: 12px 16px; color: #475569; font-weight: 600;">Time Checked In</th>
+                        <tr>
+                            <th>Reference ID</th>
+                            <th>Full Name</th>
+                            <th>Event</th>
+                            <th>Time Checked In</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($recentAttendance)): ?>
                             <tr>
-                                <td colspan="4" style="padding: 30px; text-align: center; color: #94a3b8; font-style: italic;">
+                                <td colspan="4" style="padding: 30px; text-align: center; font-style: italic; color: var(--muted);">
                                     No live attendance records logged yet.
                                 </td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($recentAttendance as $log): ?>
                                 <?php $fullName = htmlspecialchars($log['last_name'] . ', ' . $log['first_name']); ?>
-                                <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.1s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 14px 16px; font-family: monospace; font-weight: 600; color: #0284c7;">
-                                        #<?= htmlspecialchars($log['reference_id'] ?? 'N/A') ?>
-                                    </td>
-                                    <td style="padding: 14px 16px; color: #0f172a; font-weight: 500;">
-                                        <?= $fullName ?>
-                                    </td>
-                                    <td style="padding: 14px 16px; color: #334155;">
-                                        <span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 4px; font-weight: 500; font-size: 0.95em;">
-                                            <?= htmlspecialchars($log['event_name']) ?>
-                                        </span>
-                                    </td>
-                                    <td style="padding: 14px 16px; color: #16a34a; font-weight: 600;">
-                                        <?= date('h:i A (M d, Y)', strtotime($log['time_checked_in'])) ?>
-                                    </td>
+                                <tr>
+                                    <td class="ref">#<?= htmlspecialchars($log['reference_id'] ?? 'N/A') ?></td>
+                                    <td class="name"><?= $fullName ?></td>
+                                    <td><span class="event-badge"><?= htmlspecialchars($log['event_name']) ?></span></td>
+                                    <td class="time"><?= date('h:i A (M d, Y)', strtotime($log['time_checked_in'])) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -213,10 +204,12 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
                 </table>
             </div>
         </div>
+        </div>
 
     </div>
 
     <!-- Script Engines -->
+    <script src="/Walany/assets/script.js"></script>
     <script>
         function showEventDetails(dateString, events) {
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -228,11 +221,11 @@ require_once __DIR__ . '/../Controllers/RegistrarController.php';
 
             events.forEach(function(event) {
                 const eventCard = document.createElement('div');
-                eventCard.style.cssText = "background: #f8fafc; border-left: 4px solid #0284c7; padding: 12px; border-radius: 0 6px 6px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.01);";
+                eventCard.className = 'event-card-detail';
                 eventCard.innerHTML = `
-                    <h4 style="margin: 0 0 5px 0; color: #0f172a; font-size: 0.95em; font-weight: 600;">${event.name}</h4>
-                    <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Time: ${event.time}</div>
-                    <div style="font-size: 0.8em; color: #64748b;">Venue: ${event.location}</div>
+                    <h4>${event.name}</h4>
+                    <div>Time: ${event.time}</div>
+                    <div>Venue: ${event.location}</div>
                 `;
                 container.appendChild(eventCard);
             });
