@@ -109,9 +109,187 @@ body {
     scrollbar-width: none;    /* Firefox */
 }
 
-/* =========================
-   REGISTRAR EVENTS PAGE
-========================= */
+/* Profile Settings Page */
+.profile-settings-page {
+    min-height: 100vh;
+    padding: 30px;
+    padding-top: 96px;
+    font-family: 'ArchivoLight', Arial, sans-serif;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--background) 92%, var(--secondary)) 0%, color-mix(in srgb, var(--background) 86%, var(--primary)) 100%);
+    color: var(--text);
+}
+
+.profile-settings-shell {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-top: 8px;
+}
+
+.profile-settings-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.profile-settings-topbar h2 {
+    margin: 0;
+    font-family: 'ArchivoCondensedExtraBold';
+    font-size: 1.7rem;
+    background: linear-gradient(135deg, #2b6a6c 0%, #4f8f8f 45%, #7fb3b2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.profile-settings-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.profile-settings-card {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, var(--secondary)) 0%, var(--surface) 100%);
+    box-shadow: var(--shadow);
+}
+
+.profile-settings-card h3 {
+    margin: 0 0 8px;
+    font-family: 'ArchivoBold';
+    background: linear-gradient(135deg, #2b6a6c 0%, #4f8f8f 45%, #7fb3b2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.profile-settings-card p {
+    margin: 0 0 22px;
+    color: color-mix(in srgb, var(--muted) 84%, var(--text) 16%);
+    font-size: 0.9em;
+    font-family: 'ArchivoLight';
+}
+
+.profile-settings-form {
+    display: grid;
+    gap: 18px;
+}
+
+.profile-field {
+    display: grid;
+    gap: 6px;
+}
+
+.profile-field label,
+.profile-password-box label {
+    font-family: 'ArchivoBold';
+    color: color-mix(in srgb, var(--text) 90%, var(--primary) 10%);
+    font-size: 0.95em;
+}
+
+.profile-field input,
+.profile-password-box input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    box-sizing: border-box;
+    font: inherit;
+    font-family: 'ArchivoLight';
+}
+
+.profile-password-box {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+    border-left: 4px solid #ffc107;
+    border-radius: 10px;
+    background: color-mix(in srgb, #fff3cd 70%, var(--surface));
+}
+
+.profile-password-box small {
+    color: color-mix(in srgb, #7a4f0f 78%, var(--text) 22%);
+    font-size: 0.85em;
+    font-family: 'ArchivoLight';
+}
+
+.profile-submit {
+    width: 100%;
+    justify-content: center;
+    font-family: 'ArchivoCondensedExtraBold';
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95em;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 0;
+    cursor: pointer;
+    font-family: 'ArchivoCondensedExtraBold';
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, var(--accent)) 100%);
+    box-shadow: 0 8px 20px rgba(47, 88, 99, 0.2);
+}
+
+.btn-secondary {
+    color: #ffffff;
+    background: linear-gradient(135deg, #6ca7a6 0%, #468181 100%);
+    border: 1px solid #468181;
+    box-shadow: 0 8px 18px rgba(70, 129, 129, 0.16);
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.btn-danger {
+    color: #ffffff;
+    background: #dc3545;
+}
+
+@media (max-width: 640px) {
+    .profile-settings-page {
+        padding: 20px 12px;
+    }
+
+    .profile-settings-topbar {
+        align-items: flex-start;
+    }
+
+    .profile-settings-card {
+        padding: 20px;
+    }
+
+    .profile-settings-actions {
+        width: 100%;
+    }
+
+    .profile-settings-actions .btn {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+/* Registrar Events Page */
 .registrar-events-page {
     font-family: 'ArchivoLight', Arial, sans-serif;
     min-height: 100vh;

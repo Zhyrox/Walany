@@ -212,6 +212,7 @@ function updateThemeButton(theme) {
 
     const isDark = theme === "dark";
     themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    themeToggle.setAttribute("data-theme", isDark ? "dark" : "light");
 
     if (!themeIcon) {
         return;
