@@ -22,12 +22,15 @@ $managerName = $_SESSION['manager_name'] ?? 'Guest';
 
 <div class="dashboard-container">
     <div class="content-shell">
-        <div class="header">
+        <div class="header" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
             <div class="header-copy">
                 <h2>Registrar Operation Center</h2>
                 <p>Logged in as: <strong><?php echo htmlspecialchars($managerName); ?></strong></p>
             </div>
-            <a href="?module=Auth&action=logout" class="logout-btn">Log Out</a>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="/Walany/index.php?module=Admin&action=registrar_dashboard" class="logout-btn">Dashboard</a>
+                <a href="/Walany/index.php?module=Auth&action=logout" onclick="return confirm('Are you sure you want to log out of the system?');" class="logout-btn">Log Out</a>
+            </div>
         </div>
 
         <div class="intro-panel">
