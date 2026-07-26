@@ -1,4 +1,9 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 ob_start();
 require_once __DIR__ . '/core/config.php';
 date_default_timezone_set('Asia/Manila');
@@ -49,92 +54,101 @@ switch ($module) {
         break;
 
     case 'Admin':
-    require_once __DIR__ . '/modules/Admin/Controllers/ManagerController.php';
-    $controller = new ManagerController();
+        // Normalize action to lowercase to avoid case-sensitivity issues
+        $currentAction = strtolower($action);
 
-    if ($action === 'view_managers') {
-        require_once __DIR__ . '/modules/Admin/Views/managers.php';
-        exit;
-    }
+        require_once __DIR__ . '/modules/Admin/Controllers/ManagerController.php';
+        $controller = new ManagerController();
 
-    if ($action === 'create_manager') {
-        $controller->createManager();
-        exit;
-    }
+        if ($currentAction === 'view_managers') {
+            require_once __DIR__ . '/modules/Admin/Views/managers.php';
+            exit;
+        }
 
-    if ($action === 'profile_settings') {
-        require_once __DIR__ . '/modules/Admin/Views/profile_settings.php';
-        exit;
-    }
+        if ($currentAction === 'create_manager') {
+            $controller->createManager();
+            exit;
+        }
 
-    if ($action === 'update_manager') {
-        $res = $controller->updateManager();
-        header("Location: /Walany/index.php?module=Admin&action=profile_settings&status=" . $res['status'] . "&message=" . urlencode($res['message']));
-        exit;
-    }
+        if ($currentAction === 'profile_settings') {
+            require_once __DIR__ . '/modules/Admin/Views/profile_settings.php';
+            exit;
+        }
 
-    if ($action === 'regenerate_key') {
-        $managerId = intval($_GET['id'] ?? 0);
-        $res = $controller->regenerateTempPassword($managerId);
-        header("Location: /Walany/index.php?module=Admin&action=view_managers&status=" . $res['status'] . "&message=" . urlencode($res['message']));
-        exit;
-    }
+        if ($currentAction === 'update_manager') {
+            $res = $controller->updateManager();
+            header("Location: /Walany/index.php?module=Admin&action=profile_settings&status=" . $res['status'] . "&message=" . urlencode($res['message']));
+            exit;
+        }
 
-    if ($action === 'system_error') {
-        require_once __DIR__ . '/modules/Admin/Views/error-landing.php';
-        exit;
-    }
+        if ($currentAction === 'regenerate_key') {
+            $managerId = intval($_GET['id'] ?? 0);
+            $res = $controller->regenerateTempPassword($managerId);
+            header("Location: /Walany/index.php?module=Admin&action=view_managers&status=" . $res['status'] . "&message=" . urlencode($res['message']));
+            exit;
+        }
 
-    if ($action === 'registrar_dashboard') {
-        require_once 'modules/Admin/Controllers/RegistrarController.php';
-        $controller = new RegistrarController();
-        $controller->registrarDashboard();
-        exit();
-    }
+        if ($currentAction === 'system_error') {
+            require_once __DIR__ . '/modules/Admin/Views/error-landing.php';
+            exit;
+        }
 
-    if ($action === 'planner_dashboard') {
-        require_once 'modules/Admin/Controllers/PlannerController.php';
-        $controller = new PlannerController();
-        $controller->plannerDashboard();
-        exit();
-    }
+        if ($currentAction === 'registrar_dashboard') {
+            require_once 'modules/Admin/Controllers/RegistrarController.php';
+            $regController = new RegistrarController();
+            $regController->registrarDashboard();
+            exit();
+        }
 
-    // EVENT CRUD ACTIONS FOR PLANNER CONTROLLER
-    if ($action === 'createevent') {
-        require_once 'modules/Admin/Controllers/PlannerController.php';
-        $controller = new PlannerController();
-        $controller->createEvent();
-        exit();
-    }
+        if ($currentAction === 'planner_dashboard' || $currentAction === 'plannerdashboard') {
+            require_once 'modules/Admin/Controllers/PlannerController.php';
+            $planner = new PlannerController();
+            $planner->plannerDashboard();
+            exit();
+        }
 
-    if ($action === 'editevent') {
-        require_once 'modules/Admin/Controllers/PlannerController.php';
-        $controller = new PlannerController();
-        $controller->editEvent();
-        exit();
-    }
+        // --- PLANNER / EVENT ACTIONS ---
+        if (in_array($currentAction, ['createevent', 'editevent', 'archiveevent', 'unarchiveevent', 'toggleregistration', 'getlivelogsapi', 'exportguestlist'])) {
+            require_once 'modules/Admin/Controllers/PlannerController.php';
+            $planner = new PlannerController();
 
-    if ($action === 'deleteevent') {
-        require_once 'modules/Admin/Controllers/PlannerController.php';
-        $controller = new PlannerController();
-        $controller->deleteEvent();
-        exit();
-    }
+            if ($currentAction === 'createevent') {
+                $planner->createEvent();
+                exit();
+            }
 
-    if ($action === 'getlivelogsapi') {
-        require_once 'modules/Admin/Controllers/PlannerController.php';
-        $controller = new PlannerController();
-        $controller->getLiveLogsApi();
-        exit();
-    }
+            if ($currentAction === 'editevent') {
+                $planner->editEvent();
+                exit();
+            }
 
-    if ($action === 'exportguestlist') {
-        require_once 'modules/Admin/Controllers/PlannerController.php';
-        $controller = new PlannerController();
-        $controller->exportGuestList();
-        exit();
-    }
-    break;
+            if ($currentAction === 'archiveevent') {
+                $planner->archiveEvent();
+                exit();
+            }
+
+            if ($currentAction === 'unarchiveevent') {
+                $planner->unarchiveEvent();
+                exit();
+            }
+
+            if ($currentAction === 'toggleregistration') {
+                $planner->toggleRegistration();
+                exit();
+            }
+
+            if ($currentAction === 'getlivelogsapi') {
+                $planner->getLiveLogsApi();
+                exit();
+            }
+
+            if ($currentAction === 'exportguestlist') {
+                $planner->exportGuestList();
+                exit();
+            }
+        }
+
+        break;
         
 
     case 'Attendance':

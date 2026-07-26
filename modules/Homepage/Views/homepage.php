@@ -190,11 +190,11 @@
                                     <span class="capacity-tag capacity-full">At Capacity</span>
                                 <?php else: ?>
                                     <span class="capacity-tag capacity-available">
-                                        <?= ($maxCapacity - $currentRegistrations) ?> / <?= $maxCapacity ?> Spots Left
+                                        <?= ($maxCapacity - $currentRegistrations) ?> / <?= $maxCapacity ?> Slots Left
                                     </span>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <span class="capacity-tag capacity-available">Open Spots</span>
+                                <span class="capacity-tag capacity-available">Open Slots</span>
                             <?php endif; ?>
                         </div>
 

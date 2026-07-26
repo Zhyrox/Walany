@@ -147,7 +147,17 @@ class PlannerModel {
     public function getCalendarEvents() {
         try {
             $stmt = $this->db->query("
-                SELECT id, name, DATE(event_date) as edate, location, max_capacity 
+                SELECT 
+                    id, 
+                    name, 
+                    DATE(event_date) AS edate, 
+                    location, 
+                    max_capacity,
+                    category,
+                    description,
+                    price,
+                    open_registration,
+                    is_active
                 FROM `walania_event`
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -204,8 +214,8 @@ class PlannerModel {
     public function insertEvent($data) {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO `walania_event` (name, event_date, location, description, thumbnail, max_capacity) 
-                VALUES (:name, :edate, :location, :description, :thumbnail, :max_capacity)
+                INSERT INTO `walania_event` (name, event_date, location, description, thumbnail, max_capacity, price, open_registration, is_active) 
+                VALUES (:name, :edate, :location, :description, :thumbnail, :max_capacity, :price, :open_registration, 1)
             ");
             return $stmt->execute($data);
         } catch (PDOException $e) {
@@ -235,7 +245,9 @@ class PlannerModel {
                     location = :location, 
                     description = :description, 
                     thumbnail = :thumbnail, 
-                    max_capacity = :max_capacity 
+                    max_capacity = :max_capacity,
+                    price = :price,
+                    open_registration = :open_registration
                 WHERE id = :id
             ");
             return $stmt->execute($data);
@@ -245,13 +257,40 @@ class PlannerModel {
         }
     }
 
-    public function removeEvent($id) {
+    public function archiveEvent($id) {
         try {
-            // You can change this to an UPDATE statement if you implement an 'is_archived' status column later
-            $stmt = $this->db->prepare("DELETE FROM `walania_event` WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE `walania_event` SET is_active = 0 WHERE id = :id");
             return $stmt->execute(['id' => $id]);
         } catch (PDOException $e) {
-            error_log("Error deleting event: " . $e->getMessage());
+            error_log("Error archiving event: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function unarchiveEventById($id) {
+        try {
+            $stmt = $this->db->prepare("UPDATE `walania_event` SET is_active = 1 WHERE id = :id");
+            return $stmt->execute(['id' => $id]);
+        } catch (PDOException $e) {
+            error_log("Error unarchiving event: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function toggleRegistrationStatus($id, $status) {
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE `walania_event` 
+                SET `open_registration` = :status 
+                WHERE `id` = :id
+            ");
+            
+            return $stmt->execute([
+                ':status' => intval($status),
+                ':id'     => intval($id)
+            ]);
+        } catch (PDOException $e) {
+            error_log("Database Error in toggleRegistrationStatus: " . $e->getMessage());
             return false;
         }
     }

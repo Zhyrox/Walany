@@ -62,16 +62,21 @@ class PlannerController {
         // Organize events into a clean indexed array grouped by date string
         $mappedEvents = [];
         foreach ($calendarEvents as $ev) {
-            // Include dynamic runtime lookups for each event entry
             $details = $this->model->getEventFeedbackDetails($ev['id']);
             $mappedEvents[$ev['edate']][] = [
-                'id' => $ev['id'],
-                'name' => htmlspecialchars($ev['name']),
-                'location' => htmlspecialchars($ev['location']),
-                'max_capacity' => (int)$ev['max_capacity'],
-                'registrants' => $details['fill_rate'],
-                'rating' => $details['avg_rating'],
-                'feedbacks' => $details['feedbacks']
+                'id'                => $ev['id'],
+                'name'              => htmlspecialchars($ev['name']),
+                'category'          => $ev['category'] ?? 'Seminar',
+                'event_date'        => $ev['edate'],
+                'location'          => htmlspecialchars($ev['location']),
+                'description'       => htmlspecialchars($ev['description'] ?? ''),
+                'max_capacity'      => (int)$ev['max_capacity'],
+                'price'             => $ev['price'] ?? '0.00',
+                'open_registration' => $ev['open_registration'] ?? 1,
+                'is_active'        => $ev['is_active'] ?? 1,
+                'registrants'       => $details['fill_rate'],
+                'rating'            => $details['avg_rating'],
+                'feedbacks'         => $details['feedbacks']
             ];
         }
 
@@ -152,13 +157,18 @@ class PlannerController {
             }
 
             // 4. Map the collection arrays directly to the tokens your Model specifies (:edate)
+            $price = floatval($_POST['price'] ?? 0.00);
+            $open_registration = isset($_POST['open_registration']) ? 1 : 0;
+
             $modelPayload = [
-                'name'         => $name,
-                'edate'        => $formattedDate,
-                'location'     => $location,
-                'description'  => $description,
-                'thumbnail'    => $thumbnailName,
-                'max_capacity' => $max_capacity
+                'name'              => $name,
+                'edate'             => $formattedDate,
+                'location'          => $location,
+                'description'       => $description,
+                'thumbnail'         => $thumbnailName,
+                'max_capacity'      => $max_capacity,
+                'price'             => $price,
+                'open_registration' => $open_registration
             ];
 
             // 5. Fire transaction out to Database layer
@@ -207,13 +217,15 @@ class PlannerController {
             }
 
             $data = [
-                'id'           => $id,
-                'name'         => trim($_POST['name']),
-                'edate'        => $_POST['event_date'],
-                'location'     => trim($_POST['location']),
-                'description'  => trim($_POST['description'] ?? ''),
-                'thumbnail'    => $thumbnailDbPath,
-                'max_capacity' => (int)$_POST['max_capacity']
+                'id'                => $id,
+                'name'              => trim($_POST['name']),
+                'edate'             => $_POST['event_date'],
+                'location'          => trim($_POST['location']),
+                'description'       => trim($_POST['description'] ?? ''),
+                'thumbnail'         => $thumbnailDbPath,
+                'max_capacity'      => (int)$_POST['max_capacity'],
+                'price'             => floatval($_POST['price'] ?? 0.00),
+                'open_registration' => isset($_POST['open_registration']) ? 1 : 0
             ];
             
             if ($data['id'] > 0 && !empty($data['name'])) {
@@ -224,20 +236,32 @@ class PlannerController {
         exit;
     }
 
-    // Handles deleting an event along with its local thumbnail image file
-    public function deleteEvent() {
+    // Handles archiving an event along with its local thumbnail image file
+    public function archiveEvent() {
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id > 0) {
-            $event = $this->model->getEventById($id);
-            
-            if (!empty($event['thumbnail']) && strpos($event['thumbnail'], 'cvsu-imus.png') === false) {
-                $filePath = $_SERVER['DOCUMENT_ROOT'] . $event['thumbnail'];
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-            }
-            
-            $this->model->removeEvent($id);
+            $this->model->archiveEvent($id);
+        }
+        header("Location: /Walany/index.php?module=Admin&action=planner_dashboard&status=success&message=" . urlencode("Event archived successfully."));
+        exit;
+    }
+
+    public function unarchiveEvent() {
+        $eventId = $_GET['id'] ?? null;
+
+        if ($eventId) {
+            $this->model->unarchiveEventById($eventId);
+        }
+
+        header("Location: /Walany/index.php?module=Admin&action=planner_dashboard");
+        exit();
+    }
+
+    public function toggleRegistration() {
+        $id = intval($_GET['id'] ?? 0);
+        $status = intval($_GET['status'] ?? 0);
+        if ($id > 0) {
+            $this->model->toggleRegistrationStatus($id, $status);
         }
         header("Location: /Walany/index.php?module=Admin&action=planner_dashboard");
         exit;

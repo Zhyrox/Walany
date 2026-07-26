@@ -238,23 +238,38 @@
             </button>
         </div>
 
-        <!-- CREATE EVENT MODAL WITH FILE UPLOAD -->
+        <!-- CREATE EVENT MODAL WITH FILE UPLOAD, PRICE, AND OPEN REGISTRATION TOGGLE -->
         <div id="createEventModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
             <div style="background: #fff; padding: 24px; border-radius: 8px; width: 100%; max-width: 450px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
                 <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 1.25em; color: #1e293b;">Create New Event</h3>
                 
-                <!-- CRUCIAL: Added enctype for file processing -->
                 <form method="POST" action="?module=Admin&action=createEvent" enctype="multipart/form-data">
                     
                     <div style="margin-bottom: 12px;">
                         <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Event Name</label>
                         <input type="text" name="name" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
                     </div>
+
+                    <!-- NEW: Event Category Dropdown -->
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Event Category</label>
+                        <select name="category" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; background-color: #fff;">
+                            <option value="Seminar">Seminar</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Tournament">Tournament</option>
+                            <option value="Tryouts">Tryouts</option>
+                            <option value="Intramurals">Intramurals</option>
+                            <option value="Exhibitions">Exhibitions</option>
+                            <option value="Fundraisers">Fundraisers</option>
+                            <option value="Orientations">Orientations</option>
+                            <option value="Webinars">Webinars</option>
+                        </select>
+                    </div>
                     
                     <div style="margin-bottom: 12px;">
                         <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Thumbnail Image</label>
                         <input type="file" name="thumbnail" accept="image/*" style="width: 100%; padding: 4px 0;">
-                        <span style="font-size: 0.75em; color: #64748b; display: block; margin-top: 2px;">Leave blank to use default institutional layout.</span>
+                        <span style="font-size: 0.75em; color: #64748b; display: block; margin-top: 2px;">Leave blank to use default layout.</span>
                     </div>
 
                     <div style="margin-bottom: 12px;">
@@ -272,9 +287,22 @@
                         <textarea name="description" rows="3" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; resize: vertical;"></textarea>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Event Price (₱)</label>
+                        <input type="number" step="0.01" min="0" name="price" value="0.00" placeholder="0.00" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
                         <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Max Capacity (Quota)</label>
                         <input type="number" name="max_capacity" min="1" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                        <div>
+                            <label for="create_open_registration" style="display: block; font-size: 0.85em; font-weight: 600; color: #1e293b; cursor: pointer;">Open Registration</label>
+                            <span style="font-size: 0.75em; color: #64748b; display: block;">Allow sign-ups upon event creation.</span>
+                        </div>
+                        <input type="checkbox" id="create_open_registration" name="open_registration" value="1" checked style="width: 18px; height: 18px; cursor: pointer;">
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 8px;">
@@ -285,12 +313,11 @@
             </div>
         </div>
 
-        <!-- EDIT EVENT MODAL WITH FILE STREAMING -->
+        <!-- EDIT EVENT MODAL WITH FILE STREAMING, PRICE, REGISTRATION TOGGLE, AND ARCHIVE BUTTON -->
         <div id="editEventModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
             <div style="background: #fff; padding: 24px; border-radius: 8px; width: 100%; max-width: 450px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
                 <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 1.25em; color: #1e293b;">Edit Event</h3>
                 
-                <!-- ENCTYPE added here so new images parse cleanly -->
                 <form method="POST" action="?module=Admin&action=editEvent" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="edit_event_id">
                     
@@ -298,11 +325,27 @@
                         <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Event Name</label>
                         <input type="text" name="name" id="edit_event_name" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
                     </div>
+
+                    <!-- NEW: Edit Event Category Dropdown -->
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Event Category</label>
+                        <select name="category" id="edit_event_category" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; background-color: #fff;">
+                            <option value="Seminar">Seminar</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Tournament">Tournament</option>
+                            <option value="Tryouts">Tryouts</option>
+                            <option value="Intramurals">Intramurals</option>
+                            <option value="Exhibitions">Exhibitions</option>
+                            <option value="Fundraisers">Fundraisers</option>
+                            <option value="Orientations">Orientations</option>
+                            <option value="Webinars">Webinars</option>
+                        </select>
+                    </div>
                     
                     <div style="margin-bottom: 12px;">
                         <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Change Thumbnail Image</label>
                         <input type="file" name="thumbnail" accept="image/*" style="width: 100%; padding: 4px 0;">
-                        <span style="font-size: 0.75em; color: #64748b; display: block; margin-top: 2px;">Leave blank to preserve current event thumbnail image.</span>
+                        <span style="font-size: 0.75em; color: #64748b; display: block; margin-top: 2px;">Leave blank to preserve current thumbnail.</span>
                     </div>
 
                     <div style="margin-bottom: 12px;">
@@ -320,13 +363,26 @@
                         <textarea name="description" id="edit_event_description" rows="3" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; resize: vertical;"></textarea>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Event Price (₱)</label>
+                        <input type="number" step="0.01" min="0" name="price" id="edit_event_price" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
                         <label style="display: block; font-size: 0.85em; font-weight: 600; color: #475569; margin-bottom: 4px;">Max Capacity (Quota)</label>
                         <input type="number" name="max_capacity" id="edit_event_max_capacity" min="1" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
                     </div>
 
+                    <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                        <div>
+                            <label for="edit_open_registration" style="display: block; font-size: 0.85em; font-weight: 600; color: #1e293b; cursor: pointer;">Open Registration</label>
+                            <span style="font-size: 0.75em; color: #64748b; display: block;">Enable or suspend student registrations.</span>
+                        </div>
+                        <input type="checkbox" id="edit_open_registration" name="open_registration" value="1" style="width: 18px; height: 18px; cursor: pointer;">
+                    </div>
+
                     <div style="display: flex; justify-content: space-between;">
-                        <button type="button" id="delete_event_btn" style="background: #ef4444; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Delete</button>
+                        <button type="button" id="archive_event_btn" style="background: #e11d48; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Archive</button>
                         <div style="display: flex; gap: 8px;">
                             <button type="button" onclick="closeEditModal()" style="background: #e2e8f0; color: #334155; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Cancel</button>
                             <button type="submit" style="background: #10b981; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Update Event</button>
@@ -335,192 +391,225 @@
                 </form>
             </div>
         </div>
-
         
-
     <!-- Include dynamic Chart.js Library Engine from Official CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Data configurations fed cleanly from PHP scope variables
-        const labelsA = <?= json_encode($chartA_labels) ?>;
-        const capsA   = <?= json_encode($chartA_caps) ?>;
-        const regsA   = <?= json_encode($chartA_regs) ?>;
+<script>
+    // --- 1. MODAL CONTROLLERS ---
+    function openCreateModal() {
+        const modal = document.getElementById('createEventModal');
+        if (modal) modal.style.display = 'flex';
+    }
 
-        const labelsB = <?= json_encode($chartB_labels) ?>;
-        const valuesB = <?= json_encode($chartB_values) ?>;
+    function closeCreateModal() {
+        const modal = document.getElementById('createEventModal');
+        if (modal) modal.style.display = 'none';
+    }
 
-        const turnoutData = <?= json_encode($turnoutData) ?>;
+    function closeEditModal() {
+        const modal = document.getElementById('editEventModal');
+        if (modal) modal.style.display = 'none';
+    }
 
-        // --- Chart A: Quota Bar Chart Configuration ---
-        new Chart(document.getElementById('capacityBarChart'), {
-            type: 'bar',
-            data: {
-                labels: labelsA.length ? labelsA : ['No Active Events'],
-                datasets: [
-                    { label: 'Current Registrants', data: regsA, backgroundColor: '#0284c7', borderRadius: 4 },
-                    { label: 'Max Quota Limit', data: capsA, backgroundColor: '#cbd5e1', borderRadius: 4 }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-        });
+    // --- 2. CATEGORY BADGE HELPER ---
+    function getCategoryBadge(categoryName) {
+        const cat = categoryName || 'Seminar';
+        let bg = '#e2e8f0';
+        let text = '#334155';
 
-        // --- Chart B: Velocity Line Chart Configuration ---
-        new Chart(document.getElementById('velocityLineChart'), {
-            type: 'line',
-            data: {
-                labels: labelsB.length ? labelsB : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Daily Signups',
-                    data: valuesB.length ? valuesB : [0, 0, 0, 0, 0, 0, 0],
-                    borderColor: '#0d9488',
-                    backgroundColor: 'rgba(13, 148, 136, 0.05)',
-                    fill: true,
-                    tension: 0.3,
-                    borderWidth: 2
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-        });
+        switch(cat.toLowerCase()) {
+            case 'seminar':       bg = '#f3e8ff'; text = '#6b21a8'; break;
+            case 'workshop':      bg = '#dbeafe'; text = '#1e40af'; break;
+            case 'tournament':    bg = '#ffedd5'; text = '#9a3412'; break;
+            case 'tryouts':       bg = '#fef3c7'; text = '#92400e'; break;
+            case 'intramurals':   bg = '#dcfce7'; text = '#166534'; break;
+            case 'exhibitions':   bg = '#fae8ff'; text = '#86198f'; break;
+            case 'fundraisers':   bg = '#ffe4e6'; text = '#9f1239'; break;
+            case 'orientations':  bg = '#e0f2fe'; text = '#075985'; break;
+            case 'webinars':      bg = '#ccfbf1'; text = '#115e59'; break;
+        }
 
-        // --- Chart C: Turnout Doughnut Configuration ---
-        new Chart(document.getElementById('turnoutDoughnutChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Checked In', 'Remaining Slots'],
-                datasets: [{
-                    data: [turnoutData.checked_in, turnoutData.no_shows],
-                    backgroundColor: ['#10b981', '#cbd5e1'], // Soft green and slate gray
-                    borderWidth: 1
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { 
-                    legend: { 
-                        display: true,
-                        position: 'bottom' 
-                    } 
-                } 
+        return `<span style="font-size:0.75em; font-weight:700; text-transform:uppercase; color:${text}; background:${bg}; padding:2px 8px; border-radius:12px;">${cat}</span>`;
+    }
+
+    // --- 3. AUTO-FILL AND OPEN EDIT MODAL ---
+    function openEditModal(eventObj) {
+        if (!eventObj) return;
+
+        const idEl = document.getElementById('edit_event_id');
+        if (idEl) idEl.value = eventObj.id || '';
+
+        const nameEl = document.getElementById('edit_event_name');
+        if (nameEl) nameEl.value = eventObj.name || '';
+
+        const catEl = document.getElementById('edit_event_category');
+        if (catEl) catEl.value = eventObj.category || 'Seminar';
+
+        const dateEl = document.getElementById('edit_event_date');
+        if (dateEl) {
+            let rawDate = eventObj.event_date || eventObj.edate || '';
+            if (rawDate && !rawDate.includes('T')) {
+                rawDate = `${rawDate}T12:00`;
             }
-        });
+            dateEl.value = rawDate;
+        }
 
-        function handleCalendarDayClick(dateString, events) {
-            const sidebar = document.getElementById('sideboardPanel');
-            const placeholder = document.getElementById('sideboardPlaceholder');
-            const content = document.getElementById('sideboardContent');
+        const locEl = document.getElementById('edit_event_location');
+        if (locEl) locEl.value = eventObj.location || '';
 
-            if (!events || events.length === 0) {
-                placeholder.style.display = 'block';
-                content.style.display = 'none';
-                sidebar.style.color = '#94a3b8';
-                return;
-            }
+        const descEl = document.getElementById('edit_event_description');
+        if (descEl) descEl.value = eventObj.description || '';
 
-            placeholder.style.display = 'none';
-            content.style.display = 'block';
-            sidebar.style.color = 'inherit';
+        const capEl = document.getElementById('edit_event_max_capacity');
+        if (capEl) capEl.value = eventObj.max_capacity || eventObj.capacity || '';
 
-            const activeEv = events[0]; 
-            const fillPct = Math.round((activeEv.registrants / activeEv.max_capacity) * 100);
+        const priceEl = document.getElementById('edit_event_price');
+        if (priceEl) priceEl.value = eventObj.price !== undefined ? eventObj.price : '0.00';
 
-            let reviewFeedHtml = '';
-            if(activeEv.feedbacks && activeEv.feedbacks.length > 0) {
-                activeEv.feedbacks.forEach(f => {
-                    reviewFeedHtml += `
-                        <div style="border-bottom: 1px solid #f1f5f9; padding: 8px 0;">
-                            <div style="display:flex; justify-content:space-between; font-size:0.8em; font-weight:600; color:#475569;">
-                                <span>Ref ID: ${f.reference_id}</span>
-                                <span style="color:#eab308;">★ ${f.rating}</span>
-                            </div>
-                            <p style="margin:4px 0 0 0; font-size:0.85em; color:#64748b; line-height:1.4;">"${f.comment}"</p>
-                        </div>
-                    `;
-                });
+        const regCheckEl = document.getElementById('edit_open_registration');
+        if (regCheckEl) {
+            const isRegOpen = String(eventObj.open_registration) === '1' || eventObj.open_registration === true;
+            regCheckEl.checked = isRegOpen;
+        }
+
+        // --- ARCHIVE / UNARCHIVE BUTTON TOGGLE ---
+        const archiveBtn = document.getElementById('archive_event_btn');
+        if (archiveBtn) {
+            const isArchived = String(eventObj.is_active) === '0' || eventObj.is_active === true;
+
+            if (isArchived) {
+                archiveBtn.textContent = 'Unarchive Event';
+                archiveBtn.style.backgroundColor = '#2563eb'; // Blue button for unarchive
+                archiveBtn.style.color = '#ffffff';
+                archiveBtn.onclick = function() {
+                    if (confirm(`Are you sure you want to unarchive "${eventObj.name}"?`)) {
+                        window.location.href = `/Walany/index.php?module=Admin&action=unarchiveEvent&id=${eventObj.id}`;
+                    }
+                };
             } else {
-                reviewFeedHtml = `<p style="font-size:0.85em; color:#94a3b8; font-style:italic; margin:10px 0 0 0;">No reviews written yet for this event.</p>`;
+                archiveBtn.textContent = 'Archive Event';
+                archiveBtn.style.backgroundColor = '#ef4444'; // Red button for archive
+                archiveBtn.style.color = '#ffffff';
+                archiveBtn.onclick = function() {
+                    if (confirm(`Are you sure you want to archive "${eventObj.name}"?`)) {
+                        window.location.href = `/Walany/index.php?module=Admin&action=archiveEvent&id=${eventObj.id}`;
+                    }
+                };
             }
+        }
 
-            content.innerHTML = `
-                <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <button onclick='openEditModal(${JSON.stringify(activeEv)})' style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 500; cursor: pointer; color: #334155;">
-                            Edit
-                        </button>
-                        
-                        <!-- ADDED: Export Guest List Button inside Dynamic Sidebar View -->
-                        <a href="/Walany/index.php?module=Admin&action=exportguestlist&event_id=${activeEv.id}" 
-                           style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 500; color: #334155; text-decoration: none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Export Guest List
-                        </a>
+        const editModal = document.getElementById('editEventModal');
+        if (editModal) editModal.style.display = 'flex';
+    }
+
+    // --- 4. CALENDAR SIDEBOARD HANDLER ---
+    function handleCalendarDayClick(dateString, events) {
+        const sidebar = document.getElementById('sideboardPanel');
+        const placeholder = document.getElementById('sideboardPlaceholder');
+        const content = document.getElementById('sideboardContent');
+
+        if (!events || events.length === 0) {
+            placeholder.style.display = 'block';
+            content.style.display = 'none';
+            sidebar.style.color = '#94a3b8';
+            return;
+        }
+
+        placeholder.style.display = 'none';
+        content.style.display = 'block';
+        sidebar.style.color = 'inherit';
+
+        const activeEv = events[0]; 
+        window.currentSelectedEvent = activeEv;
+
+        const maxCap = parseInt(activeEv.max_capacity || activeEv.capacity || 1);
+        const regCount = parseInt(activeEv.registrants || 0);
+        const fillPct = Math.round((regCount / maxCap) * 100);
+        
+        const priceVal = parseFloat(activeEv.price || 0);
+        const priceLabel = priceVal > 0 ? `₱${priceVal.toFixed(2)}` : 'FREE';
+
+        // Check registration status
+        const isRegOpen = String(activeEv.open_registration) === '1' || activeEv.open_registration === true;
+        const regStatusBadge = isRegOpen 
+            ? `<span style="font-size:0.75em; font-weight:700; color:#15803d; background:#dcfce7; padding:2px 8px; border-radius:12px;">Registration Open</span>`
+            : `<span style="font-size:0.75em; font-weight:700; color:#b91c1c; background:#fee2e2; padding:2px 8px; border-radius:12px;">Registration Closed</span>`;
+
+        // Check archived status
+        const isArchived = String(activeEv.is_active) === '0' || activeEv.is_active === true;
+        const archivedBadge = isArchived 
+            ? `<span style="font-size:0.75em; font-weight:700; text-transform:uppercase; color:#475569; background:#e2e8f0; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1;">📦 Archived</span>`
+            : '';
+
+        const categoryBadge = getCategoryBadge(activeEv.category);
+
+        let reviewFeedHtml = '';
+        if (activeEv.feedbacks && activeEv.feedbacks.length > 0) {
+            activeEv.feedbacks.forEach(f => {
+                reviewFeedHtml += `
+                    <div style="border-bottom: 1px solid #f1f5f9; padding: 8px 0;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8em; font-weight:600; color:#475569;">
+                            <span>Ref ID: ${f.reference_id}</span>
+                            <span style="color:#eab308;">★ ${f.rating}</span>
+                        </div>
+                        <p style="margin:4px 0 0 0; font-size:0.85em; color:#64748b; line-height:1.4;">"${f.comment}"</p>
                     </div>
-                    <div>
+                `;
+            });
+        } else {
+            reviewFeedHtml = `<p style="font-size:0.85em; color:#94a3b8; font-style:italic; margin:10px 0 0 0;">No reviews written yet for this event.</p>`;
+        }
+
+        content.innerHTML = `
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <button type="button" onclick="openEditModal(window.currentSelectedEvent)" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 500; cursor: pointer; color: #334155;">
+                        Edit
+                    </button>
+                    
+                    <a href="/Walany/index.php?module=Admin&action=exportguestlist&event_id=${activeEv.id}" 
+                    style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 500; color: #334155; text-decoration: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export Guest List
+                    </a>
+                </div>
+
+                <div>
+                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top: 4px;">
+                        ${categoryBadge}
                         <span style="font-size:0.75em; font-weight:700; text-transform:uppercase; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:12px;">${dateString}</span>
-                        <h3 style="margin: 8px 0 4px 0; color:#0f172a; font-size:1.2em;">${activeEv.name}</h3>
-                        <p style="margin:0; font-size:0.85em; color:#64748b;">📍 ${activeEv.location}</p>
+                        ${regStatusBadge}
+                        ${archivedBadge}
                     </div>
+                    <h3 style="margin: 8px 0 4px 0; color:#0f172a; font-size:1.2em;">${activeEv.name}</h3>
+                    <p style="margin:0; font-size:0.85em; color:#64748b;">📍 ${activeEv.location} &bull; <strong>Price: ${priceLabel}</strong></p>
                 </div>
-                
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-                    <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #f1f5f9;">
-                        <span style="display:block; font-size:0.75em; color:#64748b; font-weight:600;">Total Attendees</span>
-                        <span style="font-size:1.1em; font-weight:700; color:#0f172a;">${fillPct}%</span>
-                        <span style="display:block; font-size:0.7em; color:#94a3b8;">(${activeEv.registrants}/${activeEv.max_capacity} slots)</span>
-                    </div>
-                    <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #f1f5f9;">
-                        <span style="display:block; font-size:0.75em; color:#64748b; font-weight:600;">AVG RATING</span>
-                        <span style="font-size:1.1em; font-weight:700; color:#eab308;">★ ${activeEv.rating}</span>
-                        <span style="display:block; font-size:0.7em; color:#94a3b8;">Student Score</span>
-                    </div>
-                </div>
-
-                <h4 style="margin:15px 0 5px 0; font-size:0.9em; font-weight:700; text-transform:uppercase; color:#475569; letter-spacing:0.05em;">Student Reviews Feed</h4>
-                <div style="max-height:160px; overflow-y:auto; padding-right:5px;">
-                    ${reviewFeedHtml}
-                </div>
-            `;
-        }
-
-        // Modal toggles
-        function openCreateModal() {
-            document.getElementById('createEventModal').style.display = 'flex';
-        }
-        function closeCreateModal() {
-            document.getElementById('createEventModal').style.display = 'none';
-        }
-        function closeEditModal() {
-            document.getElementById('editEventModal').style.display = 'none';
-        }
-
-        // Function to trigger the edit modal populated with current event details
-        function openEditModal(eventObj) {
-            document.getElementById('edit_event_id').value = eventObj.id;
-            document.getElementById('edit_event_name').value = eventObj.name;
+            </div>
             
-            if (eventObj.edate) {
-                const formattedDate = eventObj.edate.includes('T') ? eventObj.edate : `${eventObj.edate}T12:00`;
-                document.getElementById('edit_event_date').value = formattedDate;
-            }
-            
-            document.getElementById('edit_event_location').value = eventObj.location || '';
-            document.getElementById('edit_event_description').value = eventObj.description || '';
-            document.getElementById('edit_event_max_capacity').value = eventObj.max_capacity || '';
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #f1f5f9;">
+                    <span style="display:block; font-size:0.75em; color:#64748b; font-weight:600;">Total Attendees</span>
+                    <span style="font-size:1.1em; font-weight:700; color:#0f172a;">${fillPct}%</span>
+                    <span style="display:block; font-size:0.7em; color:#94a3b8;">(${regCount}/${maxCap} slots)</span>
+                </div>
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #f1f5f9;">
+                    <span style="display:block; font-size:0.75em; color:#64748b; font-weight:600;">AVG RATING</span>
+                    <span style="font-size:1.1em; font-weight:700; color:#eab308;">★ ${activeEv.rating || '0.0'}</span>
+                    <span style="display:block; font-size:0.7em; color:#94a3b8;">Student Score</span>
+                </div>
+            </div>
 
-            // Setup delete redirection
-            document.getElementById('delete_event_btn').onclick = function() {
-                if (confirm(`Are you sure you want to delete "${eventObj.name}"? This action cannot be undone.`)) {
-                    window.location.href = `?module=Admin&action=deleteEvent&id=${eventObj.id}`;
-                }
-            };
-
-            document.getElementById('editEventModal').style.display = 'flex';
-        }
-    </script>
+            <h4 style="margin:15px 0 5px 0; font-size:0.9em; font-weight:700; text-transform:uppercase; color:#475569; letter-spacing:0.05em;">Student Reviews Feed</h4>
+            <div style="max-height:160px; overflow-y:auto; padding-right:5px;">
+                ${reviewFeedHtml}
+            </div>
+        `;
+    }
+</script>
 
 <!-- Live Attendance Logs Container -->
 <div style="background: #ffffff; padding: 24px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
