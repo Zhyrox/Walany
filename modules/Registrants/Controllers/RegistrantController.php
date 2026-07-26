@@ -140,7 +140,7 @@ class RegistrantController {
             session_start();
         }
 
-        // 1. Fetch your clean evaluation ID context from the session
+        // 1. Fetch your clean reference ID context from the session
         $evalReferenceId = $_SESSION['pending_reference_id'] ?? null;
         
         if (!$evalReferenceId) {
@@ -148,14 +148,25 @@ class RegistrantController {
             exit();
         }
 
-        // 2. Generate an independent, unique merchant track token for PayMongo
+        // 2. Retrieve registrant record to identify which event they registered for
+        $registrant = $this->model->getRegistrantByRef($evalReferenceId);
+        $eventId = $registrant['event_id'] ?? ($_SESSION['pending_event_id'] ?? 1);
+
+        // 3. Fetch event details (including the dynamic 'price' column) from walania_event
+        $eventData = $this->model->getEventData((int)$eventId);
+        
+        // Default to 250.00 if price is missing/0, then convert to centavos for PayMongo
+        $rawPrice = (!empty($eventData['price']) && $eventData['price'] > 0) ? (float)$eventData['price'] : 250.00;
+        $amountInCents = (int)round($rawPrice * 100);
+        $eventName = $eventData['name'] ?? 'Event Registration Fee';
+
+        // 4. Generate an independent, unique merchant track token for PayMongo
         $paymentTrackingRef = "PAY-" . $evalReferenceId . "-" . time();
-        $amountInCents = 25000; // ₱250.00 (PayMongo counts in cents, e.g., 25000 = PHP 250.00)
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
         $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . "/Walany";
 
-        // 3. Prepare the strict JSON format structured request payload
+        // 5. Prepare the strict JSON payload with dynamic event name & amount
         $payload = json_encode([
             'data' => [
                 'attributes' => [
@@ -166,21 +177,20 @@ class RegistrantController {
                         [
                             'amount'      => $amountInCents,
                             'currency'    => 'PHP',
-                            'name'        => 'Event Registration Fee',
+                            'name'        => $eventName,
                             'quantity'    => 1
                         ]
                     ],
                     'payment_method_types' => ['gcash', 'paymaya', 'card'],
                     'reference_number'     => $paymentTrackingRef,
-                    'description'          => 'Payment integration pipeline verification.',
-                    // Pass the true evaluation ID back via query parameter string on success
+                    'description'          => 'Registration fee for ' . $eventName,
                     'success_url'          => $baseUrl . "/modules/Registrants/Views/payment-callback.php?status=success&ref=" . urlencode($evalReferenceId),
                     'cancel_url'           => $baseUrl . "/modules/Registrants/Views/payment-callback.php?status=cancelled"
                 ]
             ]
         ]);
 
-        // 4. Send the payload to PayMongo Checkout Sessions API endpoint via cURL
+        // 6. Send payload to PayMongo Checkout Sessions API endpoint via cURL
         $ch = curl_init('https://api.paymongo.com/v1/checkout_sessions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -199,18 +209,23 @@ class RegistrantController {
             $checkoutUrl = $result['data']['attributes']['checkout_url'] ?? null;
 
             if ($checkoutUrl) {
-                // Hand off control window loop to PayMongo's secure merchant page
                 header("Location: " . $checkoutUrl);
                 exit();
             }
         }
 
-        // Debugging backup output in case configuration keys are wrong
+        // Debugging backup output in case API handshake fails
         die("PayMongo API Handshake Failed. HTTP Server Response Code: " . $httpCode);
     }
 
     private function sendVerificationOtpWorkflow(string $email, string $firstName, string $lastName, ?array $latestOtpLog): bool {
         $sixDigitPin = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        // Check if the previous OTP request was made within the last 60 minutes
+        $logCreatedAt = $latestOtpLog ? strtotime($latestOtpLog['created_at'] ?? 'now') : 0;
+        $isWithinHour = $logCreatedAt > strtotime('-1 hour');
+
+        // If inside the 1-hour window, increment count; otherwise reset to 1
         $this->model->createOtpLog($email, $sixDigitPin, $latestOtpLog ? (int)$latestOtpLog['resend_count_hourly'] + 1 : 1, date('Y-m-d H:i:s', strtotime('+5 minutes')));
         
         $body = "<div style='font-family: Arial; padding: 25px; max-width: 480px; margin: auto;'>

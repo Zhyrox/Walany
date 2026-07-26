@@ -57,14 +57,28 @@ class RegistrantModel {
         $latestOtpLog = $this->getLatestOtpLog($email);
 
         if ($latestOtpLog) {
+            // 1. Check if the user is currently under a hard failed-attempt lockout
             if ($latestOtpLog['locked_until'] && strtotime($latestOtpLog['locked_until']) > strtotime($currentTime)) {
                 $timeLeft = ceil((strtotime($latestOtpLog['locked_until']) - strtotime($currentTime)) / 60);
                 return ['status' => 'error', 'message' => "Too many verification failures. Locked for {$timeLeft} minutes."];
             }
-            if ((int)$latestOtpLog['resend_count_hourly'] >= 6) {
-                return ['status' => 'error', 'message' => 'Hourly security request threshold reached. Please wait an hour.'];
+
+            // 2. TIME-BASED HOURLY RESET CHECK
+            // Check if the latest OTP log was created within the last 60 minutes
+            $logCreatedAt = strtotime($latestOtpLog['created_at'] ?? $latestOtpLog['expires_at'] . ' -5 minutes');
+            $oneHourAgo = strtotime('-1 hour');
+
+            if ($logCreatedAt > $oneHourAgo) {
+                // Log was within the past hour — enforce hourly limit
+                if ((int)$latestOtpLog['resend_count_hourly'] >= 6) {
+                    return ['status' => 'error', 'message' => 'Hourly security request threshold reached. Please wait an hour.'];
+                }
+            } else {
+                // More than an hour has passed! Reset the hourly counter on the log object
+                $latestOtpLog['resend_count_hourly'] = 0;
             }
         }
+
         return ['status' => 'success', 'latest_log' => $latestOtpLog];
     }
 
@@ -271,18 +285,19 @@ class RegistrantModel {
         return ($stmt->fetch(PDO::FETCH_ASSOC))['line_position'] ?? 1;
     }
 
-    public function completePaymentRecord(string $referenceNumber, string $receipt): bool
+    public function completePaymentRecord(string $referenceNumber, string $receipt, float $amount = 250.00): bool
     {
         $stmt = $this->db->prepare("
-            UPDATE registrants
+            UPDATE walania_registrant
             SET payment_status = 'completed',
                 payment_method = 'PayMongo_Gateway',
-                payment_amount = 250.00,
+                payment_amount = :amount,
                 payment_reference = :receipt
-            WHERE reference_number = :ref
+            WHERE reference_id = :ref
         ");
         
         return $stmt->execute([
+            'amount'  => $amount,
             'receipt' => $receipt,
             'ref'     => $referenceNumber
         ]);
