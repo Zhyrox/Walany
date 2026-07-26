@@ -732,6 +732,10 @@ button {
     align-items: stretch;
 }
 
+.home-events-page .events-grid .event-card.is-hidden {
+    display: none;
+}
+
 .registrar-events-page .events-roster .event-card {
     position: relative;
     display: flex;

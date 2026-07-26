@@ -168,7 +168,6 @@ switch ($module) {
         require_once __DIR__ . '/modules/Homepage/Controllers/HomepageController.php';
         $controller = new HomepageController();
         $controller->index();
-        require_once __DIR__ . '/modules/Homepage/Views/homepage.php';
         break;
 
     case 'Registrants':

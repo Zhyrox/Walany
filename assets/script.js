@@ -170,7 +170,7 @@ if (backToTopBtn) {
     });
 }
 
-if (eventSearch && eventCards.length) {
+if (eventSearch) {
     if (eventSearchBtn) {
         eventSearchBtn.addEventListener("click", filterEvents);
     }
@@ -186,12 +186,16 @@ if (eventSearch && eventCards.length) {
 }
 
 function filterEvents() {
+    if (!eventSearch || !eventCards.length) {
+        return;
+    }
+
     const searchTerm = eventSearch.value.trim().toLowerCase();
     let visibleCount = 0;
 
     eventCards.forEach((card) => {
-        const eventTitle = card.dataset.eventTitle || card.querySelector("h3")?.textContent.toLowerCase() || "";
-        const isMatch = searchTerm === "" || eventTitle.startsWith(searchTerm);
+        const eventTitle = (card.dataset.eventTitle || card.querySelector("h3")?.textContent || "").toLowerCase();
+        const isMatch = searchTerm === "" || eventTitle.includes(searchTerm);
 
         card.classList.toggle("is-hidden", !isMatch);
 
