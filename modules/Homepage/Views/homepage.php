@@ -237,8 +237,8 @@
 
                             <!-- Feedback Lockdown Button -->
                             <?php if ($canFeedback): ?>
-                                <a href="/Walany/modules/Events/Views/evaluate.php?event_id=<?= htmlspecialchars((string) ($event['id'] ?? 0)) ?>" 
-                                   class="btn btn-secondary">
+                                <a href="/Walany/index.php?module=Events&action=evaluate&event_id=<?= htmlspecialchars((string) ($event['id'] ?? 0)) ?>" 
+                                class="btn btn-secondary">
                                     Give Feedback
                                 </a>
                             <?php else: ?>

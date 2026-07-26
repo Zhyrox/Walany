@@ -43,4 +43,30 @@ class EventFeedback {
             throw $e;
         }
     }
+
+    public function getEventById($eventId) {
+        try {
+            $sql = "SELECT id, name FROM walania_event WHERE id = :event_id AND is_active = 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':event_id' => $eventId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC); // Returns array like ['id' => 1, 'name' => 'Tech Summit 2026'] or false
+        } catch (PDOException $e) {
+            error_log("EVENT FETCH FAILURE: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function getEventNameById($eventId) {
+        try {
+            $sql = "SELECT name FROM walania_event WHERE id = :event_id LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':event_id' => $eventId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $row ? $row['name'] : null;
+        } catch (PDOException $e) {
+            error_log("MODEL ENGINE FAILURE (getEventNameById): " . $e->getMessage());
+            return null;
+        }
+    }
 }

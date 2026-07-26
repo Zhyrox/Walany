@@ -109,6 +109,46 @@ body {
     scrollbar-width: none;    /* Firefox */
 }
 
+/* Container for star ratings */
+.star-rating {
+    display: inline-flex;
+    gap: 0.35rem;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* Hide native radio buttons */
+.star-rating input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Default state for stars */
+.star-rating label {
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out, transform 0.1s ease;
+    user-select: none;
+}
+
+/* Highlight checked star and all stars before it (Left to Right) */
+.star-rating label:has(~ input[type="radio"]:checked),
+.star-rating input[type="radio"]:checked + label {
+    color: #ffc107;
+}
+
+/* Hover effects for interactive feedback */
+.star-rating label:hover,
+.star-rating label:has(~ label:hover) {
+    color: #ffdb69;
+}
+
+.star-rating label:active {
+    transform: scale(1.15);
+}
+
 /* Profile Settings Page */
 .profile-settings-page {
     min-height: 100vh;

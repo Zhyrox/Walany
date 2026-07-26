@@ -207,8 +207,8 @@ switch ($module) {
         $controller = new EventController();
 
         if ($action === 'evaluate') {
-            require_once __DIR__ . '/modules/Events/Views/evaluate.php';
-        }
+            $controller->showEvaluationForm();
+        } 
         elseif ($action === 'submit_evaluation') {
             $result = $controller->handleEvaluation();
             echo json_encode($result);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Evaluation - Walania</title>
+    <title>Evaluate <?= htmlspecialchars($eventName ?? 'Event', ENT_QUOTES, 'UTF-8') ?> - Walania</title>
     <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
     <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
@@ -21,12 +21,13 @@
         <section class="evaluation-container" aria-labelledby="evaluation-title">
             <div class="evaluation-intro">
                 <p class="evaluation-eyebrow">Event feedback</p>
-                <h1 id="evaluation-title">Event Evaluation</h1>
+                <!-- Render event name passed down from controller -->
+                <h1 id="evaluation-title"><?= htmlspecialchars($eventName ?? 'Event Evaluation', ENT_QUOTES, 'UTF-8') ?></h1>
                 <p>Please provide your registration reference ID and share your event experience.</p>
             </div>
 
             <form class="evaluation-form" action="/Walany/index.php?module=Events&amp;action=submit_evaluation" method="POST">
-                <input type="hidden" name="event_id" value="<?= htmlspecialchars($_GET['event_id'] ?? '1', ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="event_id" value="<?= htmlspecialchars($_GET['event_id'] ?? $eventId ?? '1', ENT_QUOTES, 'UTF-8') ?>">
 
                 <div class="evaluation-field">
                     <label for="reference_id">Registration Reference ID</label>
@@ -34,16 +35,25 @@
                     <small>Use the 8-character reference code from your registration.</small>
                 </div>
 
+                <!-- Star Rating Field (1–5 Stars Left-to-Right) -->
                 <div class="evaluation-field">
-                    <label for="rating_metric">Overall Rating</label>
-                    <select id="rating_metric" name="rating_metric" required oninvalid="this.setCustomValidity('Please select a rating from the list')" oninput="setCustomValidity('')"> 
-                    <option value="">Select a rating</option>
-                        <option value="5">5 ⭐⭐⭐⭐⭐ - Excellent</option>
-                        <option value="4">4 ⭐⭐⭐⭐ - Very Good</option>
-                        <option value="3">3 ⭐⭐⭐ - Good</option>
-                        <option value="2">2 ⭐⭐ - Fair</option>
-                        <option value="1">1 ⭐ - Poor</option>
-                    </select>
+                    <label>Overall Rating</label>
+                    <div class="star-rating" role="radiogroup" aria-label="Overall Rating">
+                        <input type="radio" id="star1" name="rating_metric" value="1" required />
+                        <label for="star1" title="1 star - Poor">★</label>
+
+                        <input type="radio" id="star2" name="rating_metric" value="2" />
+                        <label for="star2" title="2 stars - Fair">★</label>
+
+                        <input type="radio" id="star3" name="rating_metric" value="3" />
+                        <label for="star3" title="3 stars - Good">★</label>
+
+                        <input type="radio" id="star4" name="rating_metric" value="4" />
+                        <label for="star4" title="4 stars - Very Good">★</label>
+
+                        <input type="radio" id="star5" name="rating_metric" value="5" />
+                        <label for="star5" title="5 stars - Excellent">★</label>
+                    </div>
                 </div>
 
                 <div class="evaluation-field">

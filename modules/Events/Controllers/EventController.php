@@ -1,6 +1,25 @@
 <?php
 class EventController {
 
+    // Action for rendering the page
+    public function showEvaluationForm() {
+        $eventId = isset($_GET['event_id']) ? intval($_GET['event_id']) : 0;
+
+        require_once __DIR__ . '/../Models/EventFeedbackModel.php';
+        $model = new EventFeedback();
+
+        // Model fetches the data
+        $eventName = $model->getEventNameById($eventId);
+
+        // Fallback title if not found
+        if (!$eventName) {
+            $eventName = 'Event Evaluation';
+        }
+
+        // Include the View (variables like $eventName & $eventId are passed down into it)
+        require_once __DIR__ . '/../Views/evaluate.php';
+    }
+
     public function handleEvaluation() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return ['status' => 'error', 'message' => 'Invalid request delivery context.'];
