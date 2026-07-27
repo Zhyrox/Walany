@@ -3,8 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../../../core/config.php';
-require_once __DIR__ . '/../../../core/database.php';
+require_once __DIR__ . '/../../../core/Config.php';
+require_once __DIR__ . '/../../../core/Database.php';
 require_once __DIR__ . '/../Models/RegistrantModel.php';
 
 $status = $_GET['status'] ?? 'failed';
@@ -16,14 +16,15 @@ if ($status === 'success' && $referenceNumber) {
     
     $mockGatewayReceipt = "PMGO-" . strtoupper(bin2hex(random_bytes(5)));
     
-    // Updates local ledger matching exactly where reference_number equals your evaluation ID
+    // Updates local ledger by dynamically joining walania_event to get the exact price
     $stmt = $dbConnection->prepare("
-        UPDATE walania_registrant
-        SET payment_status = 'completed',
-            payment_method = 'PayMongo_Gateway',
-            payment_amount = 250.00,
-            payment_reference = :receipt
-        WHERE reference_id = :ref
+        UPDATE walania_registrant r
+        JOIN walania_event e ON r.event_id = e.id
+        SET r.payment_status = 'completed',
+            r.payment_method = 'PayMongo_Gateway',
+            r.payment_amount = COALESCE(NULLIF(e.price, 0), 250.00),
+            r.payment_reference = :receipt
+        WHERE r.reference_id = :ref
     ");
     
     $stmt->execute([

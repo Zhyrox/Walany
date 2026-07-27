@@ -92,6 +92,150 @@
             color: #0056b3;
             font-weight: bold;
         }
+
+        .featured-card .event-card-header-tags {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .featured-events-section {
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .featured-events-section h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-color, #1a1a1a);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Force 3 equal columns on desktop */
+        .featured-events-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        /* Featured Card Design */
+        .featured-card {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+
+        .featured-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Image Container with Fixed Aspect Ratio */
+        .featured-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            background-color: #f3f4f6;
+        }
+
+        /* Card Body Layout */
+        .featured-card-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .featured-card .event-card-header-tags {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .featured-card .card-details {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        /* Featured Badge */
+        .badge-featured {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(255, 75, 43, 0.3);
+        }
+
+        /* Typography */
+        .featured-card-body h3 {
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin: 0 0 8px 0;
+            color: #1a1a1a;
+            /* Limit title to 2 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .featured-card-body p {
+            font-size: 13px;
+            color: #666666;
+            margin: 0 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Action Button Pushed to Bottom */
+        .featured-card-body .btn {
+            margin-top: auto;
+            width: 100%;
+            text-align: center;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Responsive Rules for Tablets and Mobile */
+        @media (max-width: 992px) {
+            .featured-events-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 per row on tablets */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .featured-events-grid {
+                grid-template-columns: 1fr; /* 1 per row on mobile */
+            }
+        }
     </style>
 </head>
 <body class="home-events-page">
@@ -109,7 +253,113 @@
         </button>
     </header>
 
+
     <main class="events-container">
+
+        <?php if (!empty($featuredEvents)): ?>
+            <section class="featured-events-section" aria-label="Featured Campus Events">
+                <h2>Featured Events</h2>
+                <div class="featured-events-grid">
+                    <?php 
+                    $currentDate = date('Y-m-d');
+                    foreach (array_slice($featuredEvents, 0, 3) as $featured): 
+                        $eventName = $featured['name'] ?? 'Campus Event';
+                        $eventCategory = $featured['category'] ?? 'General';
+                        $eventDate = $featured['event_date'] ?? '';
+                        $rawPrice = (float)($featured['price'] ?? 0);
+                        
+                        // Capacity Logic
+                        $maxCapacity = isset($featured['max_capacity']) ? (int)$featured['max_capacity'] : 0;
+                        $currentRegistrations = (int)($featured['current_registrations'] ?? 0);
+                        $isFull = ($maxCapacity > 0) && ($currentRegistrations >= $maxCapacity);
+                        
+                        // Lockdown Logic States
+                        $isPastEvent = !empty($eventDate) && ($eventDate < $currentDate);
+                        $isOpenRegistration = !empty($featured['open_registration']);
+                        
+                        $canRegister = $isOpenRegistration && !$isPastEvent && !$isFull;
+
+                        $eventImage = !empty($featured['thumbnail'])
+                            ? $featured['thumbnail']
+                            : 'uploads/events/default-banner.png';
+                    ?>
+                        <div class="featured-card">
+                            <img src="<?= htmlspecialchars($eventImage) ?>" alt="<?= htmlspecialchars($eventName) ?>">
+                            
+                            <div class="featured-card-body">
+                                <!-- Header Tag Row -->
+                                <div class="event-card-header-tags">
+                                    <span class="badge-featured">Featured</span>
+
+                                    <!-- Status Tag -->
+                                    <span class="event-card-badge">
+                                        <?= $isPastEvent ? 'Ended' : 'Upcoming' ?>
+                                    </span>
+
+                                    <!-- Category Tag -->
+                                    <span class="category-tag">
+                                        <?= htmlspecialchars($eventCategory) ?>
+                                    </span>
+
+                                    <!-- Capacity Tag -->
+                                    <?php if ($maxCapacity > 0): ?>
+                                        <?php if ($isFull): ?>
+                                            <span class="capacity-tag capacity-full">At Capacity</span>
+                                        <?php else: ?>
+                                            <span class="capacity-tag capacity-available">
+                                                <?= ($maxCapacity - $currentRegistrations) ?> / <?= $maxCapacity ?> Slots Left
+                                            </span>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <span class="capacity-tag capacity-available">Open Spots</span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <h3><?= htmlspecialchars($eventName) ?></h3>
+                                
+                                <!-- Price Tag -->
+                                <p class="card-price" style="margin-bottom: 4px;">
+                                    <strong>Price:</strong> 
+                                    <?php if ($rawPrice <= 0): ?>
+                                        <span class="price-free">Free Admission</span>
+                                    <?php else: ?>
+                                        <span class="price-paid">₱<?= number_format($rawPrice, 2) ?></span>
+                                    <?php endif; ?>
+                                </p>
+
+                                <p class="card-details">
+                                    <strong>Date:</strong> <?= htmlspecialchars($eventDate) ?> • <strong>Location:</strong> <?= htmlspecialchars($featured['location'] ?? 'TBA') ?>
+                                </p>
+
+                                <!-- Action Button -->
+                                <?php if ($canRegister): ?>
+                                    <a href="/Walany/modules/Registrants/Views/registration-form.php?event_id=<?= htmlspecialchars((string) $featured['id']) ?>" 
+                                    class="btn btn-primary">
+                                        Register Now
+                                    </a>
+                                <?php else: ?>
+                                    <?php
+                                        $disabledReason = 'Registration Closed';
+                                        $tooltip = 'Registration is closed.';
+                                        if ($isPastEvent) {
+                                            $disabledReason = 'Event Ended';
+                                            $tooltip = 'Event has ended.';
+                                        } elseif ($isFull) {
+                                            $disabledReason = 'At Capacity';
+                                            $tooltip = 'Maximum capacity reached.';
+                                        }
+                                    ?>
+                                    <button type="button" class="btn btn-primary disabled" disabled title="<?= $tooltip ?>">
+                                        <?= $disabledReason ?>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
+
         <section class="events-search-panel" aria-label="Search campus events">
             <label for="eventSearch">Search events</label>
             <div class="events-search-control">

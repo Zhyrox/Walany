@@ -5,15 +5,16 @@ class HomepageController {
     public function index() {
         try {
             $HomepageModel = new HomepageModel();
+            
+            $featuredEvents = $HomepageModel->getFeaturedEvents();
             $events = $HomepageModel->getActiveEventsWithRegistrations();
             
         } catch (PDOException $e) {
-            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
-            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+            error_log("Database fault: " . $e->getMessage());
+            header("Location: /Walany/index.php?module=Admin&action=system_error");
             exit;
         }
 
-        // Pass $events to the View
         require_once __DIR__ . '/../Views/homepage.php';
     }
 }

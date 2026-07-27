@@ -259,6 +259,7 @@ class RegistrantController {
     private function dispatchSuccessTicketWithQr(string $email, string $referenceId, ?array $user) {
         $qrLibPath = __DIR__ . '/../../../libs/phpqrcode/qrlib.php';
         if (!file_exists($qrLibPath)) return;
+
         try {
             require_once $qrLibPath;
             $qrDir = __DIR__ . '/../../../uploads/qrcodes/';
@@ -266,27 +267,56 @@ class RegistrantController {
             $qrFilePath = $qrDir . $referenceId . '.png';
             QRcode::png($referenceId, $qrFilePath, QR_ECLEVEL_H, 6);
 
+            // Fetch event data
+            $eventId = (int)($user['event_id'] ?? 1);
+            $eventData = $this->model->getEventData($eventId);
+            $eventName = htmlspecialchars($eventData['name'] ?? 'Walania Event');
+            $firstName = htmlspecialchars($user['first_name'] ?? 'Registrant');
+
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-            $mail->isSMTP(); $mail->Host = SMTP_HOST; $mail->SMTPAuth = true;
-            $mail->Username = SMTP_USER; $mail->Password = SMTP_PASS;
-            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS; $mail->Port = 587;
-            $mail->setFrom('yeahlow24@gmail.com', 'Walania Event Management');
-            $mail->addAddress($email); $mail->addEmbeddedImage($qrFilePath, 'qr_code_embed');
-            $mail->isHTML(true); $mail->Subject = 'Your Event Entry Ticket Pass: ' . $referenceId;
-            $mail->Body = "<div style='font-family: Arial; padding: 20px;'>
-                               <h2>Verification Successful! 🎉</h2>
-                               <p>Hi <strong>" . ($user['first_name'] ?? 'Registrant') . "</strong>,</p>
-                               <img src='cid:qr_code_embed' alt='Your QR Ticket'><br>
-                               <strong>Reference ID: {$referenceId}</strong>
-                           </div>";
+            $mail->isSMTP(); 
+            $mail->Host = SMTP_HOST; 
+            $mail->SMTPAuth = true;
+            $mail->Username = SMTP_USER; 
+            $mail->Password = SMTP_PASS;
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS; 
+            $mail->Port = 587;
+            
+            // SENDER ALIAS & DISPLAY NAME
+            $mail->setFrom('yeahlow24@gmail.com', 'Walania Events (No-Reply)');
+            
+            $mail->addAddress($email); 
+            $mail->addEmbeddedImage($qrFilePath, 'qr_code_embed');
+            $mail->isHTML(true); 
+
+            // CUSTOM EMAIL SUBJECT
+            $mail->Subject = "CONFIRMED: Your Registration Pass for {$eventName} [Ref: {$referenceId}]";
+
+            $mail->Body = "
+                <div style='font-family: Arial, sans-serif; padding: 25px; color: #333; max-width: 520px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px;'>
+                    <h2 style='color: #0d6efd; margin-top: 0;'>Registration Successful! 🎉</h2>
+                    
+                    <p>Hi <strong>{$firstName}</strong>,</p>
+                    
+                    <p>We are excited to confirm that your registration for <strong>{$eventName}</strong> has been processed successfully. Your spot is officially secured, and your unique entry pass details are attached below. Please present the generated QR code at the venue check-in desk or keep it accessible for digital verification upon arrival. For online webinars, official meeting links and access guidelines will be followed up directly by the event planner in a separate email prior to the schedule. We appreciate your participation and look forward to having you at the event!</p>
+                    
+                    <div style='text-align: center; margin: 25px 0;'>
+                        <img src='cid:qr_code_embed' alt='Your QR Ticket' style='max-width: 180px; height: auto;'><br>
+                        <span style='font-family: monospace; font-size: 16px; font-weight: bold; color: #555;'>Reference ID: {$referenceId}</span>
+                    </div>
+
+                    <div style='background-color: #f8f9fa; padding: 12px; border-left: 4px solid #0d6efd; margin-top: 20px; font-size: 13px; color: #6c757d;'>
+                        <strong>Note:</strong> Please do not reply directly to this automated email. Keep this pass safe for check-in verification.
+                    </div>
+                </div>
+            ";
+
             $mail->send();
             if (file_exists($qrFilePath)) unlink($qrFilePath);
-        } catch (PDOException $e) {
-            // 1. Log the absolute descriptive raw traceback details to XAMPP error logs for the server administrator
-            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
-            // 2. Safely redirect the user to the generic error container view without leaking structure schemas
-            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Database connectivity or operational schema fault."));
+        } catch (\Exception $e) {
+            error_log("CRITICAL SYSTEM INTEGRITY FAULT: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+            header("Location: /Walany/index.php?module=Admin&action=system_error&message=" . urlencode("Email dispatch or QR generator error."));
             exit;
         }
     }
