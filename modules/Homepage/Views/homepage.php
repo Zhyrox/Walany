@@ -53,23 +53,33 @@
         }
 
         .category-tag {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: #e9ecef;
             color: #495057;
             font-size: 12px;
             font-weight: 600;
-            padding: 3px 10px;
+            min-height: 24px;
+            padding: 4px 10px;
             border-radius: 12px;
             text-transform: capitalize;
+            line-height: 1;
+            text-align: center;
         }
 
         /* Capacity Badges */
         .capacity-tag {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             font-size: 12px;
             font-weight: 600;
-            padding: 3px 10px;
+            min-height: 24px;
+            padding: 4px 10px;
             border-radius: 12px;
+            line-height: 1;
+            text-align: center;
         }
 
         .capacity-available {
@@ -110,7 +120,7 @@
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 16px;
-            color: var(--text-color, #1a1a1a);
+            color: var(--text);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -125,15 +135,16 @@
 
         /* Featured Card Design */
         .featured-card {
-            background: #ffffff;
+            background: var(--surface);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
             display: flex;
             flex-direction: column;
             transition: transform 0.25s ease, box-shadow 0.25s ease;
             position: relative;
+            height: 100%;
         }
 
         .featured-card:hover {
@@ -169,23 +180,27 @@
 
         .featured-card .card-details {
             font-size: 13px;
-            color: #555;
+            color: var(--muted);
             margin-bottom: 16px;
         }
 
         /* Featured Badge */
         .badge-featured {
-            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #ff416c, #ff4b2b);
             color: #ffffff;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            min-height: 24px;
             padding: 4px 10px;
             border-radius: 20px;
-            margin-bottom: 10px;
             box-shadow: 0 2px 6px rgba(255, 75, 43, 0.3);
+            line-height: 1;
+            text-align: center;
         }
 
         /* Typography */
@@ -194,7 +209,7 @@
             font-weight: 700;
             line-height: 1.35;
             margin: 0 0 8px 0;
-            color: #1a1a1a;
+            color: var(--text);
             /* Limit title to 2 lines */
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -204,11 +219,43 @@
 
         .featured-card-body p {
             font-size: 13px;
-            color: #666666;
+            color: var(--muted);
             margin: 0 0 16px 0;
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        :root[data-theme="dark"] .featured-events-section h2,
+        :root[data-theme="dark"] .featured-card-body h3,
+        :root[data-theme="dark"] .featured-card-body p strong {
+            color: #ffffff;
+        }
+
+        :root[data-theme="dark"] .featured-card {
+            border-color: color-mix(in srgb, var(--secondary) 22%, transparent);
+            background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 86%, #132020) 0%, color-mix(in srgb, var(--background) 76%, #132020) 100%);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        :root[data-theme="dark"] .featured-card-body p,
+        :root[data-theme="dark"] .featured-card .card-details {
+            color: #c6d6d6;
+        }
+
+        :root[data-theme="dark"] .category-tag {
+            background: color-mix(in srgb, var(--secondary) 38%, var(--surface));
+            color: #e8f5f5;
+        }
+
+        :root[data-theme="dark"] .capacity-available {
+            background: color-mix(in srgb, #2e7d32 28%, var(--surface));
+            color: #bff0c6;
+        }
+
+        :root[data-theme="dark"] .capacity-full {
+            background: color-mix(in srgb, #c62828 24%, var(--surface));
+            color: #ffc4c4;
         }
 
         /* Action Button Pushed to Bottom */

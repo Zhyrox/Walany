@@ -767,9 +767,10 @@ button {
 
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 340px));
     gap: 24px;
     align-items: stretch;
+    justify-content: start;
 }
 
 /* Event evaluation page */
@@ -925,6 +926,26 @@ button {
     display: none;
 }
 
+.home-events-page .events-grid .event-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 560px;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
+    border-radius: 12px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, var(--secondary)) 0%, var(--surface) 100%);
+    box-shadow: 0 16px 36px rgba(31, 77, 76, 0.10);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.home-events-page .events-grid .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 46px rgba(31, 77, 76, 0.14);
+}
+
 .registrar-events-page .events-roster .event-card {
     position: relative;
     display: flex;
@@ -983,7 +1004,10 @@ button {
 
 .event-card-badge {
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: fit-content;
+    min-height: 24px;
     padding: 6px 10px;
     border-radius: 999px;
     color: #6ca7a6;
@@ -993,6 +1017,8 @@ button {
     font-family: 'ArchivoCondensedMedium';
     text-transform: capitalize;
     margin-bottom: 8px;
+    line-height: 1;
+    text-align: center;
 }
 
 .event-card h3 {
@@ -1027,12 +1053,26 @@ button {
     margin: 12px 0 0;
     padding: 0;
     flex-grow: 1;
+    max-height: 104px;
+    min-height: 104px;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+.card-description::-webkit-scrollbar {
+    display: block !important;
+    width: 6px !important;
+}
+
+.card-description::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--primary) 38%, transparent);
+    border-radius: 999px;
 }
 
 .actions {
     display: flex;
     gap: 12px;
-    margin-top: 16px;
+    margin-top: auto;
     padding-top: 0;
     align-items: center;
     justify-content: flex-start;
