@@ -19,6 +19,59 @@
                 <h1 style="color: #2c3e50; margin: 0; font-size: 1.85em;">Event Planner Control Center</h1>
                 <p style="color: #7f8c8d; margin: 5px 0 0 0; font-size: 0.95em;">Design upcoming events, track quotas, and monitor real-time attendee engagement.</p>
             </div>
+
+                <!-- Messenger Header Action Button -->
+                <div style="position: relative; display: inline-block;">
+                    <button type="button" id="messengerDropdownBtn" onclick="toggleMessengerMenu()" 
+                            style="width: 40px; height: 40px; border-radius: 50%; background-color: #3a3b3c; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;">
+                        <!-- Messenger SVG Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#e4e6eb">
+                            <path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.45 5.518 3.717 7.23V22l3.376-1.854c.928.257 1.91.398 2.907.398 5.523 0 10-4.145 10-9.286C22 6.145 17.523 2 12 2zm1.193 12.458l-2.548-2.718-4.97 2.718 5.467-5.8 2.58 2.718 4.938-2.718-5.467 5.8a.747.747 0 01-.001 0z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Messenger Dropdown Panel -->
+                    <div id="messengerDropdownPanel" 
+                        style="display: none; position: absolute; right: 0; top: 48px; width: 340px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden;">
+                        
+                        <!-- Header -->
+                        <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin: 0; font-size: 0.95em; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em;">Communication Hub</h3>
+                            <span style="font-size: 0.7em; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 10px; font-weight: 700;">Admin</span>
+                        </div>
+
+                        <!-- PINNED SECTION: Human Takeover -->
+                        <div style="padding: 10px; border-bottom: 2px solid #f1f5f9; background: #ffffff;">
+                            <div style="font-size: 0.7em; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; padding-left: 4px;">Pinned Action</div>
+                            <button type="button" disabled 
+                                    style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 8px; cursor: not-allowed; text-align: left; opacity: 0.75;">
+                                <div style="width: 34px; height: 34px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1em;">
+                                    💬
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px;">
+                                        Human Takeover 
+                                        <span style="font-size: 0.65em; background: #cbd5e1; color: #475569; padding: 1px 5px; border-radius: 4px;">SOON</span>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #64748b;">Intervene in live student bot chats</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- SCROLLABLE SECTION: Email Broadcast by Event -->
+                        <div style="padding: 10px; max-height: 320px; overflow-y: auto;">
+                            <div style="font-size: 0.7em; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; padding-left: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                <span>Select Event to Email</span>
+                                <span style="font-size: 0.9em;">✉️</span>
+                            </div>
+
+                            <!-- Dynamic Grouped & Sorted Container -->
+                            <div id="messengerEventListContainer">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             
             <!-- Dynamic Logout Pathway Resolution -->
             <a href="<?= $selfPath ?>?module=Auth&action=logout" onclick="return confirm('Are you sure you want to log out?');" style="background: #dc3545; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
@@ -391,9 +444,6 @@
                 </form>
             </div>
         </div>
-        
-    <!-- Include dynamic Chart.js Library Engine from Official CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // --- 1. MODAL CONTROLLERS ---
     function openCreateModal() {
@@ -535,11 +585,22 @@
             ? `<span style="font-size:0.75em; font-weight:700; color:#15803d; background:#dcfce7; padding:2px 8px; border-radius:12px;">Registration Open</span>`
             : `<span style="font-size:0.75em; font-weight:700; color:#b91c1c; background:#fee2e2; padding:2px 8px; border-radius:12px;">Registration Closed</span>`;
 
-        // Check archived status
-        const isArchived = String(activeEv.is_active) === '0' || activeEv.is_active === true;
+        // Check archived status (is_active === 0)
+        const isArchived = String(activeEv.is_active) === '0' || activeEv.is_active === false;
         const archivedBadge = isArchived 
             ? `<span style="font-size:0.75em; font-weight:700; text-transform:uppercase; color:#475569; background:#e2e8f0; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1;">📦 Archived</span>`
             : '';
+
+        // Check featured status
+        const isFeatured = String(activeEv.is_featured) === '1' || activeEv.is_featured === true;
+        const featuredBadge = isFeatured
+            ? `<span style="font-size:0.75em; font-weight:700; color:#854d0e; background:#fef08a; padding:2px 8px; border-radius:12px; border:1px solid #fde047;">★ Featured</span>`
+            : '';
+
+        // Toggle Featured Button Configuration
+        const featureBtnLabel = isFeatured ? '★ Remove Featured' : '★ Feature Event';
+        const featureBtnBg = isFeatured ? '#fef3c7' : '#ffffff';
+        const featureBtnColor = isFeatured ? '#b45309' : '#334155';
 
         const categoryBadge = getCategoryBadge(activeEv.category);
 
@@ -567,6 +628,11 @@
                         Edit
                     </button>
                     
+                    <a href="/Walany/index.php?module=Admin&action=toggleFeatured&id=${activeEv.id}" 
+                    style="display: inline-flex; align-items: center; background: ${featureBtnBg}; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 600; color: ${featureBtnColor}; text-decoration: none;">
+                        ${featureBtnLabel}
+                    </a>
+
                     <a href="/Walany/index.php?module=Admin&action=exportguestlist&event_id=${activeEv.id}" 
                     style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 500; color: #334155; text-decoration: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -584,6 +650,7 @@
                         <span style="font-size:0.75em; font-weight:700; text-transform:uppercase; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:12px;">${dateString}</span>
                         ${regStatusBadge}
                         ${archivedBadge}
+                        ${featuredBadge}
                     </div>
                     <h3 style="margin: 8px 0 4px 0; color:#0f172a; font-size:1.2em;">${activeEv.name}</h3>
                     <p style="margin:0; font-size:0.85em; color:#64748b;">📍 ${activeEv.location} &bull; <strong>Price: ${priceLabel}</strong></p>
@@ -609,6 +676,74 @@
             </div>
         `;
     }
+</script>
+
+    <!-- Include dynamic Chart.js Library Engine from Official CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data configurations fed cleanly from PHP scope variables
+    const labelsA = <?= json_encode($chartA_labels) ?>;
+    const capsA   = <?= json_encode($chartA_caps) ?>;
+    const regsA   = <?= json_encode($chartA_regs) ?>;
+
+    const labelsB = <?= json_encode($chartB_labels) ?>;
+    const valuesB = <?= json_encode($chartB_values) ?>;
+
+    const turnoutData = <?= json_encode($turnoutData) ?>;
+
+    // --- Chart A: Quota Bar Chart Configuration ---
+    new Chart(document.getElementById('capacityBarChart'), {
+        type: 'bar',
+        data: {
+            labels: labelsA.length ? labelsA : ['No Active Events'],
+            datasets: [
+                { label: 'Current Registrants', data: regsA, backgroundColor: '#0284c7', borderRadius: 4 },
+                { label: 'Max Quota Limit', data: capsA, backgroundColor: '#cbd5e1', borderRadius: 4 }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    });
+
+    // --- Chart B: Velocity Line Chart Configuration ---
+    new Chart(document.getElementById('velocityLineChart'), {
+        type: 'line',
+        data: {
+            labels: labelsB.length ? labelsB : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Daily Signups',
+                data: valuesB.length ? valuesB : [0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#0d9488',
+                backgroundColor: 'rgba(13, 148, 136, 0.05)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    });
+
+    // --- Chart C: Turnout Doughnut Configuration ---
+    new Chart(document.getElementById('turnoutDoughnutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Checked In', 'Remaining Slots'],
+            datasets: [{
+                data: [turnoutData.checked_in, turnoutData.no_shows],
+                backgroundColor: ['#10b981', '#cbd5e1'], // Soft green and slate gray
+                borderWidth: 1
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    display: true,
+                    position: 'bottom' 
+                } 
+            } 
+        }
+    });
 </script>
 
 <!-- Live Attendance Logs Container -->
@@ -837,6 +972,186 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchLiveLogs();
     setInterval(fetchLiveLogs, 3000); // Poll tracking database loops cleanly every 3 seconds
 });
+</script>
+
+<!-- Email Broadcast Modal -->
+<div id="emailBroadcastModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+    <div style="background: #ffffff; border-radius: 12px; width: 450px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+        
+        <!-- Header displaying selected event name -->
+        <div style="margin-bottom: 16px;">
+            <h3 style="margin: 0; font-size: 1.1em; color: #0f172a;">Send Email Announcement</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.85em; color: #64748b;">
+                Event: <strong id="broadcastEventNameLabel" style="color: #2563eb;">Selected Event</strong>
+            </p>
+        </div>
+
+        <form action="/Walany/index.php?module=Admin&action=sendBroadcastEmail" method="POST">
+            <!-- Hidden Input for Event ID -->
+            <input type="hidden" id="broadcastEventId" name="event_id" value="">
+
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.8em; font-weight: 600; color: #475569; margin-bottom: 4px;">Subject</label>
+                <input type="text" name="subject" required placeholder="e.g., Important Updates Regarding Event" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9em; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.8em; font-weight: 600; color: #475569; margin-bottom: 4px;">Message</label>
+                <textarea name="message" rows="5" required placeholder="Type your broadcast message here..." style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9em; box-sizing: border-box;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" onclick="document.getElementById('emailBroadcastModal').style.display='none'" style="padding: 8px 16px; background: #f1f5f9; color: #475569; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button type="submit" style="padding: 8px 16px; background: #2563eb; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Send Email ✉️</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    // Priority category sorting order
+    const CATEGORY_ORDER = [
+        'Seminar',
+        'Workshop',
+        'Tournament',
+        'Tryouts',
+        'Intramurals',
+        'Exhibitions',
+        'Fundraisers',
+        'Orientations',
+        'Webinars'
+    ];
+
+    function populateMessengerEventList() {
+        const container = document.getElementById('messengerEventListContainer');
+        if (!container) return;
+
+        // Get event data source
+        const rawData = window.rawPlannerEvents || window.calendarEvents || window.events || [];
+
+        // Flatten if rawData is an Object indexed by dates (or nested arrays)
+        let allEvents = [];
+        if (Array.isArray(rawData)) {
+            allEvents = rawData.flat();
+        } else if (typeof rawData === 'object' && rawData !== null) {
+            allEvents = Object.values(rawData).flat();
+        }
+
+        console.log("Messenger Events Successfully Flattened:", allEvents);
+
+        if (!Array.isArray(allEvents) || allEvents.length === 0) {
+            container.innerHTML = `<div style="font-size: 0.8em; color: #94a3b8; text-align: center; padding: 12px 0;">No active events found.</div>`;
+            return;
+        }
+
+        // Group events by category
+        const grouped = {};
+        allEvents.forEach(ev => {
+            if (!ev) return;
+            const cat = (ev.category && String(ev.category).trim() !== '') ? ev.category : 'Seminar';
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(ev);
+        });
+
+        let html = '';
+        
+        CATEGORY_ORDER.forEach(catName => {
+            const eventsInCat = grouped[catName];
+            if (eventsInCat && eventsInCat.length > 0) {
+                html += `
+                    <div style="margin-bottom: 10px;">
+                        <div style="font-size: 0.72em; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 3px 8px; border-radius: 4px; margin-bottom: 4px; display: inline-block;">
+                            ${catName}
+                        </div>
+                `;
+
+                eventsInCat.forEach(ev => {
+                    const eventId = ev.id || ev.event_id;
+                    const eventName = ev.name || ev.title || 'Untitled Event';
+                    const eventLoc = ev.location || 'Campus';
+
+                    html += `
+                        <button type="button" onclick="selectEventForBroadcast(${eventId}, '${escapeHtml(eventName)}')"
+                                style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; margin-bottom: 4px; border: 1px solid #f1f5f9; background: #ffffff; border-radius: 6px; cursor: pointer; text-align: left; transition: all 0.15s;"
+                                onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';"
+                                onmouseout="this.style.background='#ffffff'; this.style.borderColor='#f1f5f9';">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">
+                                <div style="font-size: 0.82em; font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis;">${eventName}</div>
+                                <div style="font-size: 0.72em; color: #64748b;">📍 ${eventLoc}</div>
+                            </div>
+                            <span style="font-size: 0.75em; font-weight: 600; color: #2563eb; background: #dbeafe; padding: 2px 6px; border-radius: 4px;">
+                                Email ✉️
+                            </span>
+                        </button>
+                    `;
+                });
+
+                html += `</div>`;
+            }
+        });
+
+        // Fallback if events exist but don't match CATEGORY_ORDER list exactly
+        if (html === '' && allEvents.length > 0) {
+            html += `<div style="font-size: 0.72em; font-weight: 700; color: #475569; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; margin-bottom: 4px;">Events</div>`;
+            allEvents.forEach(ev => {
+                if (!ev) return;
+                const eventId = ev.id || ev.event_id;
+                const eventName = ev.name || ev.title || 'Untitled Event';
+                html += `
+                    <button type="button" onclick="selectEventForBroadcast(${eventId}, '${escapeHtml(eventName)}')"
+                            style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; margin-bottom: 4px; border: 1px solid #f1f5f9; background: #ffffff; border-radius: 6px; cursor: pointer; text-align: left;">
+                        <div style="font-size: 0.82em; font-weight: 600; color: #1e293b;">${eventName}</div>
+                        <span style="font-size: 0.75em; font-weight: 600; color: #2563eb; background: #dbeafe; padding: 2px 6px; border-radius: 4px;">Email ✉️</span>
+                    </button>
+                `;
+            });
+        }
+
+        container.innerHTML = html;
+    }
+
+    // Utility to escape HTML quotes inside inline JS parameters
+    function escapeHtml(str) {
+        return String(str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    // Trigger menu and auto-render events on click
+    function toggleMessengerMenu() {
+        const panel = document.getElementById('messengerDropdownPanel');
+        if (panel) {
+            const isHidden = panel.style.display === 'none';
+            panel.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                populateMessengerEventList();
+            }
+        }
+    }
+
+    // Direct selection handler from Messenger list item
+    function selectEventForBroadcast(eventId, eventName) {
+        // Hide the dropdown menu
+        const dropdown = document.getElementById('messengerDropdownPanel');
+        if (dropdown) dropdown.style.display = 'none';
+
+        // Set the hidden input value for form submission
+        const eventIdInput = document.getElementById('broadcastEventId');
+        if (eventIdInput) eventIdInput.value = eventId;
+
+        // Safely update the display label in the modal header
+        const nameLabel = document.getElementById('broadcastEventNameLabel');
+        if (nameLabel) {
+            nameLabel.textContent = eventName;
+        }
+
+        // Open the email modal
+        const modal = document.getElementById('emailBroadcastModal');
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+    }
+</script>
+<script>
+    // Inject PHP $mappedEvents (or $events) into global JS scope
+    window.rawPlannerEvents = <?php echo json_encode($mappedEvents ?? $events ?? []); ?>;
 </script>
 </body>
 </html>

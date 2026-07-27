@@ -108,7 +108,7 @@ switch ($module) {
         }
 
         // --- PLANNER / EVENT ACTIONS ---
-        if (in_array($currentAction, ['createevent', 'editevent', 'archiveevent', 'unarchiveevent', 'toggleregistration', 'getlivelogsapi', 'exportguestlist'])) {
+        if (in_array($currentAction, ['createevent', 'editevent', 'archiveevent', 'unarchiveevent', 'toggleregistration', 'getlivelogsapi', 'exportguestlist' , 'togglefeatured','sendbroadcastemail'])) {
             require_once 'modules/Admin/Controllers/PlannerController.php';
             $planner = new PlannerController();
 
@@ -144,6 +144,16 @@ switch ($module) {
 
             if ($currentAction === 'exportguestlist') {
                 $planner->exportGuestList();
+                exit();
+            }
+            
+            if ($currentAction === 'togglefeatured') {
+                $planner->toggleFeatured();
+                exit();
+            }
+
+            if ($currentAction === 'sendbroadcastemail') {
+                $planner->sendBroadcastEmail();
                 exit();
             }
         }

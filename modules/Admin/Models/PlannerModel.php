@@ -277,6 +277,19 @@ class PlannerModel {
         }
     }
 
+    public function toggleFeaturedEvent($id) {
+        try {
+            $sql = "UPDATE `walania_event` 
+                    SET is_featured = CASE WHEN is_featured = 1 THEN 0 ELSE 1 END 
+                    WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            error_log("Error toggling featured event: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function toggleRegistrationStatus($id, $status) {
         try {
             $stmt = $this->db->prepare("
@@ -389,4 +402,21 @@ class PlannerModel {
             }
         }
     }
+
+    public function getEventParticipants($eventId) {
+    try {
+        $sql = "SELECT DISTINCT email, first_name
+                FROM walania_registrant 
+                WHERE event_id = :event_id 
+                AND email IS NOT NULL 
+                AND email != ''";
+                
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':event_id' => $eventId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error in getEventParticipants: " . $e->getMessage());
+        return [];
+    }
+}
 }

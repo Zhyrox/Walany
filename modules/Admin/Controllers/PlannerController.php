@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../Models/PlannerModel.php';
+require_once __DIR__ . '/../../../core/Config.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class PlannerController {
     private $model;
@@ -74,6 +78,7 @@ class PlannerController {
                 'price'             => $ev['price'] ?? '0.00',
                 'open_registration' => $ev['open_registration'] ?? 1,
                 'is_active'        => $ev['is_active'] ?? 1,
+                'is_featured' => (int)($ev['is_featured'] ?? 0),
                 'registrants'       => $details['fill_rate'],
                 'rating'            => $details['avg_rating'],
                 'feedbacks'         => $details['feedbacks']
@@ -82,6 +87,15 @@ class PlannerController {
 
         // Load the view file (allowing variables above to inherit scope)
         require_once __DIR__ . '/../Views/plannerDashboard.php';
+    }
+
+    public function toggleFeatured() {
+        $eventId = $_GET['id'] ?? null;
+        if ($eventId) {
+            $this->model->toggleFeaturedEvent($eventId);
+        }
+        header("Location: /Walany/index.php?module=Admin&action=planner_dashboard");
+        exit();
     }
 
     // Handles creating a new event
@@ -428,6 +442,100 @@ class PlannerController {
         echo "  </Table>\n";
         echo " </Worksheet>\n";
         echo "</Workbook>\n";
+        exit();
+    }
+
+    public function sendBroadcastEmail() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /Walany/index.php?module=Admin&action=planner_dashboard");
+            exit();
+        }
+
+        $eventId = $_POST['event_id'] ?? null;
+        $subject = trim($_POST['subject'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if (!$eventId || empty($subject) || empty($message)) {
+            header("Location: /Walany/index.php?module=Admin&action=planner_dashboard&status=error&message=" . urlencode("All fields are required."));
+            exit();
+        }
+
+        // 1. Fetch participants for this event
+        $participants = $this->model->getEventParticipants($eventId);
+
+        if (empty($participants)) {
+            header("Location: /Walany/index.php?module=Admin&action=planner_dashboard&status=error&message=" . urlencode("No registered participants found for this event."));
+            exit();
+        }
+
+        // 2. Load PHPMailer files directly from root/core/libs/PHPMailer
+        $phpMailerDir = __DIR__ . '/../../../libs/PHPMailer';
+        
+        // Check if PHPMailer files exist in 'src/' subfolder or directly in directory
+        if (file_exists($phpMailerDir . '/src/PHPMailer.php')) {
+            require_once $phpMailerDir . '/src/Exception.php';
+            require_once $phpMailerDir . '/src/PHPMailer.php';
+            require_once $phpMailerDir . '/src/SMTP.php';
+        } else {
+            require_once $phpMailerDir . '/Exception.php';
+            require_once $phpMailerDir . '/PHPMailer.php';
+            require_once $phpMailerDir . '/SMTP.php';
+        }
+
+        $sentCount = 0;
+
+        // 3. Loop through participants and send via SMTP
+        foreach ($participants as $participant) {
+            $toEmail = $participant['email'] ?? null;
+            $toName  = $participant['full_name'] ?? 'Participant';
+
+            if (!$toEmail) continue;
+
+            $mail = new PHPMailer(true);
+
+            $mail->SMTPDebug = 2; // Output detailed server logs
+            $mail->Debugoutput = 'html';
+
+            try {
+                // --- SMTP CONFIGURATION ---
+                $mail->isSMTP();
+                $mail->Host       = SMTP_HOST;
+                $mail->SMTPAuth   = true;
+                $mail->Username   = SMTP_USER;
+                $mail->Password   = SMTP_PASS;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                // --- SENDER & RECIPIENT ---
+                $mail->setFrom('yeahlow24@gmail.com', 'Walania Events (No-Reply)');
+                $mail->addAddress($toEmail, $toName);
+
+                // --- EMAIL CONTENT ---
+                $formattedMsg = nl2br(htmlspecialchars($message));
+                
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body    = "
+                    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;'>
+                        <h2 style='color: #2563eb; margin-top: 0;'>Walania Events Announcement</h2>
+                        <p style='color: #475569;'>Hello <strong>{$toName}</strong>,</p>
+                        <div style='background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 15px 0; color: #1e293b; line-height: 1.6;'>
+                            {$formattedMsg}
+                        </div>
+                        <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                        <p style='font-size: 0.8em; color: #94a3b8;'>This is an official announcement regarding your event registration.</p>
+                    </div>
+                ";
+                $mail->AltBody = strip_tags($message);
+
+                $mail->send();
+                $sentCount++;
+            } catch (Exception $e) {
+                error_log("Failed to send email to {$toEmail}: " . $mail->ErrorInfo);
+            }
+        }
+
+        header("Location: /Walany/index.php?module=Admin&action=planner_dashboard&status=success&message=" . urlencode("Successfully sent broadcast email to {$sentCount} participant(s)."));
         exit();
     }
 }
