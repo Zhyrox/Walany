@@ -6,6 +6,10 @@ class ChatSession {
         $this->db = $dbConnection;
     }
 
+    public function getDbConnection() {
+        return $this->db;
+    }
+
     public function getOrCreateSession($token) {
         $stmt = $this->db->prepare("SELECT * FROM `walania_chat_sessions` WHERE `session_token` = :token LIMIT 1");
         $stmt->execute([':token' => $token]);
@@ -20,14 +24,18 @@ class ChatSession {
     }
 
     public function saveMessage($sessionId, $sender, $message) {
-        $stmt = $this->db->prepare("INSERT INTO chat_messages (session_id, sender, message, created_at) VALUES (?, ?, ?, NOW())");
-        return $stmt->execute([$sessionId, $sender, $message]);
+        $stmt = $this->db->prepare("INSERT INTO `walania_chat_messages` (`session_id`, `sender`, `message`, `created_at`) VALUES (:sid, :sender, :msg, NOW())");
+        return $stmt->execute([
+            ':sid' => $sessionId,
+            ':sender' => $sender,
+            ':msg' => $message
+        ]);
     }
 
     public function getChatHistory($sessionId) {
-        $stmt = $this->db->prepare("SELECT `sender`, `message`, `timestamp` FROM `walania_chat_messages` WHERE `session_id` = :sid ORDER BY `id` ASC");
+        $stmt = $this->db->prepare("SELECT `sender`, `message`, `created_at` FROM `walania_chat_messages` WHERE `session_id` = :sid ORDER BY `id` ASC");
         $stmt->execute([':sid' => $sessionId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
     public function requestHumanTakeover($sessionId) {
@@ -36,7 +44,13 @@ class ChatSession {
     }
 
     public function updateSessionStatus($sessionId, $status) {
-        $stmt = $this->db->prepare("UPDATE chat_sessions SET status = ?, updated_at = NOW() WHERE id = ?");
-        return $stmt->execute([$status, $sessionId]);
+        $stmt = $this->db->prepare("UPDATE `walania_chat_sessions` SET `status` = :status WHERE `id` = :sid");
+        return $stmt->execute([':status' => $status, ':sid' => $sessionId]);
+    }
+
+    public function getEscalatedSessions() {
+        $stmt = $this->db->prepare("SELECT * FROM `walania_chat_sessions` WHERE `status` = 'human' ORDER BY `id` DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 }

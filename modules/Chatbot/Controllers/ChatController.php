@@ -1,12 +1,11 @@
 <?php
-// C:\xampp\htdocs\Walany\modules\Chatbot\Controllers\ChatController.php
 require_once __DIR__ . '/../../../core/Database.php';
 require_once __DIR__ . '/../../../core/Config.php';
 require_once __DIR__ . '/../Models/ChatSessions.php';
 
 class ChatController {
     private $chatModel;
-    private $apiKey = GEMINI_CHATBOT_KEY; // Provide your valid token key element
+    private $apiKey = GEMINI_CHATBOT_KEY;
 
     public function __construct() {
         $dbInstance = new Database();
@@ -23,7 +22,6 @@ class ChatController {
         $history = $this->chatModel->getChatHistory($session['id']);
         $suggestions = $this->getSuggestionPrompts();
         
-        // Render target layout file securely
         require_once __DIR__ . '/../Views/chat-window.php';
     }
 
@@ -37,36 +35,46 @@ class ChatController {
     }
 
     public function sendMessage() {
+        if (ob_get_length()) { ob_clean(); }
         header('Content-Type: application/json');
-        if (session_status() === PHP_SESSION_NONE) { session_start(); }
         
-        $token = $_SESSION['chat_token'] ?? '';
-        $input = json_decode(file_get_contents('php://input'), true);
-        $userMsg = trim($input['message'] ?? '');
+        if (session_status() === PHP_SESSION_NONE) { 
+            session_start(); 
+        }
+        
+        // 1. Ensure chat_token exists (auto-generate if missing)
+        if (empty($_SESSION['chat_token'])) {
+            $_SESSION['chat_token'] = bin2hex(random_bytes(16));
+        }
+        $token = $_SESSION['chat_token'];
 
-        if (empty($token) || empty($userMsg)) {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid data payload']);
+        // 2. Read message from raw JSON payload OR standard $_POST
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userMsg = trim($input['message'] ?? $_POST['message'] ?? $_POST['prompt'] ?? '');
+
+        // 3. Validation check
+        if (empty($userMsg)) {
+            echo json_encode([
+                'status' => 'error', 
+                'message' => 'Invalid data payload: Message string is empty.'
+            ]);
             exit;
         }
 
         $session = $this->chatModel->getOrCreateSession($token);
         $this->chatModel->saveMessage($session['id'], 'user', $userMsg);
 
-        // 1. Human Takeover Escalation Logic (Persistent Check)
+        // 1. Check for human agent escalation request or active takeover
         if ($session['status'] === 'human' || stripos($userMsg, 'talk to human') !== false || stripos($userMsg, 'agent') !== false) {
-            
-            // Scenario A: The session was ALREADY handed off to a human admin
             if ($session['status'] === 'human') {
-                // Just acknowledge receipt of data. Let the UI wait for the admin's live database poll response.
                 echo json_encode([
                     'status' => 'success', 
-                    'reply' => null, // DO NOT return text; UI handles empty tracking states or loading indicators
+                    'reply' => null, 
                     'mode' => 'human'
                 ]);
                 exit;
             }
             
-            // Scenario B: First-time transfer request triggered by user keywords
             $this->chatModel->requestHumanTakeover($session['id']);
             $reply = "I am transferring your session to a live campus coordinator. They will review this conversation thread shortly.";
             $this->chatModel->saveMessage($session['id'], 'agent', $reply);
@@ -75,7 +83,7 @@ class ChatController {
             exit;
         }
 
-        // 2. Local FAQ Layer
+        // 2. Check local FAQs first
         $faqReply = $this->checkLocalFAQs($userMsg);
         if ($faqReply) {
             $this->chatModel->saveMessage($session['id'], 'bot', $faqReply);
@@ -83,12 +91,12 @@ class ChatController {
             exit;
         }
 
-        // 3. Contextual Multi-Turn Call down to Gemini Model Core
+        // 3. Query Gemini Model
         $botReply = $this->fetchGeminiResponse($userMsg, $session['id']);
 
         $confusedPhrases = [
             "i do not know", "i'm not sure", "i cannot answer", 
-            "sorry, as an ai", "i don't have information"
+            "sorry, as an ai", "i don't have information", "api error"
         ];
         
         $isConfused = false;
@@ -100,9 +108,7 @@ class ChatController {
         }
 
         if ($isConfused) {
-            // Trigger automatic background human takeover
             $this->chatModel->requestHumanTakeover($session['id']);
-            
             $escalationReply = "I am transferring your session to a live campus coordinator. They will review this conversation thread shortly.";
             $this->chatModel->saveMessage($session['id'], 'agent', $escalationReply);
             
@@ -110,21 +116,68 @@ class ChatController {
             exit;
         }
 
-        // Standard AI Response Loop Path
         $this->chatModel->saveMessage($session['id'], 'bot', $botReply);
         echo json_encode(['status' => 'success', 'reply' => $botReply, 'mode' => 'bot']);
         exit;
     }
-    
+
     public function clearChat() {
+        if (ob_get_length()) { ob_clean(); }
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-        // Generate a brand new independent session token row context
         $_SESSION['chat_token'] = bin2hex(random_bytes(16));
         $this->chatModel->getOrCreateSession($_SESSION['chat_token']);
 
         echo json_encode(['status' => 'success', 'message' => 'Chat context successfully reset']);
+        exit;
+    }
+
+    public function getHistoryApi() {
+        if (ob_get_length()) { ob_clean(); }
+        header('Content-Type: application/json');
+
+        $sessionId = intval($_GET['session_id'] ?? 0);
+        if (!$sessionId) {
+            echo json_encode([]);
+            exit;
+        }
+
+        $history = $this->chatModel->getChatHistory($sessionId);
+        echo json_encode($history);
+        exit;
+    }
+
+    public function adminReplyApi() {
+        if (ob_get_length()) { ob_clean(); }
+        header('Content-Type: application/json');
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $sessionId = intval($input['session_id'] ?? 0);
+        $message = trim($input['message'] ?? '');
+
+        if ($sessionId && !empty($message)) {
+            $this->chatModel->saveMessage($sessionId, 'agent', $message);
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Missing session or message content']);
+        }
+        exit;
+    }
+
+    public function resolveSessionApi() {
+        if (ob_get_length()) { ob_clean(); }
+        header('Content-Type: application/json');
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $sessionId = intval($input['session_id'] ?? 0);
+
+        if ($sessionId) {
+            $this->chatModel->updateSessionStatus($sessionId, 'bot');
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid session ID']);
+        }
         exit;
     }
 
@@ -144,85 +197,118 @@ class ChatController {
         return null;
     }
 
-    public function getAvailableModels() {
-        // FIXED: Query parameter construction patched
-        $url = "https://generativelanguage.googleapis.com/v1beta/models?key=" . $this->apiKey;
+    private function getLiveEventsSummary() {
+        try {
+            // Query only public-facing, relevant columns from active events
+            $stmt = $this->chatModel->getDbConnection()->prepare("
+                SELECT 
+                    `name`, 
+                    `category`, 
+                    `event_date`, 
+                    `location`, 
+                    `price`, 
+                    `description`, 
+                    `is_featured`, 
+                    `open_registration` 
+                FROM `walania_event` 
+                WHERE `is_active` = 1 
+                ORDER BY `event_date` ASC 
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        
-        // Added local environment SSL bypass protections for XAMPP
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        $data = json_decode($response, true);
-        
-        if (isset($data['models'])) {
-            foreach ($data['models'] as $model) {
-                echo "Model String: " . str_replace("models/", "", $model['name']) . "<br>";
+            if (empty($events)) {
+                return "There are currently no active events scheduled in the database.";
             }
-        } else {
-            echo "Failed to retrieve models. Response: <pre>" . htmlspecialchars($response) . "</pre>";
+
+            $summary = "Official Active Events List:\n";
+            foreach ($events as $e) {
+                $priceText = ($e['price'] > 0) ? "₱" . number_format($e['price'], 2) : "Free";
+                $featuredTag = ($e['is_featured'] == 1) ? " [FEATURED EVENT]" : "";
+                $regStatus = ($e['open_registration'] == 1) ? "Registration Open" : "Registration Closed";
+
+                $summary .= sprintf(
+                    "- Event: %s%s\n  Category: %s | Date: %s | Location: %s\n  Price: %s | Status: %s\n  Description: %s\n\n",
+                    $e['name'],
+                    $featuredTag,
+                    $e['category'],
+                    $e['event_date'],
+                    $e['location'],
+                    $priceText,
+                    $regStatus,
+                    $e['description']
+                );
+            }
+            return $summary;
+        } catch (Exception $ex) {
+            return "Unable to fetch events list at the moment.";
         }
     }
 
     private function fetchGeminiResponse($currentPrompt, $sessionId) {
-        // FIXED: Swapped to an active model string and added the missing '?key=' operator
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=" . $this->apiKey;
-        
-        $dbHistory = $this->chatModel->getChatHistory($sessionId);
-        $contentsArray = [];
+        // Standard Gemini Flash Endpoint
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=" . $this->apiKey;
 
-        // Build the correct payload mapping
-        foreach ($dbHistory as $chatRow) {
-            $role = ($chatRow['sender'] === 'user') ? 'user' : 'model';
-            $contentsArray[] = [
-                "role" => $role,
-                "parts" => [["text" => $chatRow['message']]]
-            ];
-        }
+        // 1. Get live events from walania_event table
+        $liveEventsContext = $this->getLiveEventsSummary();
 
-        if (empty($contentsArray)) {
-            $contentsArray[] = [
-                "role" => "user",
-                "parts" => [["text" => $currentPrompt]]
-            ];
-        }
+        // 2. Build system instruction text
+        $systemInstructionText = "You are the official student virtual assistant named 'Wally' for the Walania campus event platform.\n"
+            . "TONE & BEHAVIOR:\n"
+            . "- Be polite, welcoming, professional, and natural.\n"
+            . "- NEVER mention technical terms like 'database', 'system records', 'backend', 'entries', or 'provided context'. Speak naturally as a staff member.\n"
+            . "- If information or registration steps are not listed in the event details, direct the user politely to visit the event page or contact the event coordinator.\n"
+            . "- Keep responses clear and concise (under 3 sentences).\n\n"
+            . "CURRENT CAMPUS EVENTS:\n" 
+            . $liveEventsContext;
 
-        // Clean Architecture: Pass your identity constraints cleanly using the formal systemInstruction API object
+        // 3. Simple, guaranteed valid payload format (single turn test)
         $payload = [
-            "contents" => $contentsArray,
+            "contents" => [
+                [
+                    "role" => "user",
+                    "parts" => [
+                        ["text" => (string)$currentPrompt]
+                    ]
+                ]
+            ],
             "systemInstruction" => [
                 "parts" => [
-                    ["text" => "You are the automated assistant for Walania, a campus event system. Keep responses helpful, precise, and under 3 sentences."]
+                    ["text" => $systemInstructionText]
                 ]
             ]
         ];
 
+        $jsonPayload = json_encode($payload);
+
+        // 4. Send cURL Request
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json'
+        ]);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        
+
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($httpCode === 200 && $response) {
+        // DEBUG: If it fails, return both the status code and the raw API response!
+        if ($httpCode !== 200) {
+            return "DEBUG ERROR (HTTP $httpCode): " . $response . " | SENT PAYLOAD: " . $jsonPayload;
+        }
+
+        if ($response) {
             $data = json_decode($response, true);
             if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
                 return $data['candidates'][0]['content']['parts'][0]['text'];
             }
         }
 
-        return "API Error (Status: " . $httpCode . "): " . ($response ? htmlspecialchars($response) : 'No response data payload returned');
+        return "Unable to fetch response from AI model right now.";
     }
 }

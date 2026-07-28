@@ -1,5 +1,3 @@
-<!-- C:\xampp\htdocs\Walany\modules\Chatbot\Views\chat-window.php -->
-
 <style>
     /* 1. Floating Action Toggle Button */
     .chat-launcher-btn {
@@ -40,22 +38,19 @@
         display: flex;
         flex-direction: column;
         z-index: 9999;
-        
-        /* Animation State States Defaults */
         opacity: 0;
         transform: translateY(20px) scale(0.95);
         pointer-events: none;
         transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
     }
 
-    /* Activated Widget View State CSS Toggle */
     .chat-widget-wrapper.is-active {
         opacity: 1;
         transform: translateY(0) scale(1);
         pointer-events: auto;
     }
 
-    /* 3. Streamlined Internal Structural Layout Overrides */
+    /* 3. Internal Layout */
     .chat-widget-header { 
         background: #006064; 
         color: #fff; 
@@ -99,8 +94,8 @@
         word-wrap: break-word;
     }
     .chat-widget-msg.user { background: #006064; color: #fff; align-self: flex-end; border-bottom-right-radius: 0; }
-    .chat-widget-msg.bot, .chat-widget-msg.agent { background: #e0f7fa; color: #006064; align-self: flex-start; border-bottom-left-radius: 0; }
-    .chat-widget-msg.agent { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+    .chat-widget-msg.bot { background: #e0f7fa; color: #006064; align-self: flex-start; border-bottom-left-radius: 0; }
+    .chat-widget-msg.agent { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; align-self: flex-start; border-bottom-left-radius: 0; }
     
     .chat-widget-input-area { padding: 12px; background: #fff; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
     .chat-widget-chips { display: flex; flex-wrap: wrap; gap: 6px; max-height: 65px; overflow-y: auto; }
@@ -126,17 +121,18 @@
     .chat-widget-status-badge { font-size: 10px; background: rgba(255,255,255,0.2); padding: 3px 6px; border-radius: 20px; }
 </style>
 
-<!-- Floating Action Button Launcher Context Element Component -->
+<!-- Floating Action Button Launcher -->
 <button class="chat-launcher-btn" id="chatLauncher" onclick="toggleChatWidget()" aria-label="Open chat assistant">
+    💬
 </button>
 
-<!-- Main Container Element Box Wrapper Frame -->
+<!-- Main Floating Container -->
 <div class="chat-widget-wrapper" id="chatWidgetContainer">
     <div class="chat-widget-header">
         <h2>Walania Assistant</h2>
         <div class="chat-widget-actions">
             <button class="chat-widget-clear-btn" onclick="clearWidgetHistory()">Clear</button>
-            <span class="chat-widget-status-badge" id="chatModeWidget"><?= isset($session) && $session['status'] === 'human' ? 'Live Agent Mode' : 'AI Bot Mode' ?></span>
+            <span class="chat-widget-status-badge" id="chatModeWidget"><?= isset($activeSession) && $activeSession['status'] === 'human' ? 'Live Agent Mode' : 'AI Bot Mode' ?></span>
         </div>
     </div>
     
@@ -164,6 +160,8 @@
 </div>
 
 <script>
+let isSendingWidgetMsg = false;
+
 document.addEventListener("DOMContentLoaded", function() {
     const box = document.getElementById('chatWidgetBox');
     if(box) box.scrollTop = box.scrollHeight;
@@ -173,12 +171,18 @@ document.addEventListener("DOMContentLoaded", function() {
         modeBadge.style.background = "#e65100";
     }
 
-    document.querySelectorAll('.chat-widget-chip').forEach(button => {
-        button.addEventListener('click', () => {
-            const inputEl = document.getElementById('widgetUserInput');
-            inputEl.value = button.getAttribute('data-message') || '';
-            sendWidgetChatMessage();
-        });
+    // Attach click listeners cleanly using event delegation
+    document.addEventListener('click', function(e) {
+        const chip = e.target.closest('.chat-widget-chip');
+        if (chip) {
+            e.preventDefault();
+            const msg = chip.getAttribute('data-message') || chip.innerText.trim();
+            if (msg) {
+                const inputEl = document.getElementById('widgetUserInput');
+                if (inputEl) inputEl.value = msg;
+                sendWidgetChatMessage();
+            }
+        }
     });
 });
 
@@ -189,22 +193,27 @@ function toggleChatWidget() {
     container.classList.toggle('is-active');
     
     if(container.classList.contains('is-active')) {
-        launcher.innerText = '';
+        launcher.innerText = '✕';
         document.getElementById('widgetUserInput').focus();
         const box = document.getElementById('chatWidgetBox');
-        box.scrollTop = box.scrollHeight;
+        if (box) box.scrollTop = box.scrollHeight;
     } else {
-        launcher.innerText = '';
+        launcher.innerText = '💬';
     }
 }
 
 function sendWidgetChatMessage() {
+    // Lock to prevent stacked duplicate calls
+    if (isSendingWidgetMsg) return;
+
     const inputEl = document.getElementById('widgetUserInput');
-    const msgText = inputEl.value.trim();
+    const msgText = inputEl ? inputEl.value.trim() : '';
+    
     if(!msgText) return;
 
+    isSendingWidgetMsg = true;
     appendWidgetMessage('user', msgText);
-    inputEl.value = '';
+    if (inputEl) inputEl.value = '';
 
     fetch('chat.php?action=send', {
         method: 'POST',
@@ -213,14 +222,20 @@ function sendWidgetChatMessage() {
     })
     .then(res => res.json())
     .then(data => {
-        if(data.status === 'success') {
+        if(data.status === 'success' && data.reply) {
             appendWidgetMessage(data.mode, data.reply);
             if(data.mode === 'human') {
                 const modeBadge = document.getElementById('chatModeWidget');
-                modeBadge.innerText = "Live Agent Mode";
-                modeBadge.style.background = "#e65100";
+                if (modeBadge) {
+                    modeBadge.innerText = "Live Agent Mode";
+                    modeBadge.style.background = "#e65100";
+                }
             }
         }
+    })
+    .catch(err => console.error("Error sending message:", err))
+    .finally(() => {
+        isSendingWidgetMsg = false;
     });
 }
 
@@ -231,20 +246,44 @@ function clearWidgetHistory() {
     .then(res => res.json())
     .then(data => {
         if(data.status === 'success') {
-            document.getElementById('chatWidgetBox').innerHTML = '';
+            const box = document.getElementById('chatWidgetBox');
+            if (box) box.innerHTML = '';
             const modeBadge = document.getElementById('chatModeWidget');
-            modeBadge.innerText = "AI Bot Mode";
-            modeBadge.style.background = "rgba(255,255,255,0.2)";
+            if (modeBadge) {
+                modeBadge.innerText = "AI Bot Mode";
+                modeBadge.style.background = "rgba(255,255,255,0.2)";
+            }
         }
     });
 }
 
 function appendWidgetMessage(sender, text) {
     const box = document.getElementById('chatWidgetBox');
+    if (!box) return;
     const msgDiv = document.createElement('div');
     msgDiv.className = `chat-widget-msg ${sender}`;
     msgDiv.innerText = text;
     box.appendChild(msgDiv);
     box.scrollTop = box.scrollHeight;
 }
+
+// Fixed polling: uses a dedicated poll endpoint if needed, or polls cleanly without triggering action=send errors
+setInterval(() => {
+    const container = document.getElementById('chatWidgetContainer');
+    const modeBadge = document.getElementById('chatModeWidget');
+    
+    // Only poll when open AND currently in Live Agent Mode
+    if (container && container.classList.contains('is-active') && modeBadge && modeBadge.innerText === "Live Agent Mode") {
+        fetch('chat.php?action=poll', {
+            method: 'GET'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success' && data.messages) {
+                // Process newly polled admin messages if any...
+            }
+        })
+        .catch(() => {});
+    }
+}, 5000);
 </script>

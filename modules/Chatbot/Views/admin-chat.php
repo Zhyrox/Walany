@@ -1,27 +1,39 @@
+<?php
+require_once __DIR__ . '/../../../core/Database.php';
+require_once __DIR__ . '/../../Chatbot/Models/ChatSessions.php';
+
+$dbInstance = new Database();
+$chatModel = new ChatSession($dbInstance->getConnection());
+$escalatedSessions = $chatModel->getEscalatedSessions();
+?>
+
 <div class="admin-chat-dashboard" style="display: flex; height: 80vh; font-family: sans-serif; border: 1px solid #ddd;">
     
     <!-- Sidebar Queue List -->
     <div class="session-sidebar" style="width: 30%; border-right: 1px solid #ddd; overflow-y: auto; background: #f8f9fa;">
         <h3 style="padding: 15px; margin: 0; background: #004d40; color: white;">Escalated Chats</h3>
         <div id="sessionQueueList">
-            <!-- Dynamically populate with database loops of sessions where status = 'human' -->
-            <?php foreach ($escalatedSessions as $s): ?>
-                <div class="queue-item" onclick="loadAdminChat(<?= $s['id'] ?>)" style="padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; hover: background: #e0f2f1;">
-                    <strong>Session #<?= $s['id'] ?></strong>
-                    <div style="font-size: 11px; color: #666;">Waiting since: <?= $s['updated_at'] ?></div>
-                </div>
-            <?php endforeach; ?>
+            <?php if (empty($escalatedSessions)): ?>
+                <div style="padding: 15px; color: #888; font-size: 13px;">No chats currently waiting for agent assistance.</div>
+            <?php else: ?>
+                <?php foreach ($escalatedSessions as $s): ?>
+                    <div class="queue-item" onclick="loadAdminChat(<?= $s['id'] ?>)" style="padding: 15px; border-bottom: 1px solid #eee; cursor: pointer;">
+                        <strong>Session #<?= $s['id'] ?></strong>
+                        <div style="font-size: 11px; color: #666;">Waiting since: <?= htmlspecialchars($s['created_at'] ?? 'N/A') ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 
-    <!-- Active Chat Screen Window Area Frame Box -->
+    <!-- Active Chat Workspace -->
     <div class="chat-workspace" style="width: 70%; display: flex; flex-direction: column;">
         <div id="chatWorkspaceHeader" style="padding: 15px; background: #006064; color: white; font-weight: bold;">
             Select a session from the left queue to begin chatting
         </div>
         
         <div id="adminMessageLogs" style="flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 12px;">
-            <!-- Message thread loaded dynamically via AJAX -->
+            <!-- Thread messages dynamically loaded via AJAX -->
         </div>
 
         <div class="admin-input-tray" style="padding: 15px; border-top: 1px solid #ddd; display: flex; gap: 10px;">
@@ -46,23 +58,26 @@ function loadAdminChat(sessionId) {
     .then(messages => {
         const log = document.getElementById('adminMessageLogs');
         log.innerHTML = '';
-        messages.forEach(m => {
-            const div = document.createElement('div');
-            div.innerText = `${m.sender.toUpperCase()}: ${m.message}`;
-            div.style.padding = '8px 12px';
-            div.style.borderRadius = '6px';
-            div.style.marginWidth = '70%';
-            if(m.sender === 'user') {
-                div.style.background = '#e0f7fa';
-                div.style.alignSelf = 'flex-start';
-            } else {
-                div.style.background = '#ffe0b2';
-                div.style.alignSelf = 'flex-end';
-            }
-            log.appendChild(div);
-        });
+        if (Array.isArray(messages)) {
+            messages.forEach(m => {
+                const div = document.createElement('div');
+                div.innerText = `${m.sender.toUpperCase()}: ${m.message}`;
+                div.style.padding = '8px 12px';
+                div.style.borderRadius = '6px';
+                div.style.maxWidth = '70%';
+                if(m.sender === 'user') {
+                    div.style.background = '#e0f7fa';
+                    div.style.alignSelf = 'flex-start';
+                } else {
+                    div.style.background = '#ffe0b2';
+                    div.style.alignSelf = 'flex-end';
+                }
+                log.appendChild(div);
+            });
+        }
         log.scrollTop = log.scrollHeight;
-    });
+    })
+    .catch(err => console.error("Error loading chat history:", err));
 }
 
 function sendAdminResponse() {
@@ -79,7 +94,7 @@ function sendAdminResponse() {
     .then(data => {
         if (data.status === 'success') {
             input.value = '';
-            loadAdminChat(activeSessionId); // Refresh logs window
+            loadAdminChat(activeSessionId);
         }
     });
 }
@@ -95,12 +110,11 @@ function resolveSessionCall() {
     .then(res => res.json())
     .then(data => {
         if(data.status === 'success') {
-            location.reload(); // Refresh queue lists layouts
+            location.reload();
         }
     });
 }
 
-// Automatically poll active chat logs every 4 seconds to catch new user messages
 setInterval(() => {
     if(activeSessionId) loadAdminChat(activeSessionId);
 }, 4000);
