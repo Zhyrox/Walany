@@ -43,8 +43,8 @@ class ChatController {
         }
         
         // 1. Ensure chat_token exists (auto-generate if missing)
-        if (empty($_SESSION['chat_token'])) {
-            $_SESSION['chat_token'] = bin2hex(random_bytes(16));
+        if (!isset($_SESSION['chat_token'])) {
+            $_SESSION['chat_token'] = session_id() ?: bin2hex(random_bytes(16));
         }
         $token = $_SESSION['chat_token'];
 
@@ -246,9 +246,29 @@ class ChatController {
         }
     }
 
+    public function getActiveSessions() {
+        if (ob_get_length()) { ob_clean(); }
+        header('Content-Type: application/json');
+
+        try {
+            $sessions = $this->chatModel->getRecentSessions();
+
+            echo json_encode([
+                'status' => 'success',
+                'sessions' => $sessions
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+
     private function fetchGeminiResponse($currentPrompt, $sessionId) {
         // Standard Gemini Flash Endpoint
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=" . $this->apiKey;
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=" . $this->apiKey;
 
         // 1. Get live events from walania_event table
         $liveEventsContext = $this->getLiveEventsSummary();
@@ -310,5 +330,38 @@ class ChatController {
         }
 
         return "Unable to fetch response from AI model right now.";
+    }
+
+    public function getUserHistory() {
+        if (ob_get_length()) { ob_clean(); }
+        header('Content-Type: application/json');
+
+        // 1. Ensure PHP session is active
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // 2. If no token exists yet, fallback to PHP session_id or create one
+        if (empty($_SESSION['chat_token'])) {
+            $_SESSION['chat_token'] = session_id() ?: bin2hex(random_bytes(16));
+        }
+
+        $sessionToken = $_SESSION['chat_token'];
+
+        try {
+            $sessionId = $this->chatModel->getSessionIdByToken($sessionToken);
+
+            if (!$sessionId) {
+                // Return empty array if session hasn't been written to DB yet
+                echo json_encode([]);
+                exit;
+            }
+
+            $messages = $this->chatModel->getChatHistory($sessionId);
+            echo json_encode($messages);
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
     }
 }

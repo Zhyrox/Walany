@@ -8,11 +8,18 @@ switch ($action) {
     case 'send':
         $controller->sendMessage();
         break;
+    case 'get_active_sessions': // <--- Ensure this case is added!
+        $controller->getActiveSessions();
+        break;
     case 'clear':
         $controller->clearChat();
         break;
     case 'get_history':
-        $controller->getHistoryApi();
+        if (isset($_GET['session_id']) && !empty($_GET['session_id'])) {
+            $controller->getHistoryApi(); // Admin looking up specific session
+        } else {
+            $controller->getUserHistory(); // User widget looking up its active session
+        }
         break;
     case 'admin_reply':
         $controller->adminReplyApi();

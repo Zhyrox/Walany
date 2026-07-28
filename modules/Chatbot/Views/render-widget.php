@@ -14,12 +14,6 @@ $dbInstance = new Database();
 $chatSessionModel = new ChatSession($dbInstance->getConnection());
 $activeSession = $chatSessionModel->getOrCreateSession($_SESSION['chat_token']);
 
-// Revert session back to 'bot' on page load/refresh
-if ($activeSession['status'] === 'human') {
-    $chatSessionModel->updateSessionStatus($activeSession['id'], 'bot');
-    $activeSession['status'] = 'bot';
-}
-
 $history = $chatSessionModel->getChatHistory($activeSession['id']);
 $suggestions = $widgetController->getSuggestionPrompts();
 

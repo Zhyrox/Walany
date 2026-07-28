@@ -161,17 +161,17 @@
 
 <script>
 let isSendingWidgetMsg = false;
+let isPollingUserChat = false;
 
 document.addEventListener("DOMContentLoaded", function() {
     const box = document.getElementById('chatWidgetBox');
-    if(box) box.scrollTop = box.scrollHeight;
+    if (box) box.scrollTop = box.scrollHeight;
     
     const modeBadge = document.getElementById('chatModeWidget');
     if (modeBadge && modeBadge.innerText === "Live Agent Mode") {
         modeBadge.style.background = "#e65100";
     }
 
-    // Attach click listeners cleanly using event delegation
     document.addEventListener('click', function(e) {
         const chip = e.target.closest('.chat-widget-chip');
         if (chip) {
@@ -190,46 +190,48 @@ function toggleChatWidget() {
     const container = document.getElementById('chatWidgetContainer');
     const launcher = document.getElementById('chatLauncher');
     
+    if (!container) return;
     container.classList.toggle('is-active');
     
-    if(container.classList.contains('is-active')) {
-        launcher.innerText = '✕';
-        document.getElementById('widgetUserInput').focus();
-        const box = document.getElementById('chatWidgetBox');
-        if (box) box.scrollTop = box.scrollHeight;
+    if (container.classList.contains('is-active')) {
+        if (launcher) launcher.innerText = '✕';
+        const inputEl = document.getElementById('widgetUserInput');
+        if (inputEl) inputEl.focus();
+        
+        // Immediate fetch when opening
+        pollUserChatHistory(true);
     } else {
-        launcher.innerText = '💬';
+        if (launcher) launcher.innerText = '💬';
     }
 }
 
 function sendWidgetChatMessage() {
-    // Lock to prevent stacked duplicate calls
     if (isSendingWidgetMsg) return;
 
     const inputEl = document.getElementById('widgetUserInput');
     const msgText = inputEl ? inputEl.value.trim() : '';
-    
-    if(!msgText) return;
+    if (!msgText) return;
 
     isSendingWidgetMsg = true;
-    appendWidgetMessage('user', msgText);
+
+    // Clear input immediately for snappy UI
     if (inputEl) inputEl.value = '';
 
-    fetch('chat.php?action=send', {
+    fetch('/Walany/chat.php?action=send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: msgText })
     })
     .then(res => res.json())
     .then(data => {
-        if(data.status === 'success' && data.reply) {
-            appendWidgetMessage(data.mode, data.reply);
-            if(data.mode === 'human') {
-                const modeBadge = document.getElementById('chatModeWidget');
-                if (modeBadge) {
-                    modeBadge.innerText = "Live Agent Mode";
-                    modeBadge.style.background = "#e65100";
-                }
+        if (data.status === 'success') {
+            // Re-fetch entire history from DB cleanly to avoid local duplicate bugs
+            pollUserChatHistory(true);
+
+            const modeBadge = document.getElementById('chatModeWidget');
+            if (modeBadge && data.mode === 'human') {
+                modeBadge.innerText = "Live Agent Mode";
+                modeBadge.style.background = "#e65100";
             }
         }
     })
@@ -242,12 +244,13 @@ function sendWidgetChatMessage() {
 function clearWidgetHistory() {
     if (!confirm("Clear your chat conversation history context?")) return;
 
-    fetch('chat.php?action=clear', { method: 'POST' })
+    fetch('/Walany/chat.php?action=clear', { method: 'POST' })
     .then(res => res.json())
     .then(data => {
-        if(data.status === 'success') {
+        if (data.status === 'success') {
             const box = document.getElementById('chatWidgetBox');
             if (box) box.innerHTML = '';
+            
             const modeBadge = document.getElementById('chatModeWidget');
             if (modeBadge) {
                 modeBadge.innerText = "AI Bot Mode";
@@ -260,6 +263,7 @@ function clearWidgetHistory() {
 function appendWidgetMessage(sender, text) {
     const box = document.getElementById('chatWidgetBox');
     if (!box) return;
+    
     const msgDiv = document.createElement('div');
     msgDiv.className = `chat-widget-msg ${sender}`;
     msgDiv.innerText = text;
@@ -267,23 +271,46 @@ function appendWidgetMessage(sender, text) {
     box.scrollTop = box.scrollHeight;
 }
 
-// Fixed polling: uses a dedicated poll endpoint if needed, or polls cleanly without triggering action=send errors
-setInterval(() => {
+// Single Source of Truth for Chat History
+function pollUserChatHistory(forceRefresh = false) {
+    if (isPollingUserChat) return;
+
     const container = document.getElementById('chatWidgetContainer');
-    const modeBadge = document.getElementById('chatModeWidget');
-    
-    // Only poll when open AND currently in Live Agent Mode
-    if (container && container.classList.contains('is-active') && modeBadge && modeBadge.innerText === "Live Agent Mode") {
-        fetch('chat.php?action=poll', {
-            method: 'GET'
-        })
+    if (!container || !container.classList.contains('is-active')) return;
+
+    isPollingUserChat = true;
+
+    fetch(`/Walany/chat.php?action=get_history&_t=${Date.now()}`)
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'success' && data.messages) {
-                // Process newly polled admin messages if any...
+            const box = document.getElementById('chatWidgetBox');
+            if (!box || !Array.isArray(data)) return;
+
+            const messages = data;
+            const currentDomCount = box.querySelectorAll('.chat-widget-msg').length;
+
+            // Render/re-render if forced or if backend row count doesn't match DOM count
+            if (forceRefresh || messages.length !== currentDomCount) {
+                box.innerHTML = ''; // Wipe DOM cleanly once on true state change
+
+                messages.forEach(m => {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `chat-widget-msg ${m.sender}`;
+                    msgDiv.innerText = m.message;
+                    box.appendChild(msgDiv);
+                });
+
+                box.scrollTop = box.scrollHeight;
             }
         })
-        .catch(() => {});
-    }
-}, 5000);
+        .catch(err => console.error("Error polling chat history:", err))
+        .finally(() => {
+            isPollingUserChat = false;
+        });
+}
+
+// Background Polling Loop (Every 3.5 seconds)
+setInterval(() => {
+    pollUserChatHistory(false);
+}, 3500);
 </script>
