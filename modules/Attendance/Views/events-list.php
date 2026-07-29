@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Registrar Panel - Walania Events</title>
     <link rel="stylesheet" href="/Walany/assets/style.css">
+     <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
 </head>
 <body class="registrar-events-page">
 

@@ -33,6 +33,7 @@ unset($_SESSION['current_backoff_cooldown']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Confirmed</title>
+     <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
     <style>
         body { background-color: #f8f9fa; font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         .success-card { max-width: 500px; width: 100%; background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); text-align: center; box-sizing: border-box; }

@@ -7,6 +7,7 @@
     <title>Attendance Scan Terminal</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/style.css">
+     <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
 </head>
 <body class="scanner-page">
 

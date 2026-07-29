@@ -58,6 +58,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile Settings</title>
+     <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
     <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
 <body class="profile-settings-page">

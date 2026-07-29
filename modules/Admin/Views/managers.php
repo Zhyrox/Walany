@@ -36,6 +36,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Admin Control Panel</title>
     <link rel="stylesheet" href="/Walany/assets/style.css">
+     <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
 </head>
 <body class="managers-page">
 
