@@ -102,7 +102,7 @@ switch ($module) {
             exit();
         }
 
-        if (in_array($currentAction, ['createevent', 'editevent', 'archiveevent', 'unarchiveevent', 'toggleregistration', 'getlivelogsapi', 'exportguestlist' , 'togglefeatured','sendbroadcastemail'])) {
+        if (in_array($currentAction, ['createevent', 'editevent', 'archiveevent', 'unarchiveevent', 'toggleregistration', 'getlivelogsapi', 'exportguestlist' , 'togglefeatured','sendbroadcastemail','exportdataxml','importdataxml'])) {
             require_once 'modules/Admin/Controllers/PlannerController.php';
             $planner = new PlannerController();
 
@@ -115,6 +115,15 @@ switch ($module) {
             if ($currentAction === 'exportguestlist') { $planner->exportGuestList(); exit(); }
             if ($currentAction === 'togglefeatured') { $planner->toggleFeatured(); exit(); }
             if ($currentAction === 'sendbroadcastemail') { $planner->sendBroadcastEmail(); exit(); }
+
+            if ($currentAction === 'exportdataxml'){
+                $planner->exportDataXml();
+                exit();
+            }
+            if ($currentAction === 'importdataxml'){
+                $planner->importDataXml();
+                exit();
+            }
         }
         break;
 
@@ -193,7 +202,6 @@ switch ($module) {
             echo json_encode($result);
         }
         break;
-        
     default:
         require_once __DIR__ . '/modules/Homepage/Views/homepage.php';
         break;

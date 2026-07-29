@@ -170,6 +170,32 @@
             </div>
         </div>
 
+        <div style="flex: 2; background: #12181f; border: 1px solid #2d3748; border-radius: 8px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: center;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #2d3748; padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="bi bi-database-fill-gear text-primary fs-5"></i>
+                <h6 style="margin: 0; color: #ffffff; font-weight: 700;">XML Data Backup & Restore</h6>
+            </div>
+            <span class="badge bg-secondary" style="font-size: 0.75em;">walania</span>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+                <!-- Export Form -->
+                <form action="index.php?module=Admin&action=exportDataXml" method="POST" style="flex: 1;">
+                    <button type="submit" name="export_xml" class="btn btn-outline-info btn-sm w-100 fw-semibold" style="height: 38px;">
+                        <i class="bi bi-download me-1"></i> Export XML
+                    </button>
+                </form>
+
+                <!-- Import Form -->
+                <form action="index.php?module=Admin&action=importDataXml" method="POST" enctype="multipart/form-data" style="flex: 2; display: flex; gap: 8px;">
+                    <input type="file" name="xml_file" class="form-control form-control-sm bg-dark text-light border-secondary" accept=".xml" required style="height: 38px;">
+                    <button type="submit" class="btn btn-success btn-sm fw-semibold px-3" style="height: 38px; white-space: nowrap;">
+                        <i class="bi bi-upload me-1"></i> Import XML
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- 2. High-Impact KPI Cards Row -->

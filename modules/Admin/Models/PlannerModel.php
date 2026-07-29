@@ -404,19 +404,173 @@ class PlannerModel {
     }
 
     public function getEventParticipants($eventId) {
-    try {
-        $sql = "SELECT DISTINCT email, first_name
-                FROM walania_registrant 
-                WHERE event_id = :event_id 
-                AND email IS NOT NULL 
-                AND email != ''";
-                
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':event_id' => $eventId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Error in getEventParticipants: " . $e->getMessage());
-        return [];
+        try {
+            $sql = "SELECT DISTINCT email, first_name
+                    FROM walania_registrant 
+                    WHERE event_id = :event_id 
+                    AND email IS NOT NULL 
+                    AND email != ''";
+                    
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':event_id' => $eventId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error in getEventParticipants: " . $e->getMessage());
+            return [];
+        }
     }
-}
+
+    // Export complete dataset across all 4 tables
+    public function exportFullDatabaseToXml() {
+        $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><walania_database/>');
+
+        // 1. Export Events
+        $eventsNode = $xml->addChild('events');
+        $stmt = $this->db->query("SELECT * FROM `walania_event`");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $node = $eventsNode->addChild('event');
+            foreach ($row as $k => $v) { $node->addChild($k, htmlspecialchars($v ?? '')); }
+        }
+
+        // 2. Export Registrants
+        $regNode = $xml->addChild('registrants');
+        $stmt = $this->db->query("SELECT * FROM `walania_registrant`");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $node = $regNode->addChild('registrant');
+            foreach ($row as $k => $v) { $node->addChild($k, htmlspecialchars($v ?? '')); }
+        }
+
+        // 3. Export Attendance
+        $attNode = $xml->addChild('attendances');
+        $stmt = $this->db->query("SELECT * FROM `walania_attendance`");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $node = $attNode->addChild('attendance');
+            foreach ($row as $k => $v) { $node->addChild($k, htmlspecialchars($v ?? '')); }
+        }
+
+        // 4. Export Feedbacks
+        $fbNode = $xml->addChild('feedbacks');
+        $stmt = $this->db->query("SELECT * FROM `walania_event_feedback`");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $node = $fbNode->addChild('feedback');
+            foreach ($row as $k => $v) { $node->addChild($k, htmlspecialchars($v ?? '')); }
+        }
+
+        return $xml->asXML();
+    }
+
+    public function importFullDatabaseFromXml($filePath) {
+        if (!file_exists($filePath)) return false;
+        $xml = simplexml_load_file($filePath);
+        if (!$xml) return false;
+
+        try {
+            $this->db->beginTransaction();
+
+            // 1. disable foreign key checks
+            $this->db->exec("SET FOREIGN_KEY_CHECKS = 0;");
+
+            // --- 1. Import Events ---
+            if (isset($xml->events->event)) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO `walania_event` (id, name, category, event_date, location, price, description, open_registration, is_active, is_featured, thumbnail, max_capacity)
+                    VALUES (:id, :name, :category, :event_date, :location, :price, :description, :open_registration, :is_active, :is_featured, :thumbnail, :max_capacity)
+                    ON DUPLICATE KEY UPDATE name=VALUES(name), category=VALUES(category), event_date=VALUES(event_date), location=VALUES(location), price=VALUES(price), description=VALUES(description), open_registration=VALUES(open_registration), is_active=VALUES(is_active), is_featured=VALUES(is_featured), thumbnail=VALUES(thumbnail), max_capacity=VALUES(max_capacity)
+                ");
+                foreach ($xml->events->event as $e) {
+                    $stmt->execute([
+                        ':id'                => (int)$e->id,
+                        ':name'              => (string)$e->name,
+                        ':category'          => (string)$e->category,
+                        ':event_date'        => (string)$e->event_date,
+                        ':location'          => (string)$e->location,
+                        ':price'             => (float)$e->price,
+                        ':description'       => (string)$e->description,
+                        ':open_registration' => (int)$e->open_registration,
+                        ':is_active'         => (int)$e->is_active,
+                        ':is_featured'       => (int)$e->is_featured,
+                        ':thumbnail'         => (string)$e->thumbnail,
+                        ':max_capacity'      => (int)($e->max_capacity ?: 100)
+                    ]);
+                }
+            }
+
+            // --- 2. Import Registrants ---
+            if (isset($xml->registrants->registrant)) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO `walania_registrant` (id, reference_id, first_name, middle_name, last_name, birthdate, email, contact_number, is_verified, registered_at, event_id, user_id, payment_status, payment_method, payment_amount, payment_reference)
+                    VALUES (:id, :reference_id, :first_name, :middle_name, :last_name, :birthdate, :email, :contact_number, :is_verified, :registered_at, :event_id, :user_id, :payment_status, :payment_method, :payment_amount, :payment_reference)
+                    ON DUPLICATE KEY UPDATE first_name=VALUES(first_name), last_name=VALUES(last_name), email=VALUES(email), payment_status=VALUES(payment_status)
+                ");
+                foreach ($xml->registrants->registrant as $r) {
+                    $stmt->execute([
+                        ':id'                => (int)$r->id,
+                        ':reference_id'      => (string)$r->reference_id,
+                        ':first_name'        => (string)$r->first_name,
+                        ':middle_name'       => (string)$r->middle_name,
+                        ':last_name'         => (string)$r->last_name,
+                        ':birthdate'         => (string)$r->birthdate,
+                        ':email'             => (string)$r->email,
+                        ':contact_number'    => (string)$r->contact_number,
+                        ':is_verified'       => (int)$r->is_verified,
+                        ':registered_at'     => (string)$r->registered_at,
+                        ':event_id'          => (int)$r->event_id,
+                        ':user_id'           => !empty($r->user_id) ? (int)$r->user_id : null,
+                        ':payment_status'    => (string)($r->payment_status ?: 'pending'),
+                        ':payment_method'    => (string)$r->payment_method,
+                        ':payment_amount'    => (float)$r->payment_amount,
+                        ':payment_reference' => (string)$r->payment_reference
+                    ]);
+                }
+            }
+
+            // --- 3. Import Attendance ---
+            if (isset($xml->attendances->attendance)) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO `walania_attendance` (id, reference_id, event_id, first_name, last_name, time_checked_in)
+                    VALUES (:id, :reference_id, :event_id, :first_name, :last_name, :time_checked_in)
+                    ON DUPLICATE KEY UPDATE time_checked_in=VALUES(time_checked_in)
+                ");
+                foreach ($xml->attendances->attendance as $a) {
+                    $stmt->execute([
+                        ':id'              => (int)$a->id,
+                        ':reference_id'    => (string)$a->reference_id,
+                        ':event_id'        => (int)$a->event_id,
+                        ':first_name'      => (string)$a->first_name,
+                        ':last_name'       => (string)$a->last_name,
+                        ':time_checked_in' => (string)$a->time_checked_in
+                    ]);
+                }
+            }
+
+            // --- 4. Import Feedbacks ---
+            if (isset($xml->feedbacks->feedback)) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO `walania_event_feedback` (id, reference_id, event_id, comment, rating)
+                    VALUES (:id, :reference_id, :event_id, :comment, :rating)
+                    ON DUPLICATE KEY UPDATE comment=VALUES(comment), rating=VALUES(rating)
+                ");
+                foreach ($xml->feedbacks->feedback as $f) {
+                    $stmt->execute([
+                        ':id'           => (int)$f->id,
+                        ':reference_id' => (string)$f->reference_id,
+                        ':event_id'     => (int)$f->event_id,
+                        ':comment'      => (string)$f->comment,
+                        ':rating'       => (int)$f->rating
+                    ]);
+                }
+            }
+
+            // Re-enable foreign key checks & commit
+            $this->db->exec("SET FOREIGN_KEY_CHECKS = 1;");
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            // Log the exact error to xampp/php/logs/php_error.log
+            error_log("XML Import Error: " . $e->getMessage());
+            return false;
+        }
+    }
 }

@@ -538,5 +538,31 @@ class PlannerController {
         header("Location: /Walany/index.php?module=Admin&action=planner_dashboard&status=success&message=" . urlencode("Successfully sent broadcast email to {$sentCount} participant(s)."));
         exit();
     }
+
+    public function exportDataXml() {
+        $xmlContent = $this->model->exportFullDatabaseToXml();
+        
+        header('Content-Type: text/xml; charset=utf-8');
+        header('Content-Disposition: attachment; filename="walania_backup_' . date('Y-m-d_H-i-s') . '.xml"');
+        echo $xmlContent;
+        exit();
+    }
+
+    public function importDataXml() {
+        $redirectUrl = '/Walany/index.php?module=Admin&action=planner_dashboard';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['xml_file'])) {
+            $uploadedFile = $_FILES['xml_file']['tmp_name'];
+            
+            if ($this->model->importFullDatabaseFromXml($uploadedFile)) {
+                header('Location: ' . $redirectUrl . '&status=import_success');
+            } else {
+                header('Location: ' . $redirectUrl . '&status=import_failed');
+            }
+        } else {
+            header('Location: ' . $redirectUrl . '&status=invalid_request');
+        }
+        exit();
+    }
 }
 ?>
