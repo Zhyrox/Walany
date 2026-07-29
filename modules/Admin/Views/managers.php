@@ -30,9 +30,10 @@ try {
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Admin Control Panel</title>
     <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
@@ -40,7 +41,7 @@ try {
 
     <!-- Site header (shared) -->
     <header class="site-header login-header headbar">
-        <a href="" class="logo-placeholder" aria-label="Walania home">
+        <a href="/Walany/index.php" class="logo-placeholder" aria-label="Walania home">
             <img src="/Walany/assets/images/Walania.svg" alt="Walania logo">
         </a>
         <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
@@ -49,23 +50,27 @@ try {
     </header>
 
     <!-- Fix the address of the style.css -->
-    <div class="connection-warning" style="background-color: #ffcccc; color: #cc0000; border: 2px solid #cc0000; padding: 20px; font-size: 24px; font-family: sans-serif; font-weight: bold; text-align: center; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div class="connection-warning">
     If you are seeing this, paki ayos nung href nung scripts, assets, and stylesheet files. For easy fix move your project folder inside the htdocs
     </div>
 
     <div class="managers-shell">
         <div class="managers-topbar">
-        <h2>System Environment Administration Matrix</h2>
-        <!-- NAVIGATION TO SELF-SERVICE SETTINGS -->
-        <a href="/Walany/index.php?module=Admin&action=profile_settings" class="managers-action-button managers-action-button--secondary">
-            My Profile Settings
-        </a>
-        <a href="/Walany/index.php?module=Auth&action=login" 
-        onclick="return confirm('Are you sure you want to log out of the system?');" 
-        class="managers-action-button managers-action-button--danger">
-            Logout
-        </a>
-    </div>
+            <div>
+                <h2>System Environment Administration Matrix</h2>
+                <p class="managers-subtitle">Provision administrative roles, manage access, and review system audit logs.</p>
+            </div>
+            <div class="managers-actions">
+                <a href="/Walany/index.php?module=Admin&action=profile_settings" class="btn btn-secondary">
+                    My Profile Settings
+                </a>
+                <a href="/Walany/index.php?module=Auth&action=login"
+                   onclick="return confirm('Are you sure you want to log out of the system?');"
+                   class="btn btn-danger">
+                    Logout
+                </a>
+            </div>
+        </div>
     <hr class="managers-divider">
 
     <?php if (isset($_GET['status'])): ?>
@@ -198,5 +203,7 @@ try {
         </div>
     </div>
     </div>
+
+    <script src="/Walany/assets/script.js"></script>
 </body>
 </html>
