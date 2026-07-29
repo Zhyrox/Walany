@@ -34,76 +34,88 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>System Admin Control Panel</title>
+    <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
-<body style="font-family: Arial, sans-serif; background: #f4f6f9; padding: 30px;">
+<body class="managers-page">
+
+    <!-- Site header (shared) -->
+    <header class="site-header login-header headbar">
+        <a href="" class="logo-placeholder" aria-label="Walania home">
+            <img src="/Walany/assets/images/Walania.svg" alt="Walania logo">
+        </a>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+            <img class="theme-toggle-icon" data-theme-icon src="/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+        </button>
+    </header>
 
     <!-- Fix the address of the style.css -->
     <div class="connection-warning" style="background-color: #ffcccc; color: #cc0000; border: 2px solid #cc0000; padding: 20px; font-size: 24px; font-family: sans-serif; font-weight: bold; text-align: center; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     If you are seeing this, paki ayos nung href nung scripts, assets, and stylesheet files. For easy fix move your project folder inside the htdocs
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <div class="managers-shell">
+        <div class="managers-topbar">
         <h2>System Environment Administration Matrix</h2>
         <!-- NAVIGATION TO SELF-SERVICE SETTINGS -->
-        <a href="/Walany/index.php?module=Admin&action=profile_settings" style="background: #6c757d; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em;">
+        <a href="/Walany/index.php?module=Admin&action=profile_settings" class="managers-action-button managers-action-button--secondary">
             My Profile Settings
         </a>
         <a href="/Walany/index.php?module=Auth&action=login" 
         onclick="return confirm('Are you sure you want to log out of the system?');" 
-        style="background: #dc3545; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9em; display: inline-block;">
+        class="managers-action-button managers-action-button--danger">
             Logout
         </a>
     </div>
-    <hr style="margin-bottom: 25px;">
+    <hr class="managers-divider">
 
     <?php if (isset($_GET['status'])): ?>
-        <div style="padding: 12px; margin-bottom: 20px; background: <?= $_GET['status'] === 'success' ? '#d4edda; color: #155724;' : '#f8d7da; color: #721c24;' ?>; border-radius: 4px;">
+        <div class="managers-alert <?= $_GET['status'] === 'success' ? 'managers-alert--success' : 'managers-alert--error' ?>">
             <?= htmlspecialchars($_GET['message'] ?? '') ?>
         </div>
     <?php endif; ?>
 
-    <div style="display: flex; gap: 30px; margin-bottom: 30px;">
+    <div class="managers-grid">
         <!-- PROVISIONING INTERFACE WORKSPACE FORM -->
-        <div style="flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: max-content;">
-            <h3 style="margin-top:0;">Create New Environment Account</h3>
-            <p style="font-size:0.8em; color:#6c757d; margin-top:-10px; margin-bottom:20px;">
+        <div class="managers-card managers-card--narrow">
+            <h3 class="managers-section-title">Create New Environment Account</h3>
+            <p class="managers-card-description">
                 Provision system workspace execution privileges for Planners, Registrars, or new Administrators.
             </p>
             <form id="managerForm" action="/Walany/index.php?module=Admin&action=create_manager" method="POST">
                 
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.9em; font-weight: bold;">First Name</label>
-                    <input type="text" id="first_name" name="first_name" required style="width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;">
+                <div class="managers-form-group">
+                    <label>First Name</label>
+                    <input type="text" id="first_name" name="first_name" required>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.9em; font-weight: bold;">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" required style="width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;">
+                <div class="managers-form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="last_name" name="last_name" required>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.9em; font-weight: bold;">Email Address</label>
-                    <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;">
+                <div class="managers-form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" name="email" required>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.9em; font-weight: bold;">Environment Access Role</label>
-                    <select id="role" name="role" required style="width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;">
+                <div class="managers-form-group">
+                    <label>Environment Access Role</label>
+                    <select id="role" name="role" required>
                         <option value="planner">Planner</option>
                         <option value="registrar">Registrar</option>
                         <option value="admin">System Administrator (Admin)</option>
                     </select>
                 </div>
                 
-                <button type="submit" style="background: #28a745; color: #fff; border: 0; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">
+                <button type="submit" class="managers-button">
                     Provision System Account
                 </button>
             </form>
         </div>
 
         <!-- COORDINATORS LIST STACK DISPLAY -->
-        <div style="flex: 2; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow-x: auto;">
-            <h3 style="margin-top:0;">Active Managers Stack</h3>
-            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: left;">
+        <div class="managers-card managers-card--wide">
+            <h3 class="managers-section-title">Active Managers Stack</h3>
+            <table class="managers-table" border="1" cellpadding="10" cellspacing="0">
                 <thead>
-                    <tr style="background: #e9ecef;">
+                    <tr class="managers-table-head-row">
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -117,36 +129,36 @@ try {
                         $isSelf = (intval($mgr['id']) === $currentAdminId); 
                         $hasForgotRequest = (intval($mgr['forgot_request'] ?? 0) === 1);
                     ?>
-                    <tr style="<?= $isSelf ? 'background: #e3f2fd; font-weight: 500;' : '' ?>">
+                    <?= $isSelf ? '<tr class="managers-row--self">' : '<tr>' ?>
                         <td>
                             <?= htmlspecialchars($mgr['first_name'] . ' ' . $mgr['last_name']) ?>
-                            <?= $isSelf ? ' <span style="font-size:0.7em; background:#007bff; color:#fff; padding:2px 4px; border-radius:3px; font-weight:bold;">YOU</span>' : '' ?>
+                            <?= $isSelf ? ' <span class="managers-you-badge">YOU</span>' : '' ?>
                         </td>
                         <td><?= htmlspecialchars($mgr['email']) ?></td>
-                        <td><span style="text-transform: uppercase; font-size: 0.8em; font-weight: bold; background: #e9ecef; padding: 3px 6px; border-radius: 3px;"><?= htmlspecialchars($mgr['role']) ?></span></td>
+                        <td><span class="managers-role-badge"><?= htmlspecialchars($mgr['role']) ?></span></td>
                         <td>
                             <?php if (!empty($mgr['temp_password'])): ?>
-                                <code style="background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-weight: bold;"><?= htmlspecialchars($mgr['temp_password']) ?></code>
+                                <code class="managers-temp-password"><?= htmlspecialchars($mgr['temp_password']) ?></code>
                             <?php else: ?>
-                                <span style="color: #6c757d; font-size: 0.85em; font-style: italic;">Verified Active Profile</span>
+                                <span class="managers-status-text">Verified Active Profile</span>
                             <?php endif; ?>
                             
                             <?php if ($hasForgotRequest): ?>
-                                <span style="display:block; margin-top:4px; font-size:0.75em; background:#dc3545; color:white; padding:2px 5px; border-radius:3px; width:max-content; font-weight:bold;">⚠️ FORGOT REQUEST</span>
+                                <span class="managers-request-badge">⚠️ FORGOT REQUEST</span>
                             <?php endif; ?>
                         </td>
                         <td>
                             <?php if ($isSelf): ?>
-                                <span style="color:#6c757d; font-size:0.85em; font-style:italic;">Managed in Settings</span>
+                                <span class="managers-status-text managers-status-text--muted">Managed in Settings</span>
                             <?php else: ?>
                                 <?php if ($hasForgotRequest): ?>
                                     <a href="/Walany/index.php?module=Admin&action=regenerate_key&id=<?= $mgr['id'] ?>" 
                                        onclick="return confirm('Process and approve structural temporary replacement key for this coordinator profile?');" 
-                                       style="background: #dc3545; color: white; padding: 5px 10px; border-radius:3px; text-decoration:none; font-size: 0.85em; display: inline-block; font-weight: bold;">
+                                       class="managers-action-link managers-action-link--danger">
                                         Reset Key
                                     </a>
                                 <?php else: ?>
-                                    <button disabled style="background: #e0e0e0; color: #a0a0a0; padding: 5px 10px; border-radius:3px; border:0; font-size: 0.85em; cursor: not-allowed; font-weight:bold;" title="No active forgot request flagged.">
+                                    <button disabled class="managers-action-button managers-action-button--disabled" title="No active forgot request flagged.">
                                         Reset Locked
                                     </button>
                                 <?php endif; ?>
@@ -160,12 +172,12 @@ try {
     </div>
 
     <!-- LOGGER ENGINE RECORD PANEL -->
-    <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
-        <h3 style="margin-top:0;">📋 Environment Security & System Access Logs</h3>
-        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px;">
-            <table border="0" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left; font-size: 0.9em;">
+    <div class="managers-card managers-log-panel">
+        <h3 class="managers-section-title">📋 Environment Security & System Access Logs</h3>
+        <div class="managers-log-wrapper">
+            <table class="managers-log-table" border="0" cellpadding="10" cellspacing="0">
                 <thead>
-                    <tr style="background: #343a40; color: #fff; position: sticky; top: 0;">
+                    <tr class="managers-log-table-head-row">
                         <th>Timestamp</th>
                         <th>Administrator Operator</th>
                         <th>Action Log Parameters</th>
@@ -174,10 +186,10 @@ try {
                 </thead>
                 <tbody>
                     <?php foreach ($logs as $log): ?>
-                    <tr style="border-bottom: 1px solid #e9ecef;">
+                    <tr class="managers-log-row">
                         <td><?= $log['logged_at'] ?></td>
-                        <td style="color: #007bff; font-weight: bold;"><?= htmlspecialchars($log['actor_name']) ?></td>
-                        <td style="font-family: monospace;"><?= htmlspecialchars($log['action_details']) ?></td>
+                        <td class="managers-actor-name"><?= htmlspecialchars($log['actor_name']) ?></td>
+                        <td class="managers-log-detail"><?= htmlspecialchars($log['action_details']) ?></td>
                         <td><?= htmlspecialchars($log['ip_address']) ?></td>
                     </tr>
                     <?php endforeach; ?>
@@ -185,6 +197,6 @@ try {
             </table>
         </div>
     </div>
-
+    </div>
 </body>
 </html>
