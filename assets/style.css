@@ -4734,6 +4734,492 @@ section.admin-panel {
     background: #1e293b;
 }
 
+/* Planner dashboard control center */
+.planner-dashboard-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0 0 48px;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--secondary) 24%, transparent) 0 12%, transparent 30%),
+        linear-gradient(180deg, color-mix(in srgb, var(--background) 96%, var(--secondary)) 0%, var(--background) 100%);
+    font-family: 'ArchivoLight', Arial, sans-serif;
+}
+
+:root[data-theme="dark"] .planner-dashboard-page {
+    background:
+        radial-gradient(circle at 8% 10%, color-mix(in srgb, var(--secondary) 34%, transparent) 0 14%, transparent 34%),
+        radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--primary) 18%, transparent) 0 12%, transparent 32%),
+        linear-gradient(180deg, #030707 0%, var(--background) 100%);
+}
+
+.planner-dashboard-page .site-header {
+    font-family: 'ArchivoBold';
+}
+
+.planner-headbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.planner-messenger-menu {
+    position: relative;
+}
+
+.planner-messenger-btn {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: var(--background);
+    background: var(--primary);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.planner-messenger-btn:hover {
+    transform: translateY(-2px);
+}
+
+.messenger-icon,
+.human-takeover-icon {
+    display: block;
+    flex: 0 0 auto;
+    object-fit: contain;
+}
+
+.messenger-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.planner-messenger-panel {
+    position: absolute;
+    top: 54px;
+    right: 0;
+    z-index: 1000;
+    width: min(340px, calc(100vw - 28px));
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+    border-radius: 12px;
+    color: var(--text);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.planner-messenger-panel-header,
+.planner-messenger-section {
+    background: var(--surface);
+}
+
+.planner-messenger-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.planner-messenger-panel-header h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.95em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.planner-messenger-panel-header span,
+.planner-messenger-pinned-title span {
+    border-radius: 10px;
+    padding: 2px 8px;
+    color: var(--background);
+    background: var(--primary);
+    font-size: 0.7em;
+    font-weight: 700;
+}
+
+.planner-messenger-section {
+    padding: 10px;
+}
+
+.planner-messenger-section--pinned {
+    border-bottom: 2px solid var(--border);
+}
+
+.planner-messenger-section--scroll {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.planner-messenger-section-label {
+    margin-bottom: 8px;
+    padding-left: 4px;
+    color: var(--muted);
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.planner-messenger-section-label--split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.planner-messenger-pinned-action {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    background: color-mix(in srgb, var(--surface) 92%, var(--primary) 8%);
+    text-align: left;
+    opacity: 0.75;
+}
+
+.planner-messenger-pinned-icon {
+    display: flex;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--surface) 84%, var(--primary) 16%);
+    font-size: 0;
+}
+
+.human-takeover-icon {
+    width: 18px;
+    height: 18px;
+}
+
+:root[data-theme="dark"] .human-takeover-icon {
+    filter: brightness(0) invert(1);
+}
+
+.planner-messenger-pinned-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text);
+    font-size: 0.85em;
+    font-weight: 700;
+}
+
+.planner-messenger-pinned-copy {
+    color: var(--muted);
+    font-size: 0.75em;
+}
+
+.planner-legacy-messenger {
+    display: none !important;
+}
+
+.planner-dashboard-shell,
+.planner-kpi-row,
+.planner-calendar-row,
+.planner-analytics-row,
+.planner-live-logs-card {
+    width: min(1200px, calc(100% - 40px)) !important;
+    max-width: 1200px !important;
+    box-sizing: border-box;
+}
+
+.planner-dashboard-shell {
+    order: 1;
+    margin-top: 120px !important;
+}
+
+.planner-kpi-row {
+    order: 2;
+}
+
+.planner-calendar-row {
+    order: 3;
+}
+
+.planner-analytics-row {
+    order: 4;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.2fr) !important;
+    align-items: stretch;
+}
+
+.planner-live-logs-card {
+    order: 5;
+    margin: 30px auto 0 !important;
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, var(--border));
+    box-shadow: var(--shadow);
+    font-family: 'ArchivoLight', Arial, sans-serif !important;
+}
+
+.planner-dashboard-titlebar {
+    gap: 18px;
+}
+
+.planner-dashboard-titlebar h1,
+.planner-dashboard-page h2,
+.planner-dashboard-page h3,
+.planner-dashboard-page h4,
+.planner-dashboard-page strong {
+    color: var(--text) !important;
+}
+
+.planner-dashboard-titlebar p,
+.planner-dashboard-page p,
+.planner-dashboard-page label,
+.planner-dashboard-page tbody,
+.planner-dashboard-page #pagination-info-text {
+    color: var(--muted) !important;
+}
+
+.planner-dashboard-page [style*="background: #ffffff"],
+.planner-dashboard-page [style*="background: #fff"],
+.planner-dashboard-page [style*="background: #f8fafc"],
+.planner-dashboard-page [style*="background-color: #f8fafc"],
+.planner-dashboard-page [style*="background: #f1f5f9"],
+.planner-dashboard-page [style*="background-color: #f1f5f9"] {
+    background: var(--surface) !important;
+}
+
+.planner-dashboard-page [style*="border: 1px solid #e2e8f0"],
+.planner-dashboard-page [style*="border: 1px solid #f1f5f9"],
+.planner-dashboard-page [style*="border-bottom: 1px solid #f1f5f9"],
+.planner-dashboard-page [style*="border-top: 1px solid #f1f5f9"] {
+    border-color: var(--border) !important;
+}
+
+.planner-dashboard-page input,
+.planner-dashboard-page select,
+.planner-dashboard-page textarea,
+.planner-dashboard-page #log-search-input {
+    min-width: 0;
+    color: var(--text) !important;
+    background: var(--surface) !important;
+    border-color: color-mix(in srgb, var(--primary) 18%, var(--border)) !important;
+    font-family: inherit;
+}
+
+.planner-dashboard-page input::placeholder,
+.planner-dashboard-page textarea::placeholder {
+    color: var(--muted);
+}
+
+.planner-dashboard-page table {
+    min-width: 720px;
+}
+
+.planner-dashboard-page th,
+.planner-dashboard-page td,
+.planner-dashboard-page span[style*="color: #0f172a"],
+.planner-dashboard-page span[style*="color:#0f172a"],
+.planner-dashboard-page span[style*="color: #1e293b"],
+.planner-dashboard-page span[style*="color:#1e293b"],
+.planner-dashboard-page span[style*="color: #334155"],
+.planner-dashboard-page span[style*="color:#334155"],
+.planner-dashboard-page div[style*="color: #334155"] {
+    color: var(--text) !important;
+}
+
+.planner-dashboard-page th,
+.planner-dashboard-page [style*="color: #475569"],
+.planner-dashboard-page [style*="color:#475569"],
+.planner-dashboard-page [style*="color: #64748b"],
+.planner-dashboard-page [style*="color:#64748b"],
+.planner-dashboard-page [style*="color: #94a3b8"] {
+    color: var(--muted) !important;
+}
+
+.planner-analytics-row > *,
+.planner-analytics-row canvas {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.planner-analytics-row canvas {
+    width: 100% !important;
+}
+
+.planner-dashboard-page #sideboardPanel,
+.planner-dashboard-page #sideboardContent [style*="background:#f8fafc"],
+.planner-dashboard-page #sideboardContent [style*="background: #f8fafc"],
+.planner-dashboard-page #sideboardContent [style*="background:#ffffff"],
+.planner-dashboard-page #sideboardContent [style*="background: #ffffff"] {
+    color: var(--text) !important;
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+}
+
+.planner-dashboard-page #sideboardPanel,
+.planner-dashboard-page #sideboardPanel * {
+    border-color: var(--border) !important;
+}
+
+.planner-dashboard-page #sideboardPanel button,
+.planner-dashboard-page #sideboardPanel a {
+    color: var(--text) !important;
+    background: color-mix(in srgb, var(--surface) 88%, var(--primary) 12%) !important;
+    border-color: var(--border) !important;
+}
+
+.planner-dashboard-page .log-row {
+    border-bottom-color: var(--border);
+}
+
+.planner-dashboard-page .log-row:hover {
+    background: color-mix(in srgb, var(--surface) 88%, var(--primary) 12%) !important;
+}
+
+.planner-dashboard-page .event-tag-btn,
+.planner-dashboard-page #btn-prev-page,
+.planner-dashboard-page #btn-next-page {
+    color: var(--text) !important;
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    font-family: inherit;
+}
+
+.planner-dashboard-page .event-tag-btn.active {
+    color: var(--background) !important;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.planner-messenger-panel #messengerEventListContainer button {
+    color: var(--text) !important;
+    background: color-mix(in srgb, var(--surface) 88%, var(--primary) 12%) !important;
+    border-color: var(--border) !important;
+}
+
+.planner-messenger-panel #messengerEventListContainer .planner-messenger-event-button {
+    color: var(--text) !important;
+    background: color-mix(in srgb, var(--surface) 88%, var(--primary) 12%) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.planner-messenger-panel #messengerEventListContainer .planner-messenger-event-button:hover,
+.planner-messenger-panel #messengerEventListContainer .planner-messenger-event-button:focus-visible {
+    color: var(--text) !important;
+    background: color-mix(in srgb, var(--surface) 82%, var(--primary) 18%) !important;
+    border-color: var(--primary) !important;
+    outline: none;
+}
+
+.planner-messenger-panel #messengerEventListContainer button div,
+.planner-messenger-panel #messengerEventListContainer button span {
+    color: var(--text) !important;
+}
+
+.planner-messenger-panel #messengerEventListContainer > div > div {
+    color: var(--background) !important;
+    background: var(--primary) !important;
+}
+
+.planner-messenger-panel #messengerEventListContainer button:hover {
+    background: color-mix(in srgb, var(--surface) 88%, var(--primary) 12%) !important;
+    border-color: var(--primary) !important;
+}
+
+:root[data-theme="dark"] .planner-messenger-panel #messengerEventListContainer button > span,
+:root[data-theme="dark"] .planner-messenger-panel #messengerEventListContainer button:hover > span,
+:root[data-theme="dark"] .planner-messenger-panel #messengerEventListContainer button:focus-visible > span {
+    color: #000000 !important;
+}
+
+#emailBroadcastModal > div {
+    width: min(450px, calc(100% - 32px)) !important;
+    box-sizing: border-box;
+    color: var(--text);
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+}
+
+#emailBroadcastModal h3,
+#emailBroadcastModal label,
+#emailBroadcastModal strong {
+    color: var(--text) !important;
+}
+
+#emailBroadcastModal p {
+    color: var(--muted) !important;
+}
+
+#emailBroadcastModal button {
+    color: var(--text) !important;
+    background: color-mix(in srgb, var(--surface) 88%, var(--primary) 12%) !important;
+    border: 1px solid var(--border) !important;
+}
+
+#emailBroadcastModal button[type="submit"] {
+    color: var(--background) !important;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+@media (max-width: 980px) {
+    .planner-calendar-row,
+    .planner-analytics-row {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 700px) {
+    .planner-dashboard-page {
+        padding-bottom: 32px;
+    }
+
+    .planner-dashboard-shell,
+    .planner-kpi-row,
+    .planner-calendar-row,
+    .planner-analytics-row,
+    .planner-live-logs-card {
+        width: min(100% - 20px, 720px) !important;
+    }
+
+    .planner-dashboard-shell {
+        margin-top: 104px !important;
+    }
+
+    .planner-dashboard-titlebar,
+    .planner-live-logs-card > div:first-child {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .planner-live-logs-card #log-search-input {
+        width: 100% !important;
+    }
+
+    .planner-live-logs-card {
+        padding: 18px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .planner-messenger-panel {
+        right: -54px;
+        width: calc(100vw - 20px);
+    }
+
+    .planner-dashboard-shell {
+        margin-top: 118px !important;
+    }
+}
+
 .registrant-table .text-button,
 .registrant-table .secondary-button {
     width: 100%;

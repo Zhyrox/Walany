@@ -1,29 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Planner Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="/Walany/assets/images/Walania.svg">
     <link rel="stylesheet" href="/Walany/assets/style.css">
 </head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 20px;">
+<body class="planner-dashboard-page">
 
     <!-- Capture dynamic absolute script pathway to prevent routing breakage -->
     <?php $selfPath = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>
 
+    <header class="site-header login-header headbar">
+        <a href="/Walany/index.php" class="logo-placeholder" aria-label="Walania home">
+            <img src="/Walany/assets/images/Walania.svg" alt="Walania logo">
+        </a>
+        <div class="planner-headbar-actions">
+            <!-- Messenger Header Action Button -->
+            <div class="planner-messenger-menu">
+                <button type="button" id="messengerDropdownBtn" class="planner-messenger-btn" onclick="toggleMessengerMenu()" aria-label="Open Communication Hub">
+                    <img class="messenger-icon" src="/Walany/assets/images/Communication-Hub Icon.svg" alt="" aria-hidden="true">
+                </button>
+
+                <!-- Messenger Dropdown Panel -->
+                <div id="messengerDropdownPanel" class="planner-messenger-panel" style="display: none;">
+                    <!-- Header -->
+                    <div class="planner-messenger-panel-header">
+                        <h3>Communication Hub</h3>
+                        <span>Admin</span>
+                    </div>
+
+                    <!-- PINNED SECTION: Human Takeover -->
+                    <div class="planner-messenger-section planner-messenger-section--pinned">
+                        <div class="planner-messenger-section-label">Pinned Action</div>
+                        <button type="button" disabled class="planner-messenger-pinned-action">
+                            <div class="planner-messenger-pinned-icon">
+                                <img class="human-takeover-icon" src="/Walany/assets/images/Human-Takeover Support Icon.svg" alt="" aria-hidden="true">
+                            </div>
+                            <div>
+                                <div class="planner-messenger-pinned-title">
+                                    Human Takeover
+                                    <span>SOON</span>
+                                </div>
+                                <div class="planner-messenger-pinned-copy">Intervene in live student bot chats</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- SCROLLABLE SECTION: Email Broadcast by Event -->
+                    <div class="planner-messenger-section planner-messenger-section--scroll">
+                        <div class="planner-messenger-section-label planner-messenger-section-label--split">
+                            <span>Select Event to Email</span>
+                        </div>
+
+                        <!-- Dynamic Grouped & Sorted Container -->
+                        <div id="messengerEventListContainer">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+                <img class="theme-toggle-icon" data-theme-icon src="/Walany/assets/images/LightModeIcon.svg" alt="" aria-hidden="true">
+            </button>
+        </div>
+    </header>
+
     <!-- Main Workspace Container -->
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="planner-dashboard-shell" style="max-width: 1200px; margin: 0 auto;">
         
         <!-- Header -->
-        <header style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <header class="planner-dashboard-titlebar" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h1 style="color: #2c3e50; margin: 0; font-size: 1.85em;">Event Planner Control Center</h1>
                 <p style="color: #7f8c8d; margin: 5px 0 0 0; font-size: 0.95em;">Design upcoming events, track quotas, and monitor real-time attendee engagement.</p>
             </div>
 
                 <!-- Messenger Header Action Button -->
-                <div style="position: relative; display: inline-block;">
-                    <button type="button" id="messengerDropdownBtn" onclick="toggleMessengerMenu()" 
+                <div class="planner-legacy-messenger" style="position: relative; display: inline-block;">
+                    <button type="button" id="legacyMessengerDropdownBtn" onclick="toggleMessengerMenu()"
                             style="width: 40px; height: 40px; border-radius: 50%; background-color: #3a3b3c; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;">
                         <!-- Messenger SVG Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#e4e6eb">
@@ -32,7 +89,7 @@
                     </button>
 
                     <!-- Messenger Dropdown Panel -->
-                    <div id="messengerDropdownPanel" 
+                    <div id="legacyMessengerDropdownPanel"
                         style="display: none; position: absolute; right: 0; top: 48px; width: 340px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden;">
                         
                         <!-- Header -->
@@ -67,7 +124,7 @@
                             </div>
 
                             <!-- Dynamic Grouped & Sorted Container -->
-                            <div id="messengerEventListContainer">
+                            <div id="legacyMessengerEventListContainer">
                                 <!-- Populated dynamically via JS -->
                             </div>
                         </div>
@@ -116,7 +173,7 @@
     </div>
 
     <!-- 2. High-Impact KPI Cards Row -->
-        <div style="max-width: 1200px; margin: 25px auto 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+        <div class="planner-kpi-row" style="max-width: 1200px; margin: 25px auto 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
             
             <!-- Card 1: Active Events -->
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); display: flex; flex-direction: column; gap: 5px;">
@@ -148,7 +205,7 @@
         </div>
 
         <!-- 3. Dynamic Charts Display Row -->
-        <div style="max-width: 1200px; margin: 30px auto 0 auto; display: grid; grid-template-columns: 2fr 2fr 1.2fr; gap: 20px; flex-wrap: wrap;">
+        <div class="planner-analytics-row" style="max-width: 1200px; margin: 30px auto 0 auto; display: grid; grid-template-columns: 2fr 2fr 1.2fr; gap: 20px; flex-wrap: wrap;">
             
             <!-- Chart Container A: Bar Chart -->
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
@@ -177,7 +234,7 @@
         </div>
 
         <!-- 4. Interactive Calendar & Feedback Sideboard -->
-        <div style="max-width: 1200px; margin: 30px auto 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+        <div class="planner-calendar-row" style="max-width: 1200px; margin: 30px auto 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
             
             <!-- Left Side: The Calendar Component -->
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
@@ -748,7 +805,7 @@
 </script>
 
 <!-- Live Attendance Logs Container -->
-<div style="background: #ffffff; padding: 24px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<div class="planner-live-logs-card" style="background: #ffffff; padding: 24px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
     
     <!-- Top Header Layout Row -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
@@ -1154,5 +1211,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Inject PHP $mappedEvents (or $events) into global JS scope
     window.rawPlannerEvents = <?php echo json_encode($mappedEvents ?? $events ?? []); ?>;
 </script>
+<script src="/Walany/assets/script.js"></script>
 </body>
 </html>
