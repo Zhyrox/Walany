@@ -34,14 +34,14 @@
                     <!-- PINNED SECTION: Human Takeover -->
                     <div class="planner-messenger-section planner-messenger-section--pinned">
                         <div class="planner-messenger-section-label">Pinned Action</div>
-                        <button type="button" disabled class="planner-messenger-pinned-action">
+                        <button type="button" class="planner-messenger-pinned-action" onclick="openHumanTakeoverModal()">
                             <div class="planner-messenger-pinned-icon">
                                 <img class="human-takeover-icon" src="/Walany/assets/images/Human-Takeover Support Icon.svg" alt="" aria-hidden="true">
                             </div>
                             <div>
                                 <div class="planner-messenger-pinned-title">
                                     Human Takeover
-                                    <span>SOON</span>
+                                    <span class="badge-live">LIVE</span>
                                 </div>
                                 <div class="planner-messenger-pinned-copy">Intervene in live student bot chats</div>
                             </div>
@@ -893,6 +893,216 @@
     .event-tag-btn { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #64748b; transition: all 0.2s; }
     .event-tag-btn.active { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; }
     button:disabled { opacity: 0.5; cursor: not-allowed !important; }
+
+    /*Human Takeover Chat*/
+    /* Dark Theme Human Takeover Modal */
+.ht-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+}
+
+.ht-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+}
+
+.ht-modal-card {
+    position: relative;
+    width: 90%;
+    max-width: 950px;
+    height: 80vh;
+    margin: 5vh auto;
+    background: #0f1715;
+    border: 1px solid #1f332d;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    color: #e2e8f0;
+    font-family: inherit;
+}
+
+.ht-modal-header {
+    padding: 18px 24px;
+    background: #14221e;
+    border-bottom: 1px solid #1f332d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ht-modal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #80e2d0;
+}
+
+.ht-live-indicator {
+    width: 10px;
+    height: 10px;
+    background: #00e676;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00e676;
+}
+
+.ht-modal-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.ht-modal-close:hover {
+    color: #ffffff;
+}
+
+.ht-modal-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.ht-sidebar {
+    width: 280px;
+    background: #0c1311;
+    border-right: 1px solid #1f332d;
+    display: flex;
+    flex-direction: column;
+}
+
+.ht-sidebar-heading {
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    border-bottom: 1px solid #1f332d;
+}
+
+.ht-session-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.ht-empty-state {
+    padding: 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.ht-session-item {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #14221e;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.ht-session-item:hover, .ht-session-item.active {
+    border-color: #80e2d0;
+    background: #1a2e29;
+}
+
+/* Main Workspace */
+.ht-workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #0f1715;
+}
+
+.ht-workspace-header {
+    padding: 14px 20px;
+    background: #14221e;
+    border-bottom: 1px solid #1f332d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.ht-messages-box {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ht-placeholder {
+    margin: auto;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* Inputs & Buttons */
+.ht-input-row {
+    padding: 16px;
+    background: #14221e;
+    border-top: 1px solid #1f332d;
+    display: flex;
+    gap: 10px;
+}
+
+.ht-input-row input {
+    flex: 1;
+    background: #090e0d;
+    border: 1px solid #1f332d;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #ffffff;
+    outline: none;
+}
+
+.ht-input-row input:focus {
+    border-color: #80e2d0;
+}
+
+.ht-btn-send {
+    background: #80e2d0;
+    color: #081210;
+    font-weight: 700;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.ht-btn-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.ht-btn-release {
+    background: #ef4444;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
 </style>
 
 <!-- Real-time dynamic connection handler -->
@@ -1057,6 +1267,282 @@ document.addEventListener("DOMContentLoaded", function() {
     setInterval(fetchLiveLogs, 3000); // Poll tracking database loops cleanly every 3 seconds
 });
 </script>
+
+<script>
+    let currentAdminSessionId = null;
+    let activeSessionsInterval = null;
+    let activeThreadInterval = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const adminInput = document.getElementById('adminReplyInput');
+        
+        if (adminInput) {
+            adminInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendAdminReply();
+                }
+            });
+        }
+    });
+
+    // --- Modal Controls ---
+    function openHumanTakeoverModal() {
+        const modal = document.getElementById('humanTakeoverModal');
+        if (modal) modal.style.display = 'block';
+
+        // Fetch session list immediately and start polling sidebar every 5s
+        fetchActiveSessions();
+        if (!activeSessionsInterval) {
+            activeSessionsInterval = setInterval(fetchActiveSessions, 5000);
+        }
+    }
+
+    function closeHumanTakeoverModal() {
+        const modal = document.getElementById('humanTakeoverModal');
+        if (modal) modal.style.display = 'none';
+
+        // Clear all timers on modal close
+        if (activeSessionsInterval) {
+            clearInterval(activeSessionsInterval);
+            activeSessionsInterval = null;
+        }
+        if (activeThreadInterval) {
+            clearInterval(activeThreadInterval);
+            activeThreadInterval = null;
+        }
+        currentAdminSessionId = null;
+    }
+
+    // --- Sidebar Session Fetching ---
+    function fetchActiveSessions() {
+        fetch(`/Walany/chat.php?action=get_active_sessions&_t=${Date.now()}`)
+            .then(res => res.json())
+            .then(response => {
+                const listContainer = document.getElementById('adminSessionList');
+                if (!listContainer) return;
+
+                const sessions = (response && response.status === 'success' && Array.isArray(response.sessions)) 
+                    ? response.sessions 
+                    : [];
+
+                if (sessions.length === 0) {
+                    listContainer.innerHTML = '<div class="ht-empty-state">No active student chats.</div>';
+                    return;
+                }
+
+                listContainer.innerHTML = '';
+                sessions.forEach(s => {
+                    const isActive = currentAdminSessionId == s.id;
+                    const isHuman = s.status === 'human';
+
+                    const item = document.createElement('div');
+                    item.className = `ht-session-item ${isActive ? 'active' : ''}`;
+                    item.onclick = () => loadSessionThread(s.id);
+
+                    item.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="color: #80e2d0; font-size: 0.95rem;">Session #${s.id}</strong>
+                            <span class="ht-badge ${isHuman ? 'human' : 'bot'}">
+                                ${isHuman ? 'HUMAN' : 'BOT'}
+                            </span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">
+                            Last updated: ${s.updated_at || s.created_at || 'Just now'}
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            })
+            .catch(err => {
+                console.error("Error fetching active sessions:", err);
+                const listContainer = document.getElementById('adminSessionList');
+                if (listContainer) {
+                    listContainer.innerHTML = '<div class="ht-empty-state" style="color: #ef4444;">Failed to load sessions.</div>';
+                }
+            });
+    }
+
+    // --- Active Session Thread Handling (Single Consolidated Function) ---
+    function loadSessionThread(sessionId) {
+        currentAdminSessionId = sessionId;
+
+        const label = document.getElementById('activeStudentLabel');
+        if (label) label.innerText = `Chatting with Session #${sessionId}`;
+
+        const input = document.getElementById('adminReplyInput');
+        if (input) input.disabled = false;
+
+        const sendBtn = document.getElementById('adminSendBtn');
+        if (sendBtn) sendBtn.disabled = false;
+
+        const releaseBtn = document.getElementById('resolveSessionBtn');
+        if (releaseBtn) releaseBtn.style.display = 'inline-block';
+
+        // Fetch thread immediately
+        fetchThreadMessages(sessionId);
+
+        // Reset previous thread loop if switching sessions
+        if (activeThreadInterval) {
+            clearInterval(activeThreadInterval);
+        }
+
+        // Polling loop: fetch incoming student messages every 2.5 seconds
+        activeThreadInterval = setInterval(() => {
+            if (currentAdminSessionId) {
+                fetchThreadMessages(currentAdminSessionId);
+            }
+        }, 2500);
+    }
+
+    // --- Message Fetcher with Smart Scroll ---
+    function fetchThreadMessages(sessionId) {
+        fetch(`/Walany/chat.php?action=get_history&session_id=${sessionId}&_t=${Date.now()}`)
+            .then(res => res.json())
+            .then(messages => {
+                const box = document.getElementById('adminChatMessages');
+                if (!box || !Array.isArray(messages)) return;
+
+                // Check message count to avoid unnecessary re-rendering
+                const currentCount = box.querySelectorAll('.ht-msg-row').length;
+
+                if (messages.length !== currentCount) {
+                    box.innerHTML = '';
+                    messages.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = 'ht-msg-row';
+                        div.style.cssText = `margin: 6px 0; text-align: ${m.sender === 'user' ? 'left' : 'right'};`;
+
+                        div.innerHTML = `
+                            <span style="background: ${m.sender === 'user' ? '#1f332d' : '#80e2d0'}; 
+                                         color: ${m.sender === 'user' ? '#e2e8f0' : '#081210'}; 
+                                         padding: 8px 14px; border-radius: 10px; display: inline-block; max-width: 75%; text-align: left;">
+                                ${m.message}
+                            </span>
+                        `;
+                        box.appendChild(div);
+                    });
+                    box.scrollTop = box.scrollHeight;
+                }
+            })
+            .catch(err => console.error("Error polling thread history:", err));
+    }
+
+    // --- Admin Actions ---
+    function sendAdminReply() {
+        const input = document.getElementById('adminReplyInput');
+        const msg = input.value.trim();
+        if (!msg || !currentAdminSessionId) return;
+
+        fetch('/Walany/chat.php?action=admin_reply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: currentAdminSessionId, message: msg })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                input.value = '';
+                fetchThreadMessages(currentAdminSessionId); // Refresh thread
+                fetchActiveSessions(); // Update sidebar status
+            }
+        });
+    }
+
+    function releaseCurrentSession() {
+        if (!currentAdminSessionId) {
+            alert("No active session selected.");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to release this session back to AI Bot mode?")) {
+            return;
+        }
+
+        fetch('/Walany/chat.php?action=resolve_session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: currentAdminSessionId }) // Passed in JSON body matching PHP
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (activeThreadInterval) {
+                    clearInterval(activeThreadInterval);
+                    activeThreadInterval = null;
+                }
+                currentAdminSessionId = null;
+
+                const label = document.getElementById('activeStudentLabel');
+                if (label) label.innerText = 'Select a session from the left';
+
+                const msgBox = document.getElementById('adminChatMessages');
+                if (msgBox) msgBox.innerHTML = '<div class="ht-placeholder">Session released back to Bot. Choose another conversation.</div>';
+
+                const releaseBtn = document.getElementById('resolveSessionBtn');
+                if (releaseBtn) releaseBtn.style.display = 'none';
+
+                const input = document.getElementById('adminReplyInput');
+                if (input) { input.value = ''; input.disabled = true; }
+
+                const sendBtn = document.getElementById('adminSendBtn');
+                if (sendBtn) sendBtn.disabled = true;
+
+                fetchActiveSessions();
+            } else {
+                alert(data.message || "Failed to release session.");
+            }
+        })
+        .catch(err => console.error("Error releasing session:", err));
+    }
+</script>
+
+<!-- Human Takeover Modal Workspace -->
+<div id="humanTakeoverModal" class="ht-modal">
+    <div class="ht-modal-overlay" onclick="closeHumanTakeoverModal()"></div>
+    <div class="ht-modal-card">
+        
+        <!-- Modal Header -->
+        <div class="ht-modal-header">
+            <div class="ht-modal-title">
+                <span class="ht-live-indicator"></span>
+                Human Takeover Console
+            </div>
+            <button type="button" class="ht-modal-close" onclick="closeHumanTakeoverModal()">✕</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="ht-modal-body">
+            
+            <!-- Sidebar: Session List -->
+            <div class="ht-sidebar">
+                <div class="ht-sidebar-heading">Active Student Sessions</div>
+                <div id="adminSessionList" class="ht-session-list">
+                    <div class="ht-empty-state">No active student chats.</div>
+                </div>
+            </div>
+
+            <!-- Main Thread Area -->
+            <div class="ht-workspace">
+                <div class="ht-workspace-header">
+                    <span id="activeStudentLabel">Select a session from the left</span>
+                    <button id="resolveSessionBtn" class="ht-btn-release" style="display:none;" onclick="releaseCurrentSession()">Release to Bot</button>
+                </div>
+
+                <div id="adminChatMessages" class="ht-messages-box">
+                    <div class="ht-placeholder">Choose a conversation to start intervening.</div>
+                </div>
+
+                <div class="ht-input-row">
+                    <input type="text" id="adminReplyInput" placeholder="Type message as human coordinator..." disabled />
+                    <button type="button" id="adminSendBtn" class="ht-btn-send" onclick="sendAdminReply()" disabled>Send Reply</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
 
 <!-- Email Broadcast Modal -->
 <div id="emailBroadcastModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">

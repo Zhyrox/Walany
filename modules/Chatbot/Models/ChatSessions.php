@@ -86,4 +86,14 @@ class ChatSession {
         
         return $result ? (int)$result['id'] : null;
     }
+
+    /**
+     * Release a human takeover session back to AI Bot mode.
+     * 
+     * @param int $sessionId
+     * @return bool
+     */
+    public function releaseSessionToBot($sessionId) {
+        return $this->updateSessionStatus($sessionId, 'bot');
+    }
 }

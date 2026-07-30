@@ -170,9 +170,11 @@ class ChatController {
         header('Content-Type: application/json');
 
         $input = json_decode(file_get_contents('php://input'), true);
-        $sessionId = intval($input['session_id'] ?? 0);
+        
+        // Check JSON payload first, fallback to GET query string
+        $sessionId = intval($input['session_id'] ?? $_GET['session_id'] ?? 0);
 
-        if ($sessionId) {
+        if ($sessionId > 0) {
             $this->chatModel->updateSessionStatus($sessionId, 'bot');
             echo json_encode(['status' => 'success']);
         } else {
