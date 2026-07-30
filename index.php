@@ -42,6 +42,10 @@ switch ($module) {
                 exit;
             }
         }
+
+        if ($action === 'logout'){
+            header("Location: /Walany/index.php?module=Home");
+        }
         break;
 
     case 'Admin':
